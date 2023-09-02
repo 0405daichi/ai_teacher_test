@@ -350,7 +350,11 @@ document.addEventListener('turbolinks:load', () => {
   // 「写真を撮る」ボタンがクリックされたときの処理
   document.getElementById("takePhoto").addEventListener("click", async () => {
     // カメラのストリームを取得
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment' // 外部カメラの使用
+      }
+    });
     cameraPreview.srcObject = stream;
 
     // カメラプレビューと撮影ボタンを表示
