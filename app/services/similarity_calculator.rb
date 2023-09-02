@@ -2,7 +2,6 @@
 
 class SimilarityCalculator
   def initialize
-    @nm = Natto::MeCab.new
   end
 
   def similar_questions(input_question, questions, threshold = 0.5)
@@ -32,9 +31,10 @@ class SimilarityCalculator
   end
   
   def extract_words(text)
+    # Bi-gramを使用
     words = []
-    @nm.parse(text) do |n|
-      words << n.surface
+    (0...(text.length - 1)).each do |i|
+      words << text[i, 2]
     end
     words
   end

@@ -191,8 +191,6 @@ GEM
     msgpack (1.7.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
-    natto (1.2.0)
-      ffi (>= 1.9.0)
     net-imap (0.3.4)
       date
       net-protocol
@@ -341,7 +339,6 @@ DEPENDENCIES
   jquery-rails
   kaminari
   listen (~> 3.3)
-  natto
   pg
   pry
   puma (~> 5.0)

@@ -14,7 +14,6 @@ gem 'httparty'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'devise'
-gem 'natto'
 gem 'ruby-openai'
 gem 'pry', group: :development
 gem 'google-cloud-vision'
