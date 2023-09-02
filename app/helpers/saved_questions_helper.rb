@@ -1,0 +1,2 @@
+module SavedQuestionsHelper
+end

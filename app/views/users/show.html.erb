@@ -1,0 +1,8 @@
+<%# app/views/users/show.html.erb %>
+
+<div id="my-page">
+  <h2>マイページ</h2>
+  <p>アカウント名: <%= @user.username %></p>
+  <p>メールアドレス: <%= @user.email %></p>
+  <%= link_to 'パスワードを変更する', edit_user_registration_path %>
+</div>

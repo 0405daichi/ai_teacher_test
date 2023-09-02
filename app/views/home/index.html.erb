@@ -1,0 +1,210 @@
+<!-- app/views/home/index.html.erb -->
+<canvas class="homeCanvas"></canvas>
+
+<!-- Modal -->
+<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        Do you want to ask a question?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="questionButton">質問</button>
+        <button type="button" class="btn btn-secondary" id="searchButton">検索</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 質問フォームモーダル -->
+<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+  <div class="modal-dialog modal-xl q-mo custom-centering" role="document">
+    <div class="modal-content border-0 d-flex flex-column q-mo-co" style="background-color: transparent;">
+      <div class="modal-header option-carousel border-bottom-0">
+        <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+          <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+            <%= option %>
+          </div>
+        <% end %>
+      </div>
+
+      <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", method: :post do |f| %>
+        <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
+        <div class="modal-body flex-grow-1 overflow-auto q-mo-bo">
+          <!-- 質問用オプション -->
+          <div class="how-to-answer">
+            <div class="container">
+              <div class="row answer-option-row">
+                <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
+                <div class="answerOption m-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                    <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
+                    <%= option %>
+                </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          </div>
+          <!-- 直訳・翻訳オプション用 -->
+          <div class="selectLanguage">
+            <div class="container">
+              <div class="row align-items-center">
+                <div class="col">
+                  <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
+                </div>
+                <div class="col-auto">
+                  <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
+                </div>
+                <div class="col">
+                  <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="how-to-translate">
+            <div class="container">
+              <div class="row translate-option-row">
+                <% ['翻訳', '直訳'].each_with_index do |option, index| %>
+                <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                    <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
+                    <%= option %>
+                </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <!-- 要約用 -->
+          <div class="wrap-up-options">
+            <div class="d-flex justify-content-start">
+              <div class="mt-1 mb-1 mr-1">
+                <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
+              </div>
+              <div class="m-1">
+                <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count", style: "block" } %>
+                <span id="character-count-text"></span>
+                <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count", style: "none" } %>
+                <span id="word-count-text"></span>
+              </div>
+              <div class="m-1">
+                <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
+              <%= f.text_area :questionInputForm, maxlength: "1800", class: "form-control mr-2 border-0 scrollable-textarea", required: true, id: "questionInputForm", placeholder: "問題や質問を入力してください。", style: "resize: none; z-index: 10000; position: relative;" %>
+              <div>
+                <button type="button" class="btn btn-primary photoButton border-0">写真</button>
+                <%= f.submit "Submit", class: "btn btn-primary" %>
+                <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top-0">
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="answerModalBody" style="overflow: scroll;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 検索フォームモーダル -->
+<div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-content border-0" style="background-color: transparent;">
+      <%= form_with url: search_questions_path, local: true, id: "searchForm", method: :get, remote: true do |f| %>
+        <div class="modal-header border-bottom-0">
+          <%= f.text_area :searchInputForm, maxlength: "1800", class: "form-control mr-2 border-0", id: "searchInputForm", placeholder: "見つけたい問題を入力してください。", style: "resize: none;" %>
+          <button type="button" class="btn btn-primary photoButton m-1 border-0">写真で入力</button>
+        </div>
+        <div class="search-modal-body" style="background-color: transparent; max-height: 400px; overflow-y: auto;">
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- 写真入力モーダル -->
+<%
+=begin%>
+ <%= form_with url: '/ocr', method: :post, local: false, html: { id: 'photoForm' } do |f| %>
+  <div class="modal fade" id="inputPhotoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" id="selectPhoto" class="btn btn-primary">写真を選ぶ</button>
+          <%= f.file_field :image, accept: "image/*", style: "display: none;", id: "photoInput" %>
+          <button type="button" id="takePhoto" class="btn btn-primary">写真を撮る</button>
+        </div>
+        <div class="modal-body" id="previewBody" style="display: none;">
+          <img id="preview" style="width: 100%;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="backButton" class="btn btn-secondary">戻る</button>
+          <button type="submit" id="loadImage" class="btn btn-primary" style="display: none;">画像を読み込む</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %> 
+<%
+=end%>
+
+<!-- 写真入力モーダル -->
+<%= form_with url: '/ocr', method: :post, local: false, html: { id: 'photoForm' } do |f| %>
+  <div class="modal fade" id="inputPhotoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" id="selectPhoto" class="btn btn-primary">写真を選ぶ</button>
+          <%= f.file_field :image, accept: "image/*", style: "display: none;", id: "photoInput" %>
+          <button type="button" id="takePhoto" class="btn btn-primary">写真を撮る</button>
+        </div>
+        <div class="modal-body">
+          <!-- カメラプレビュー表示エリア -->
+          <video id="cameraPreview" style="width: 100%; display: none;"></video>
+          <!-- 写真プレビュー表示エリア -->
+          <img id="preview" style="width: 100%; display: none;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="backButton" class="btn btn-secondary">戻る</button>
+          <button type="button" id="captureButton" class="btn btn-primary" style="display: none;">撮影</button>
+          <button type="submit" id="loadImage" class="btn btn-primary" style="display: none;">画像を読み込む</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<!-- 回答表示モーダル -->
+<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeAnswerButton">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 検索結果表示モーダル -->
+<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeResultsButton">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>

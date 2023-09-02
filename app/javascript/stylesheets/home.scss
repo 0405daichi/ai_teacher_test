@@ -1,0 +1,129 @@
+// app/javascript/stylesheets/home.scss
+
+body, html, .homeCanvas {
+  height: 100%;
+  margin: 0;
+  position: relative;
+}
+
+#logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#character {
+  position: absolute;
+  z-index: 1;
+}
+
+.character-message {
+  position: relative;
+  margin-top: 20px;
+  width: 200px;
+  height: 80px;
+  padding: 10px;
+  background-color: #FFFFFF;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#mypage-button, #login-signup-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+// 質問フォームのオプションスライドショー
+.option-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding: 50%;
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none;  // Internet Explorer 10+
+  
+  // Chrome
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.option-carousel .option {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 200px;
+  margin-right: 16px;
+  scroll-snap-align: center;
+  background: #f0f0f0;
+  border-radius: 20px;  // 丸められた角
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;  // ポインタを手の形に
+}
+
+.option-carousel .option.active {
+  background: #007BFF;
+  color: white;
+}
+
+.answer-option-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.answerOption {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 30px;
+  background: #f0f0f0;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.answerOption.active {
+  background: #007BFF;
+  color: white;
+}
+
+.translate-option-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.translateOption {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 30px;
+  background: #f0f0f0;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.translateOption.active {
+  background: #007BFF;
+  color: white;
+}
+
+.modal.fade .custom-centering {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  top: 35%;
+}

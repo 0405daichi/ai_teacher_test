@@ -1,0 +1,17 @@
+<!-- app/views/questions/_question_card.html.erb -->
+
+<% question ||= local_assigns[:question] %>
+<div class="card mt-3">
+  <div class="card-header">
+    質問: <%= simple_format(question.content) %>
+    <div class="float-right">
+      <%= render partial: 'saved_questions/save_form', locals: { question: question } %>
+      <%= link_to like_question_path(question), remote: true, class: 'btn btn-outline-primary btn-sm', id: "like-button-#{question.id}", data: { tooltip: 'いいねする', question_id: question.id } do %>
+        <i class="far fa-thumbs-up"></i> いいね
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body">
+    回答: <%= simple_format(question.answer.content) %>
+  </div>
+</div>

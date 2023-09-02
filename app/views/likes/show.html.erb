@@ -1,0 +1,15 @@
+<%# app/views/likes/show.html.erb %>
+aaaa
+<div id="liked-questions-page" style="display: none;">
+  <h2>いいねした質問</h2>
+  <% @user.liked_questions.each do |question| %>
+    <div class="card mb-3">
+      <div class="card-header">
+        質問: <span class="question-content"><% question.content %></span>
+      </div>
+      <div class="card-body">
+        回答: <span class="answer-content"><% question.answer.content %></span>
+      </div>
+    </div>
+  <% end %>
+</div>

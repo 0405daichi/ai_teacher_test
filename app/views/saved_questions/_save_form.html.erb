@@ -1,0 +1,10 @@
+<!-- app/views/saved_questions/_save_form.html.erb -->
+<% if user_signed_in? %>
+  <% if current_user.saved_questions.exists?(question_id: question.id) %>
+    <%= link_to 'Unsave', saved_question_path(question.saved_questions.find_by(user_id: current_user.id)), method: :delete, remote: true, class: 'btn btn-secondary save-button', id: "save-button-#{question.id}", data: { tooltip: '保存を解除する', question_id: question.id } %>
+  <% else %>
+    <%= link_to 'Save', saved_questions_path(question_id: question.id), method: :post, remote: true, class: 'btn btn-primary save-button', id: "save-button-#{question.id}", data: { tooltip: '保存する', question_id: question.id } %>
+  <% end %>
+<% else %>
+  <%= link_to 'Save', "#", class: 'btn btn-primary save-button', id: "save-button-#{question.id}" %>
+<% end %>

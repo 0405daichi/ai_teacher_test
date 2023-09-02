@@ -1,0 +1,30 @@
+<%# app/views/layouts/application.html.erb %>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AiHomework</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <% if user_signed_in? %>
+      <div id="mypage-button">
+        <a href="/mypage">マイページ</a>
+      </div>
+    <% else %>
+      <div id="login-signup-buttons">
+        <a href="/users/sign_in">ログイン</a>
+        <a href="/users/sign_up">ユーザ登録</a>
+      </div>
+    <% end %>
+
+    <div id="current-user-id" data-user-id="<%= current_user&.id %>" style="display:none;"></div>
+    <%= yield %>
+  </body>
+</html>
