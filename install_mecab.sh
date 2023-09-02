@@ -1,11 +1,26 @@
 #!/bin/bash
 
-# MeCabのインストール
-sudo apt-get update -y
-sudo apt-get install -y mecab
-sudo apt-get install -y libmecab-dev
-sudo apt-get install -y mecab-ipadic-utf8
+# インストール先のディレクトリ
+INSTALL_DIR="$HOME/mecab"
 
-# 以下は環境によっては必要かもしれない追加の設定
-# export CGO_CFLAGS_ALLOW='-Wno-error=.*'
-# export CGO_CFLAGS='-Wno-error=.*'
+# ディレクトリ作成
+mkdir -p $INSTALL_DIR
+
+# ソースコードをダウンロード
+wget -O mecab-0.996.tar.gz 'https://drive.google.com/u/0/uc?id=0B4y35FiV1wh7cENtOXlicTFaRUE&export=download'
+
+# 解凍
+tar zxfv mecab-0.996.tar.gz
+cd mecab-0.996
+
+# インストール
+./configure --prefix=$INSTALL_DIR --enable-utf8-only
+make
+make install
+
+# 環境変数設定
+echo "export PATH=$INSTALL_DIR/bin:$PATH" >> ~/.bashrc
+echo "export LD_LIBRARY_PATH=$INSTALL_DIR/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
+
+# シェルを再起動（または新しいシェルを開く）
+source ~/.bashrc
