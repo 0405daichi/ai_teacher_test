@@ -359,12 +359,12 @@ document.addEventListener('turbolinks:load', () => {
   // }
 
   // カメラプレビュー、撮影ボタン、写真プレビュー要素を取得
-  const cameraPreview = document.getElementById("cameraPreview");
-  const captureButton = document.getElementById("captureButton");
-  const writeButton = document.getElementById("writeButton");
-  const imageInputButton = document.getElementById("imageInputButton");
-  const preview = document.getElementById("preview");
-  const maskRect = document.getElementById("maskRect");
+  // const cameraPreview = document.getElementById("cameraPreview");
+  // const captureButton = document.getElementById("captureButton");
+  // const writeButton = document.getElementById("writeButton");
+  // const imageInputButton = document.getElementById("imageInputButton");
+  // const preview = document.getElementById("preview");
+  // const maskRect = document.getElementById("maskRect");
 
   let stream, imageCapture;
 

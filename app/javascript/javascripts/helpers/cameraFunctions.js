@@ -19,6 +19,9 @@ export async function processImage(blob) {
   const response = await fetch('/ocr', {
     method: 'POST',
     body: formData,
+    headers: {
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    }
   });
 
   const data = await response.json();

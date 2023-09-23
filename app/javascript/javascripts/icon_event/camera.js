@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", function() {
     cameraModal.show();
     console.log("ok");
 
-    stream = createStream(cameraPreview);
+    stream = await createStream(cameraPreview);
+    console.log("Stream object: ", stream);
 
     const track = stream.getVideoTracks()[0];
     imageCapture = new ImageCapture(track);
