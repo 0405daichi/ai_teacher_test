@@ -401,93 +401,93 @@ document.addEventListener('turbolinks:load', () => {
   // });
 
   // 「撮影」ボタンがクリックされたときの処理
-  captureButton.addEventListener("click", async () => {
-    // 画像をキャプチャ
-    const photo = await imageCapture.takePhoto({
-      imageWidth: 1280, // 明示的な幅設定
-      imageHeight: 720  // 明示的な高さ設定
-    });
+  // captureButton.addEventListener("click", async () => {
+  //   // 画像をキャプチャ
+  //   const photo = await imageCapture.takePhoto({
+  //     imageWidth: 1280, // 明示的な幅設定
+  //     imageHeight: 720  // 明示的な高さ設定
+  //   });
 
-    // Blobを読み込んで表示
-    const imageBitmap = await createImageBitmap(photo);
+  //   // Blobを読み込んで表示
+  //   const imageBitmap = await createImageBitmap(photo);
 
-    // 元の画像をプレビューに表示
-    const originalImageUrl = URL.createObjectURL(photo);
-    preview.src = originalImageUrl;
+  //   // 元の画像をプレビューに表示
+  //   const originalImageUrl = URL.createObjectURL(photo);
+  //   preview.src = originalImageUrl;
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+  //   const canvas = document.createElement("canvas");
+  //   const ctx = canvas.getContext("2d");
 
-    // カメラの実際の解像度を取得
-    const track = stream.getVideoTracks()[0];
-    const settings = track.getSettings();
+  //   // カメラの実際の解像度を取得
+  //   const track = stream.getVideoTracks()[0];
+  //   const settings = track.getSettings();
 
-    // 画面とカメラの解像度の比率を計算
-    const ratioX = settings.width / window.innerWidth;
-    const ratioY = settings.height / window.innerHeight;
+  //   // 画面とカメラの解像度の比率を計算
+  //   const ratioX = settings.width / window.innerWidth;
+  //   const ratioY = settings.height / window.innerHeight;
 
-    // maskRectの位置とサイズを取得（SVG内の座標系で）
-    const svgRect = maskRect.getBoundingClientRect();  
+  //   // maskRectの位置とサイズを取得（SVG内の座標系で）
+  //   const svgRect = maskRect.getBoundingClientRect();  
 
-    // 実際の座標を計算（解像度の比率を考慮）
-    const x = svgRect.x * ratioX;
-    const y = svgRect.y * ratioY;
-    const width = svgRect.width * ratioX;
-    const height = svgRect.height * ratioY;
+  //   // 実際の座標を計算（解像度の比率を考慮）
+  //   const x = svgRect.x * ratioX;
+  //   const y = svgRect.y * ratioY;
+  //   const width = svgRect.width * ratioX;
+  //   const height = svgRect.height * ratioY;
 
-    // canvasのサイズをmaskRectのサイズに合わせる（解像度の比率を考慮）
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  //   // canvasのサイズをmaskRectのサイズに合わせる（解像度の比率を考慮）
+  //   canvas.width = window.innerWidth;
+  //   canvas.height = window.innerHeight;
 
-    // imageBitmapからmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, x, y, width, height, svgRect.x, svgRect.y, svgRect.width, svgRect.height);
+  //   // imageBitmapからmaskRectの範囲だけを切り出して描画
+  //   ctx.drawImage(imageBitmap, x, y, width, height, svgRect.x, svgRect.y, svgRect.width, svgRect.height);
 
-    // canvasからBlobを生成
-    canvas.toBlob((blob) => {
-      const formData = new FormData();
-      formData.append('image', blob, 'image.png'); // Blobをフォームデータに追加
+  //   // canvasからBlobを生成
+  //   canvas.toBlob((blob) => {
+  //     const formData = new FormData();
+  //     formData.append('image', blob, 'image.png'); // Blobをフォームデータに追加
       
-      /* 画像読み込み処理 */
-      fetch('/ocr', {
-        method: 'POST',
-        body: formData,
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Response:', data);
+  //     /* 画像読み込み処理 */
+  //     fetch('/ocr', {
+  //       method: 'POST',
+  //       body: formData,
+  //     })
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         console.log('Response:', data);
     
-          // モーダルを閉じる
-          imageUploadModal.hide();
+  //         // モーダルを閉じる
+  //         imageUploadModal.hide();
           
-          // 抽出したテキストを質問入力フォームに表示する
-          if (questionInputContainer.style.display == "block"){
-            var questionForm = questionInputContainer.querySelector('#question-input');
-            console.log(questionForm);
-            questionForm.value = data.text;
-          } else if (searchInputContainer.style.display == "block"){
-            var questionForm = searchInputContainer.querySelector('#search-query');
-            questionForm.value = data.text;
-          }
+  //         // 抽出したテキストを質問入力フォームに表示する
+  //         if (questionInputContainer.style.display == "block"){
+  //           var questionForm = questionInputContainer.querySelector('#question-input');
+  //           console.log(questionForm);
+  //           questionForm.value = data.text;
+  //         } else if (searchInputContainer.style.display == "block"){
+  //           var questionForm = searchInputContainer.querySelector('#search-query');
+  //           questionForm.value = data.text;
+  //         }
     
-          // モーダル内のボタンを削除
-          const existingButton = modalBody.querySelector('.write-out');
-          if (existingButton) {
-            existingButton.remove();
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    }, 'image/png');
+  //         // モーダル内のボタンを削除
+  //         const existingButton = modalBody.querySelector('.write-out');
+  //         if (existingButton) {
+  //           existingButton.remove();
+  //         }
+  //       })
+  //       .catch(error => {
+  //         console.error('Error:', error);
+  //       });
+  //   }, 'image/png');
 
-    // UIの切り替え
-    cameraPreview.style.display = "none";
-    captureButton.style.display = "none";
-    preview.style.display = "block";
+  //   // UIの切り替え
+  //   cameraPreview.style.display = "none";
+  //   captureButton.style.display = "none";
+  //   preview.style.display = "block";
 
-    // ストリームを停止
-    stream.getTracks().forEach(track => track.stop());
-  });
+  //   // ストリームを停止
+  //   stream.getTracks().forEach(track => track.stop());
+  // });
 
   let file = null;
   const loadImageButton = document.getElementById('loadImage');

@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   captureButton.addEventListener("click", async () => {
-    const photo = await imageCapture.takePhoto({ imageWidth: 1280, imageHeight: 720 });
+    const photo = await imageCapture.takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     
     // 元の画像をプレビューに表示
