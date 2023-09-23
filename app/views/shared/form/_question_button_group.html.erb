@@ -1,0 +1,10 @@
+<div class="mb-3" id="questionModalButton" style="display: none;">
+  <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
+    <%= render partial: 'shared/form/text_area_field', locals: { f: f } %>
+    <div>
+      <button type="button" class="btn btn-primary photoButton border-0">写真</button>
+      <%= f.submit "Submit", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<%
+=begin%>
+ <div class="option-carousel" style="position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%); display: block">
+  <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+    <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+      <%= option %>
+    </div>
+  <% end %>
+</div> 
+<%
+=end%>

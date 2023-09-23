@@ -1,5 +1,252 @@
-<!-- app/views/home/index.html.erb -->
-<canvas class="homeCanvas"></canvas>
+<!-- app/views/your_view.html.erb -->
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const adImage = document.querySelector('.benesse-ad');
+
+    adImage.addEventListener('click', function(){
+      this.classList.add('animate');
+
+      this.addEventListener('transitionend', function() {
+        this.classList.remove('animate');
+      }, { once: true });
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    let currentSlide = 0;  // これを1に変更してデフォルトのスライドをslider1にする
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const slider = document.querySelector('.slider');  // この行を追加
+
+    function updateActiveSlide(newIndex) {
+      slides[currentSlide].classList.remove('active');
+      dots[currentSlide].classList.remove('active');
+      currentSlide = newIndex;
+      slides[currentSlide].classList.add('active');
+      dots[currentSlide].classList.add('active');
+    }
+
+    function gotoSlide(n) {
+      updateActiveSlide((n + slides.length) % slides.length);
+      const slideWidth = slides[currentSlide].offsetWidth;
+      slider.scrollLeft = slideWidth * currentSlide;
+    }
+
+    gotoSlide(0);  // これをgotoSlide(1);に変更してデフォルトのスライドをslider1にする
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => gotoSlide(index));
+    });
+
+    // この部分を追加
+    slider.addEventListener('scroll', function() {
+      const newSlide = Math.round(slider.scrollLeft / slider.offsetWidth);
+      if (newSlide !== currentSlide) {
+        updateActiveSlide(newSlide);
+      }
+    });
+  });
+</script>
+
+<!-- app/views/your_view.html.erb -->
+<div class="container">
+  <div class="image-container">
+    <%= image_tag 'mobile.png', alt: 'Mobile Mockup', class: 'mobile-mockup' %>
+    <div class="slider">
+      <div class="slide" id="slide1">
+        <div class="icon-grid">
+          <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad small-icon' %>
+          <%= image_tag 'user-icon.png', alt: 'user', class: 'user-icon small-icon' %>
+          <%= image_tag 'folder-icon.png', alt: 'folder', class: 'folder-icon small-icon' %>
+          <%= image_tag 'search-icon.png', alt: 'search', class: 'search-icon small-icon' %>
+          <%= image_tag 'camera-icon.png', alt: 'camera', class: 'camera-icon small-icon', id: 'cameraApp1' %>
+          <%= image_tag 'takedajukuAD.png', alt: 'takedajuku-ad', class: 'takedajuku-ad small-icon' %>
+          <%= image_tag 'instagram-icon.png', alt: 'instagram', class: 'instagram-icon small-icon' %>
+          <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
+          <%= image_tag 'kyushinAD.png', alt: 'kyushin-ad', class: 'kyushin-ad small-icon' %>
+          <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
+          <%= image_tag 'x-icon.png', alt: 'x', class: 'x-icon small-icon' %>
+        </div>
+      </div>
+      <div class="slide" id="slide2">2
+      </div>
+      <div class="slide" id="slide3">3
+      </div>
+    </div>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="tool-bar">
+      <div class="tool">
+        <%= image_tag 'search-icon.png', alt: 'search', class: 'search-icon small-icon' %>
+        <%= image_tag 'camera-icon.png', alt: 'camera', class: 'camera-icon small-icon' %>
+        <%= image_tag 'folder-icon.png', alt: 'folder', class: 'folder-icon small-icon' %>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+.image-container {
+  position: relative;
+  max-width: 100vw;
+  max-height: 100vh;
+  display: inline-block;
+}
+
+.mobile-mockup {
+  width: auto;
+  max-width: 100%;
+  max-height: 100vh;
+  height: auto;
+  display: block;
+}
+
+.slider {
+  /* 以下の設定は必須 */
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  display: flex;
+  -webkit-overflow-scrolling: touch; /* スマホ対応のため必須 */
+  overflow-scrolling: touch; /* スマホ対応のため必須 */
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 90%;
+  height: 73%;
+  transform: translate(6%, 7%);
+  /* background-color: rgba(0, 0, 0, 0.5); */
+}
+
+.slide{
+  scroll-snap-align: start;
+  flex: 0 0 100%; /* これを追加 */
+  max-width: 100%; /* これを追加 */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* スクロールバーを非表示にする */
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 2vh 3vw;
+  width: 90%;
+  height: 93%;
+  margin: 10% 5% 0 5%;
+}
+
+.small-icon {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.takedajuku-ad {
+  grid-column: span 4; /* 4列分を占める */
+  grid-row: span 2;    /* 2行分を占める */
+}
+
+.benesse-ad {
+  grid-column: span 2; /* 4列分を占める */
+  grid-row: span 2;    /* 2行分を占める */
+
+  transition: opacity 0.5s, transform 0.5s;
+  cursor: pointer;
+}
+
+.benesse-ad.animate {
+  opacity: 0;
+  transform: scale(10.2);
+}
+
+.kyushin-ad {
+  margin-top: 20%;
+  grid-column: span 2; /* 4列分を占める */
+  grid-row: span 2;    /* 2行分を占める */
+}
+
+#slide1{
+  
+}
+
+#slide2{
+  background: blue;
+}
+
+#slide3{
+  background: white;
+}
+
+.dots {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 65%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.active {
+  background: black;
+}
+
+.tool-bar {
+  position: absolute;
+  top: 85%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 90%;
+  height: 11%;
+  transform: translate(6%, 7%);
+  /* background-color: rgba(0, 0, 0, 0.5); */
+}
+
+.tool {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5vw;
+  margin: 3% 10% 0 10%;
+}
+</style>
 
 <!-- Modal -->
 <div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -20,90 +267,13 @@
 <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
   <div class="modal-dialog modal-xl q-mo custom-centering" role="document">
     <div class="modal-content border-0 d-flex flex-column q-mo-co" style="background-color: transparent;">
-      <div class="modal-header option-carousel border-bottom-0">
-        <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
-          <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
-            <%= option %>
-          </div>
-        <% end %>
-      </div>
+      <%= render 'shared/option/option_carousel' %>
 
-      <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", method: :post do |f| %>
-        <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
         <div class="modal-body flex-grow-1 overflow-auto q-mo-bo">
-          <!-- 質問用オプション -->
-          <div class="how-to-answer">
-            <div class="container">
-              <div class="row answer-option-row">
-                <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
-                <div class="answerOption m-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
-                    <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
-                    <%= option %>
-                </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-          </div>
-          <!-- 直訳・翻訳オプション用 -->
-          <div class="selectLanguage">
-            <div class="container">
-              <div class="row align-items-center">
-                <div class="col">
-                  <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
-                </div>
-                <div class="col-auto">
-                  <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
-                </div>
-                <div class="col">
-                  <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="how-to-translate">
-            <div class="container">
-              <div class="row translate-option-row">
-                <% ['翻訳', '直訳'].each_with_index do |option, index| %>
-                <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
-                    <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
-                    <%= option %>
-                </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-          <!-- 要約用 -->
-          <div class="wrap-up-options">
-            <div class="d-flex justify-content-start">
-              <div class="mt-1 mb-1 mr-1">
-                <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
-              </div>
-              <div class="m-1">
-                <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count", style: "block" } %>
-                <span id="character-count-text"></span>
-                <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count", style: "none" } %>
-                <span id="word-count-text"></span>
-              </div>
-              <div class="m-1">
-                <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
-              <%= f.text_area :questionInputForm, maxlength: "1800", class: "form-control mr-2 border-0 scrollable-textarea", required: true, id: "questionInputForm", placeholder: "問題や質問を入力してください。", style: "resize: none; z-index: 10000; position: relative;" %>
-              <div>
-                <button type="button" class="btn btn-primary photoButton border-0">写真</button>
-                <%= f.submit "Submit", class: "btn btn-primary" %>
-                <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
-              </div>
-            </div>
-          </div>
+          <%= render 'shared/form/question_form' %>
         </div>
         <div class="modal-footer border-top-0">
         </div>
-      <% end %>
     </div>
   </div>
 </div>
@@ -132,66 +302,54 @@
   </div>
 </div>
 
-<!-- 写真入力モーダル -->
-<%
-=begin%>
- <%= form_with url: '/ocr', method: :post, local: false, html: { id: 'photoForm' } do |f| %>
-  <div class="modal fade" id="inputPhotoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" id="selectPhoto" class="btn btn-primary">写真を選ぶ</button>
-          <%= f.file_field :image, accept: "image/*", style: "display: none;", id: "photoInput" %>
-          <button type="button" id="takePhoto" class="btn btn-primary">写真を撮る</button>
+<!-- カメラモーダル -->
+<div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
+        <!-- カメラプレビュー表示エリア -->
+        <video class="cameraPreview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="option-carousel" style="position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%); display: block">
+          <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+            <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+              <%= option %>
+            </div>
+          <% end %>
         </div>
-        <div class="modal-body" id="previewBody" style="display: none;">
-          <img id="preview" style="width: 100%;">
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="backButton" class="btn btn-secondary">戻る</button>
-          <button type="submit" id="loadImage" class="btn btn-primary" style="display: none;">画像を読み込む</button>
-        </div>
+        <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", method: :post do |f| %>
+          <div style="position: absolute;">
+            <%= render partial: 'shared/option/hidden_option_field', locals: { f: f, default_value: '質問' } %>
+            <%= render 'shared/option/question_options', f: f %>
+            <%= render 'shared/option/translation_options', f: f %>
+            <%= render 'shared/option/summary_options', f: f %>
+            <%= render partial: 'shared/form/question_button_group', locals: { f: f } %>
+          </div>
+        <% end %>
+        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">撮影</button>
+        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">入力</button>
+        <button type="button" id="imageInputButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
       </div>
     </div>
   </div>
-<% end %> 
-<%
-=end%>
+</div>
 
-<!-- 写真入力モーダル -->
-<%= form_with url: '/ocr', method: :post, local: false, html: { id: 'photoForm' } do |f| %>
-  <div class="modal fade" id="inputPhotoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" id="selectPhoto" class="btn btn-primary">写真を選ぶ</button>
-          <%= f.file_field :image, accept: "image/*", style: "display: none;", id: "photoInput" %>
-          <button type="button" id="takePhoto" class="btn btn-primary">写真を撮る</button>
-        </div>
-        <div class="modal-body">
-          <!-- カメラプレビュー表示エリア -->
-          <video id="cameraPreview" style="width: 100%; display: none;" autoplay></video>
-          <!-- 写真プレビュー表示エリア -->
-          <img id="preview" style="width: 100%; display: none;">
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="backButton" class="btn btn-secondary">戻る</button>
-          <button type="button" id="captureButton" class="btn btn-primary" style="display: none;">撮影</button>
-          <button type="submit" id="loadImage" class="btn btn-primary" style="display: none;">画像を読み込む</button>
-        </div>
-      </div>
-    </div>
-  </div>
-<% end %>
-
-
-<!-- 回答表示モーダル -->
-<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="closeAnswerButton">閉じる</button>
+<!-- 画像トリミングモーダル -->
+<div class="modal fade" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh;">
+        <%= render 'shared/preview' %>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <!-- ボタンの位置を右上に調整 -->
+        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <!-- ここで撮影ボタンの位置を調整 -->
+        <button type="button" id="captureButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">決定</button>
+        <button type="button" id="writeButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">戻る</button>
+        <button type="button" id="imageInputButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
       </div>
     </div>
   </div>

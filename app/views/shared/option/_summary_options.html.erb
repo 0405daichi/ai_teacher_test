@@ -1,0 +1,17 @@
+<!-- 要約用 -->
+<div class="wrap-up-options">
+  <div class="d-flex justify-content-start">
+    <div class="mt-1 mb-1 mr-1">
+      <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
+    </div>
+    <div class="m-1">
+      <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
+      <span id="character-count-text"></span>
+      <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count"} %>
+      <span id="word-count-text"></span>
+    </div>
+    <div class="m-1">
+      <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
+    </div>
+  </div>
+</div>

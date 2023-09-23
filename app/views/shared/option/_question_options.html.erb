@@ -1,0 +1,12 @@
+<div class="how-to-answer">
+  <div class="container">
+    <div class="row answer-option-row">
+      <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
+      <div class="answerOption m-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+          <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
+          <%= option %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>

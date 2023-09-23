@@ -7,6 +7,8 @@ import "bootstrap";
 import "@popperjs/core";
 import "../stylesheets/application";
 import "../javascripts/home"
+import "../javascripts/icon_event/camera"
+import "../javascripts/helpers/cameraFunctions"
 
 Rails.start();
 Turbolinks.start();

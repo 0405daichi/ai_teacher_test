@@ -1,0 +1,13 @@
+<%
+=begin%>
+ <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", method: :post do |f| %>
+  <div style="position: absolute;">
+    <%= render partial: 'shared/option/hidden_option_field', locals: { f: f, default_value: '質問' } %>
+    <%= render 'shared/option/question_options', f: f %>
+    <%= render 'shared/option/translation_options', f: f %>
+    <%= render 'shared/option/summary_options', f: f %>
+    <%= render partial: 'shared/form/question_button_group', locals: { f: f } %>
+  </div>
+<% end %> 
+<%
+=end%>

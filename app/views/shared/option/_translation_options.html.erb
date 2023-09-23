@@ -1,0 +1,28 @@
+<!-- 略、直訳・翻訳オプション用のコード -->
+<div class="selectLanguage">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
+      </div>
+      <div class="col-auto">
+        <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
+      </div>
+      <div class="col">
+        <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="how-to-translate">
+  <div class="container">
+    <div class="row translate-option-row">
+      <% ['翻訳', '直訳'].each_with_index do |option, index| %>
+      <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+          <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
+          <%= option %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>

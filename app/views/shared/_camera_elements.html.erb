@@ -1,0 +1,34 @@
+<%
+=begin%>
+ <!-- カメラプレビュー表示エリア -->
+<video id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: none;" autoplay></video>
+
+<!-- 薄暗くする部分としない部分 -->
+<div id="lightDarkArea" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+  <svg id="maskSvg" width="100%" height="100%">
+    <!-- Mask Definition -->
+    <defs>
+      <mask id="cutoutMask">
+        <!-- Start with a white rectangle (to allow rendering) -->
+        <rect x="0" y="0" width="100%" height="100%" fill="white" />
+        
+        <!-- Cut out a black rectangle (to block rendering) -->
+        <rect id="maskRect" x="50%" y="50%" width="280" height="180" fill="black" rx="20" ry="20" transform="translate(-140, -90)" />
+      </mask>
+    </defs>
+    <!-- Use the mask -->
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#cutoutMask)" />
+  </svg>
+</div>
+
+<!-- 四つ角（長方形） -->
+<svg id="resizableRect" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 180px; background: transparent; transform: translate(-50%, -50%);">
+  <!-- 左上の角 -->
+  <path id="topLeftCorner" d="M 2,22 Q 2,2 22,2" stroke="white" fill="none" stroke-width="4"/>
+  <!-- 右上の角 -->
+  <path id="topRightCorner" d="M 278,22 Q 278,2 258,2" stroke="white" fill="none" stroke-width="4"/>
+  <!-- 右下の角 -->
+  <path id="bottomRightCorner" d="M 258,178 Q 278,178 278,158" stroke="white" fill="none" stroke-width="4"/>
+  <!-- 左下の角 -->
+  <path id="bottomLeftCorner" d="M 22,178 Q 2,178 2,158" stroke="white" fill="none" stroke-width="4"/>
+</svg>
