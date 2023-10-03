@@ -7,40 +7,40 @@ import drawCanvas from './helpers/drawCanvas';
 import isInCharacterRect from './helpers/isInCharacterRect';
 
 document.addEventListener('turbolinks:load', () => {
-  const canvas = document.querySelector('.homeCanvas');
-  const modalElement = document.getElementById('questionOrSearch');
-  const myModal = new Modal(modalElement, {
-    keyboard: false,
-    backdrop: 'true'
-  });
-  const questionModalElement = document.getElementById('questionModal');
-  const questionModal = new Modal(questionModalElement, {
-    keyboard: false,
-    backdrop: 'true'
-  });
-  const searchModalElement = document.getElementById('searchModal');
-  const searchModal = new Modal(searchModalElement, {
-    keyboard: false,
-    backdrop: 'true'
-  });
+  // const canvas = document.querySelector('.homeCanvas');
+  // const modalElement = document.getElementById('questionOrSearch');
+  // const myModal = new Modal(modalElement, {
+  //   keyboard: false,
+  //   backdrop: 'true'
+  // });
+  // const questionModalElement = document.getElementById('questionModal');
+  // const questionModal = new Modal(questionModalElement, {
+  //   keyboard: false,
+  //   backdrop: 'true'
+  // });
+  // const searchModalElement = document.getElementById('searchModal');
+  // const searchModal = new Modal(searchModalElement, {
+  //   keyboard: false,
+  //   backdrop: 'true'
+  // });
 
-  const questionButton = document.getElementById('questionButton');
-  const questionModalButton = document.getElementById('questionModalButton')
-  if (questionButton) {
-    questionButton.addEventListener('click', () => {
-      myModal.hide(); // 最初のモーダルを閉じます
-      questionModal.show(); // 質問モーダルを表示します
-      questionModalButton.style.display = "block";
-    });
-  }
+  // const questionButton = document.getElementById('questionButton');
+  // const questionModalButton = document.getElementById('questionModalButton')
+  // if (questionButton) {
+  //   questionButton.addEventListener('click', () => {
+  //     myModal.hide(); // 最初のモーダルを閉じます
+  //     questionModal.show(); // 質問モーダルを表示します
+  //     questionModalButton.style.display = "block";
+  //   });
+  // }
   
-  const searchButton = document.getElementById('searchButton');
-  if (searchButton) {
-    searchButton.addEventListener('click', () => {
-      myModal.hide(); // 最初のモーダルを閉じます
-      searchModal.show(); // 検索モーダルを表示します
-    });
-  }
+  // const searchButton = document.getElementById('searchButton');
+  // if (searchButton) {
+  //   searchButton.addEventListener('click', () => {
+  //     myModal.hide(); // 最初のモーダルを閉じます
+  //     searchModal.show(); // 検索モーダルを表示します
+  //   });
+  // }
 
   // 質問オプション用エリア
   const howToAnswer = document.querySelectorAll('.how-to-answer');
@@ -242,11 +242,11 @@ document.addEventListener('turbolinks:load', () => {
     });
   }
 
-  const photoModalElement = document.getElementById('inputPhotoModal');
-  const photoModal = new Modal(photoModalElement, {
-    keyboard: false,
-    backdrop: 'true'
-  });
+  // const photoModalElement = document.getElementById('inputPhotoModal');
+  // const photoModal = new Modal(photoModalElement, {
+  //   keyboard: false,
+  //   backdrop: 'true'
+  // });
 
   // 質問モーダルの閉じるボタン
   const questionCloseButton = document.getElementById('closeQuestionButton');
@@ -337,15 +337,15 @@ document.addEventListener('turbolinks:load', () => {
   }
 
   // '写真を選ぶ' ボタンがクリックされたときに画像を選択するダイアログを開く
-  const selectPhotoButton = document.getElementById('selectPhoto');
-  const photoInput = document.getElementById('photoInput');
-  if (selectPhotoButton) {
-    selectPhotoButton.addEventListener('click', () => {
-      if (photoInput) {
-        photoInput.click();
-      }
-    });
-  }
+  // const selectPhotoButton = document.getElementById('selectPhoto');
+  // const photoInput = document.getElementById('photoInput');
+  // if (selectPhotoButton) {
+  //   selectPhotoButton.addEventListener('click', () => {
+  //     if (photoInput) {
+  //       photoInput.click();
+  //     }
+  //   });
+  // }
 
   // '写真を撮る' ボタンがクリックされたときにカメラを開く
   // const takePhotoButton = document.getElementById('takePhoto');
@@ -489,126 +489,126 @@ document.addEventListener('turbolinks:load', () => {
   //   stream.getTracks().forEach(track => track.stop());
   // });
 
-  let file = null;
-  const loadImageButton = document.getElementById('loadImage');
-  const previewBody = document.getElementById('previewBody');
-  // 画像が選択されたらプレビューを表示する
-  if (photoInput) {
-    photoInput.addEventListener('change', () => {
-      file = photoInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          previewBody.style.display = 'block';
-          const preview = document.getElementById('preview');
-          if (preview) {
-            preview.src = e.target.result;
+  // let file = null;
+  // const loadImageButton = document.getElementById('loadImage');
+  // const previewBody = document.getElementById('previewBody');
+  // // 画像が選択されたらプレビューを表示する
+  // if (photoInput) {
+  //   photoInput.addEventListener('change', () => {
+  //     file = photoInput.files[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = function(e) {
+  //         previewBody.style.display = 'block';
+  //         const preview = document.getElementById('preview');
+  //         if (preview) {
+  //           preview.src = e.target.result;
 
-            // プレビューが表示されたら「画像を読み込む」ボタンを表示する
-            if (loadImageButton) {
-              loadImageButton.style.display = 'block';
-            }
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
+  //           // プレビューが表示されたら「画像を読み込む」ボタンを表示する
+  //           if (loadImageButton) {
+  //             loadImageButton.style.display = 'block';
+  //           }
+  //         }
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   });
+  // }
   
-  // '画像を読み込む' ボタンが押されたらOCR分析を行い結果を質問欄に入力する
-  if (loadImageButton) {
-    loadImageButton.addEventListener('click', (e) => {
-      if (previousModal) {
-        // input要素が存在し、画像が設定されている場合
-        if(photoInput && photoInput.value){
-          // デフォルトのフォーム送信を防止
-          e.preventDefault();
+  // // '画像を読み込む' ボタンが押されたらOCR分析を行い結果を質問欄に入力する
+  // if (loadImageButton) {
+  //   loadImageButton.addEventListener('click', (e) => {
+  //     if (previousModal) {
+  //       // input要素が存在し、画像が設定されている場合
+  //       if(photoInput && photoInput.value){
+  //         // デフォルトのフォーム送信を防止
+  //         e.preventDefault();
           
-          // 写真入力モーダルを閉じる
-          photoModal.hide();
+  //         // 写真入力モーダルを閉じる
+  //         photoModal.hide();
           
-          // '画像を読み込む' ボタンとプレビュー画像を隠す
-          previewBody.style.display = 'none';
-          loadImageButton.style.display = 'none';
-          const preview = document.getElementById('preview');
-          if (preview) {
-            preview.src = '';
-          }
+  //         // '画像を読み込む' ボタンとプレビュー画像を隠す
+  //         previewBody.style.display = 'none';
+  //         loadImageButton.style.display = 'none';
+  //         const preview = document.getElementById('preview');
+  //         if (preview) {
+  //           preview.src = '';
+  //         }
   
-          // 前のモーダルを表示する
-          previousModal.show();
+  //         // 前のモーダルを表示する
+  //         previousModal.show();
           
-          // OCR分析の非同期通信
-          if (file) {
-            const formData = new FormData();
-            formData.append('image', file);
+  //         // OCR分析の非同期通信
+  //         if (file) {
+  //           const formData = new FormData();
+  //           formData.append('image', file);
   
-            fetch('/ocr', {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-              },
-            })
-            .then(response => response.json())
-            .then(data => {
-              // OCR結果を質問欄に入力する
-              if (questionInputForm) {
-                questionInputForm.value = data.text;
-                questionInputForm.dispatchEvent(new Event('input', { bubbles: true }));
-              }
-            })
-            .catch(error => console.error('Error:', error));
-          }
-        } else {
-          // ユーザーに警告を表示
-          alert("画像を選択してください");
-        }
-      }
-    });
-  }
+  //           fetch('/ocr', {
+  //             method: 'POST',
+  //             body: formData,
+  //             headers: {
+  //               'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+  //             },
+  //           })
+  //           .then(response => response.json())
+  //           .then(data => {
+  //             // OCR結果を質問欄に入力する
+  //             if (questionInputForm) {
+  //               questionInputForm.value = data.text;
+  //               questionInputForm.dispatchEvent(new Event('input', { bubbles: true }));
+  //             }
+  //           })
+  //           .catch(error => console.error('Error:', error));
+  //         }
+  //       } else {
+  //         // ユーザーに警告を表示
+  //         alert("画像を選択してください");
+  //       }
+  //     }
+  //   });
+  // }
 
-  document.getElementById('questionForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // デフォルトの送信プロセスをキャンセル
+  // document.getElementById('questionForm').addEventListener('submit', function(e) {
+  //   e.preventDefault(); // デフォルトの送信プロセスをキャンセル
 
-    // 以降は同じコード
-    var formData = new FormData(this);
-    fetch('/questions/get_answer', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      // 既存のモーダルを閉じる
-      questionModal.hide();
-      questionModalButton.style.display = "block";
+  //   // 以降は同じコード
+  //   var formData = new FormData(this);
+  //   fetch('/questions/get_answer', {
+  //     method: 'POST',
+  //     body: formData
+  //   })
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     console.log(data);
+  //     // 既存のモーダルを閉じる
+  //     questionModal.hide();
+  //     questionModalButton.style.display = "block";
 
-      // 新しいモーダルの中身を設定
-      var content = data.content;
-      var modalBody = document.getElementById('answerModalBody');
-      modalBody.innerHTML = '';
+  //     // 新しいモーダルの中身を設定
+  //     var content = data.content;
+  //     var modalBody = document.getElementById('answerModalBody');
+  //     modalBody.innerHTML = '';
 
-      var index = 0;
-      function typeWriter() {
-        if (index < content.length) {
-          modalBody.innerHTML += content.charAt(index);
-          index++;
-          setTimeout(typeWriter, 50); // 50ミリ秒ごとに文字を追加
-        }
-      }
-      typeWriter();
+  //     var index = 0;
+  //     function typeWriter() {
+  //       if (index < content.length) {
+  //         modalBody.innerHTML += content.charAt(index);
+  //         index++;
+  //         setTimeout(typeWriter, 50); // 50ミリ秒ごとに文字を追加
+  //       }
+  //     }
+  //     typeWriter();
 
-      // 新しいモーダルを表示
-      var answerModalElement = document.getElementById('answerModal');
-      var answerModal = new Modal(answerModalElement);
-      answerModal.show();
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('エラーが発生しました。');
-    });
-  });
+  //     // 新しいモーダルを表示
+  //     var answerModalElement = document.getElementById('answerModal');
+  //     var answerModal = new Modal(answerModalElement);
+  //     answerModal.show();
+  //   })
+  //   .catch(error => {
+  //     console.error('Error:', error);
+  //     alert('エラーが発生しました。');
+  //   });
+  // });
 
   const modalBody = document.querySelector(".search-modal-body");
 

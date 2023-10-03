@@ -1,42 +1,68 @@
 // camera.js
 
 import { Modal } from 'bootstrap';
-import { createStream, processImage } from '../helpers/cameraFunctions.js';
+import { createStream, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("turbolinks:load", function() {
   // DOM取得
   const cameraApp1 = document.getElementById('cameraApp1');
   const cameraModalElement = document.getElementById('cameraModal');
   const cameraPreview = document.getElementById("cameraPreview");
   const preview = document.getElementById("preview");
   const maskRect = document.getElementById("maskRect");
-  const captureButton = document.getElementById("captureButton")
+  const captureButton = document.getElementById("captureButton");
+  const closeCamera = document.getElementById("closeCamera");
+  const imageInputButtonFromCamera = document.getElementById('imageInputButtonFromCamera');
+  const inputButton = document.getElementById('imageInput');
+  const trimmingImageModalElement = document.getElementById("trimmingImageModal");
   let imageCapture;
   let stream;
-  console.log(cameraApp1);
-  // カメラアプリ起動処理
-  cameraApp1.addEventListener('click', async () => {
-    const cameraModal = new Modal(cameraModalElement, {
-      keyboard: false,
-      backdrop: 'true'
-    });
-    cameraModal.show();
-    console.log("ok");
-
-    stream = await createStream(cameraPreview);
-    console.log("Stream object: ", stream);
-
-    const track = stream.getVideoTracks()[0];
-    imageCapture = new ImageCapture(track);
+  let track
+  const cameraModal = new Modal(cameraModalElement, {
+    keyboard: false,
+    backdrop: 'true'
   });
 
+  // カメラアプリ起動処理
+  cameraApp1.addEventListener('click', async () => {
+    cameraModal.show();
+    
+    stream = await createStream(cameraPreview);
+    // console.log("Stream object: ", stream);
+    
+    track = stream.getVideoTracks()[0];
+    imageCapture = new ImageCapture(track);
+
+    // カメラアプリ終了処理
+    closeCamera.addEventListener('click', async () => {
+      cameraModal.hide();
+      track.stop();
+    });
+  });
+
+  // 撮影範囲設定path
+  const place = [];
+  place.push(cameraModalElement, trimmingImageModalElement);
+  place.forEach(element => {
+    const resizableRects = element.querySelector('.resizable-rect');
+    const lightDarkAreas = element.querySelector('.light-dark-area');
+
+    initResizableRect(resizableRects, lightDarkAreas);
+  });
+
+  // 撮影ボタンクリック時の処理
   captureButton.addEventListener("click", async () => {
     const photo = await imageCapture.takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     
     // 元の画像をプレビューに表示
     const originalImageUrl = URL.createObjectURL(photo);
-    preview.src = originalImageUrl;
+    // preview.src = originalImageUrl;
+    // カメラアプリ終了処理
+    closeCamera.addEventListener('click', async () => {
+      cameraModal.hide();
+      track.stop();
+    });
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -67,13 +93,39 @@ document.addEventListener("DOMContentLoaded", function() {
 
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
-      console.log('Response:', result);
+      // console.log('Response:', result);
 
       const questionInputForm = document.getElementById("questionInputForm");
       questionInputForm.value = result.text;
       const questionForm = document.getElementById("questionForm");
       submitFormAndShowModal(questionForm);
     }, 'image/png');
+  });
+
+  // 画像選択ボタンがクリック時の処理
+  // ボタンがクリックされたら、隠れたinputタグをクリックさせる
+  // imageInputButtonFromCamera.addEventListener('click', function () {
+  //   inputButton.click();
+  // });
+
+  // 画像が選択されたらプレビューに表示
+  inputButton.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('preview');
+      preview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    cameraModal.hide();
+    track.stop();
+
+    const trimmingImageModal = new Modal(trimmingImageModalElement, {
+      keyboard: false,
+      backdrop: 'true'
+    });
+    trimmingImageModal.show();
   });
 });
 

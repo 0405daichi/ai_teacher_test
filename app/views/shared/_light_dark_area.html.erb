@@ -1,17 +1,19 @@
+<% unique_id = SecureRandom.uuid %>
+
 <!-- 薄暗くする部分としない部分 -->
-<div id="lightDarkArea" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: block;">
-  <svg id="maskSvg" width="100%" height="100%">
+<div class="light-dark-area" id="lightDarkArea" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: block;">
+  <svg class="maskSvg" id="maskSvg" width="100%" height="100%">
     <!-- Mask Definition -->
     <defs>
-      <mask id="cutoutMask">
+      <mask class="cutoutMask" id="cutoutMask-<%= unique_id %>">
         <!-- Start with a white rectangle (to allow rendering) -->
         <rect x="0" y="0" width="100%" height="100%" fill="white" />
         
         <!-- Cut out a black rectangle (to block rendering) -->
-        <rect id="maskRect" x="50%" y="50%" width="280" height="180" fill="black" rx="20" ry="20" transform="translate(-140, -90)" />
+        <rect class="mask-rect" id="maskRect" x="50%" y="50%" width="280" height="180" fill="black" rx="20" ry="20" transform="translate(-140, -90)" />
       </mask>
     </defs>
     <!-- Use the mask -->
-    <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#cutoutMask)" />
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#cutoutMask-<%= unique_id %>)" />
   </svg>
 </div>

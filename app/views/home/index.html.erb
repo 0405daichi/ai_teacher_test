@@ -1,4 +1,5 @@
 <!-- app/views/your_view.html.erb -->
+
 <script>
   document.addEventListener("DOMContentLoaded", function(){
     const adImage = document.querySelector('.benesse-ad');
@@ -46,7 +47,7 @@
       }
     });
   });
-</script>
+</script> 
 
 <!-- app/views/your_view.html.erb -->
 <div class="container">
@@ -303,7 +304,7 @@ body {
 </div>
 
 <!-- カメラモーダル -->
-<div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+<div class="modal fade cameraModal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content" style="height: 100vh;">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
@@ -327,17 +328,27 @@ body {
             <%= render partial: 'shared/form/question_button_group', locals: { f: f } %>
           </div>
         <% end %>
-        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <button type="button" id="closeCamera" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
         <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">撮影</button>
         <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">入力</button>
-        <button type="button" id="imageInputButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
+        <button type="button" id="imageInputButtonFromCamera" class="btn btn-primary imageInputButtonFromCamera" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
+        <!-- 隠れたinputタグ -->
+        <input type="file" id="imageInput" class="imageInput" style="display: none;" accept="image/*">
+        <script>
+          const imageInputButtonFromCamera = document.querySelector('.imageInputButtonFromCamera');
+          const inputButton = document.querySelector('.imageInput');
+          imageInputButtonFromCamera.addEventListener('click', function () {
+            inputButton.click();
+            return false;
+          });
+        </script>
       </div>
     </div>
   </div>
 </div>
 
 <!-- 画像トリミングモーダル -->
-<div class="modal fade" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+<div class="modal fade trimmingImageModal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content" style="height: 100vh;">
       <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh;">

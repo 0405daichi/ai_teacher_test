@@ -1,78 +1,11 @@
 <!-- 四つ角（長方形） -->
-<svg id="resizableRect" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 180px; background: transparent; transform: translate(-50%, -50%); display: block;">
+<svg class="resizable-rect" id="resizableRect" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 180px; background: transparent; transform: translate(-50%, -50%); display: block;">
   <!-- 左上の角 -->
-  <path id="topLeftCorner" d="M 2,22 Q 2,2 22,2" stroke="white" fill="none" stroke-width="4"/>
+  <path class="corner top-left-corner" id="topLeftCorner" d="M 2,22 Q 2,2 22,2" stroke="white" fill="none" stroke-width="4"/>
   <!-- 右上の角 -->
-  <path id="topRightCorner" d="M 278,22 Q 278,2 258,2" stroke="white" fill="none" stroke-width="4"/>
+  <path class="corner top-right-corner" id="topRightCorner" d="M 278,22 Q 278,2 258,2" stroke="white" fill="none" stroke-width="4"/>
   <!-- 右下の角 -->
-  <path id="bottomRightCorner" d="M 258,178 Q 278,178 278,158" stroke="white" fill="none" stroke-width="4"/>
+  <path class="corner bottom-right-corner" id="bottomRightCorner" d="M 258,178 Q 278,178 278,158" stroke="white" fill="none" stroke-width="4"/>
   <!-- 左下の角 -->
-  <path id="bottomLeftCorner" d="M 22,178 Q 2,178 2,158" stroke="white" fill="none" stroke-width="4"/>
+  <path class="corner bottom-left-corner" id="bottomLeftCorner" d="M 22,178 Q 2,178 2,158" stroke="white" fill="none" stroke-width="4"/>
 </svg>
-<script>
-let isDragging = false;
-let startX = 0, startY = 0;
-let startWidth = 0, startHeight = 0;
-let initialCenterX = 0, initialCenterY = 0;
-
-const rect = document.getElementById("resizableRect");
-
-// ドラッグ開始
-rect.addEventListener("mousedown", (e) => {
-  console.log("ok");
-  isDragging = true;
-  startX = e.clientX;
-  startY = e.clientY;
-  startWidth = parseFloat(window.getComputedStyle(rect).width);
-  startHeight = parseFloat(window.getComputedStyle(rect).height);
-
-  // 矩形の中心座標を計算
-  const rectBound = rect.getBoundingClientRect();
-  initialCenterX = rectBound.left + startWidth / 2;
-  initialCenterY = rectBound.top + startHeight / 2;
-});
-
-// ドラッグ中
-window.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-
-  // 新しいマウス座標から中心までの距離
-  const newDistX = Math.abs(e.clientX - initialCenterX);
-  const newDistY = Math.abs(e.clientY - initialCenterY);
-
-  // 初期マウス座標から中心までの距離
-  const initialDistX = Math.abs(startX - initialCenterX);
-  const initialDistY = Math.abs(startY - initialCenterY);
-
-  // 拡大または縮小を決定
-  const deltaX = newDistX - initialDistX;
-  const deltaY = newDistY - initialDistY;
-
-  let newWidth = startWidth + deltaX * 2;
-  let newHeight = startHeight + deltaY * 2;
-
-  newWidth = Math.max(100, Math.min(window.innerWidth - 100, newWidth));
-  newHeight = Math.max(100, Math.min(window.innerHeight - 100, newHeight));
-
-  rect.style.width = `${newWidth}px`;
-  rect.style.height = `${newHeight}px`;
-
-  // 新しい幅と高さに基づいてpath要素を更新
-  document.getElementById("topLeftCorner").setAttribute("d", `M 2,22 Q 2,2 22,2`);
-  document.getElementById("topRightCorner").setAttribute("d", `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`);
-  document.getElementById("bottomRightCorner").setAttribute("d", `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`);
-  document.getElementById("bottomLeftCorner").setAttribute("d", `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`);
-
-  // 新しい幅と高さに基づいてmaskのrectを更新
-  const maskRect = document.getElementById("maskRect");
-  maskRect.setAttribute("width", newWidth);
-  maskRect.setAttribute("height", newHeight);
-  maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
-});
-
-// ドラッグ終了
-window.addEventListener("mouseup", () => {
-  isDragging = false;
-});
-
-</script>
