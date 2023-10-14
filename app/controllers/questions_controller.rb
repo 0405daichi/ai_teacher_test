@@ -5,15 +5,20 @@ class QuestionsController < ApplicationController
 
   def index
     @questions = Question.page(params[:page])
-    if (current_user)
-      @user = current_user
-    end
-  end  
+    # if current_user
+    #   @user_questions = current_user.questions # 自分が作成したカード
+    #   @liked_questions = current_user.liked_questions # 自分がいいねしたカード
+    #   # ※以下の部分は、SavedQuestionモデルとの関連を正しく設定していることを前提としています。
+    #   @saved_questions = current_user.saved_questions # 自分が保存したカード
+    # end
+  end
+  
   
   def get_answer
     # binding.pry
     puts "params: #{params.inspect}"
     question = params[:questionInputForm]
+    puts "コントローラー側：#{question}"
     ai_answer = generate_ai_response(params)
   
     @question = Question.new(content: question)

@@ -11,10 +11,14 @@ class GoogleVisionApiClient
 
   def analyze_image(image_path)
     response = @client.text_detection image: image_path
+    if response.responses.first&.error&.message
+      puts "Error: #{response.responses.first.error.message}"
+    end
+    puts "これが画像読み込み後の結果#{response}";
     if response.responses.any? && response.responses.first.text_annotations.any?
       return response.responses.first.text_annotations.first.description
     else
-      return 'No text found.'
+      return response
     end
   end  
 end

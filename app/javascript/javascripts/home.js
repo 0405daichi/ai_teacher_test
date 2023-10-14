@@ -610,39 +610,39 @@ document.addEventListener('turbolinks:load', () => {
   //   });
   // });
 
-  const modalBody = document.querySelector(".search-modal-body");
+  // const modalBody = document.querySelector(".search-modal-body");
 
-  searchInputForm.addEventListener("input", async function() {
-    const query = this.value;
+  // searchInputForm.addEventListener("input", async function() {
+  //   const query = this.value;
 
-    try {
-      const response = await fetch(`/questions/search?query=${query}`);
-      if (response.ok) {
-        const data = await response.json();
-        modalBody.innerHTML = ""; // 既存のカードを削除
+  //   try {
+  //     const response = await fetch(`/questions/search?query=${query}`);
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       modalBody.innerHTML = ""; // 既存のカードを削除
 
-        // カードを追加
-        data.similar_questions.forEach(function(item) {
-          const question = item.question.content;
-          const answer = item.answer.content;
-          const similarity = item.similarity;
-          modalBody.innerHTML += `
-            <div class="card">
-              <div class="card-header">類似度: ${similarity}</div>
-              <div class="card-body">
-                <h5 class="card-title">${question}</h5>
-                <p class="card-text">${answer}</p>
-              </div>
-            </div>
-          `;
-        });
-      } else {
-        console.log("Network response was not ok.");
-      }
-    } catch (error) {
-      console.log("Fetch error: ", error);
-    }
-  });
+  //       // カードを追加
+  //       data.similar_questions.forEach(function(item) {
+  //         const question = item.question.content;
+  //         const answer = item.answer.content;
+  //         const similarity = item.similarity;
+  //         modalBody.innerHTML += `
+  //           <div class="card">
+  //             <div class="card-header">類似度: ${similarity}</div>
+  //             <div class="card-body">
+  //               <h5 class="card-title">${question}</h5>
+  //               <p class="card-text">${answer}</p>
+  //             </div>
+  //           </div>
+  //         `;
+  //       });
+  //     } else {
+  //       console.log("Network response was not ok.");
+  //     }
+  //   } catch (error) {
+  //     console.log("Fetch error: ", error);
+  //   }
+  // });
 
   // if (canvas) {
   //   const ctx = canvas.getContext('2d');

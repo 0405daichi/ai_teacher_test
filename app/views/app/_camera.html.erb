@@ -1,0 +1,134 @@
+<!-- カメラモーダル -->
+<div class="modal fade cameraModal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
+        <!-- カメラプレビュー表示エリア -->
+        <video class="cameraPreview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="option-carousel" style="position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%); display: block">
+          <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+            <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+              <%= option %>
+            </div>
+          <% end %>
+        </div>
+        <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form", method: :post do |f| %>
+          <div style="position: absolute;">
+            <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
+            <!-- 質問オプション用のコード -->
+            <div class="how-to-answer">
+              <div class="container">
+                <div class="row answer-option-row">
+                  <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
+                  <div class="answerOption m-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                      <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
+                      <%= option %>
+                  </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <!-- 直訳・翻訳オプション用のコード -->
+            <div class="selectLanguage">
+              <div class="container">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
+                  </div>
+                  <div class="col-auto">
+                    <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
+                  </div>
+                  <div class="col">
+                    <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="how-to-translate">
+              <div class="container">
+                <div class="row translate-option-row">
+                  <% ['翻訳', '直訳'].each_with_index do |option, index| %>
+                  <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                      <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
+                      <%= option %>
+                  </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <!-- 要約オプション用のコード -->
+            <div class="wrap-up-options">
+              <div class="d-flex justify-content-start">
+                <div class="mt-1 mb-1 mr-1">
+                  <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
+                </div>
+                <div class="m-1">
+                  <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
+                  <span id="character-count-text"></span>
+                  <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count"} %>
+                  <span id="word-count-text"></span>
+                </div>
+                <div class="m-1">
+                  <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
+                </div>
+              </div>
+            </div>
+            <!-- ボタン・入力内容 -->
+            <div class="mb-3" id="questionModalButton" style="display: none;">
+              <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
+                <%= f.text_area :questionInputForm,
+                                  maxlength: "1800",
+                                  class: "form-control mr-2 border-0 scrollable-textarea question-input-form",
+                                  required: true,
+                                  id: "questionInputForm",
+                                  placeholder: "問題や質問を入力してください。",
+                                  style: "resize: none; z-index: 10000; position: relative; display: none;" %>
+                <div>
+                  <button type="button" class="btn btn-primary photoButton border-0">写真</button>
+                  <%= f.submit "Submit", class: "btn btn-primary" %>
+                  <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <button type="button" id="closeCamera" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">撮影</button>
+        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">入力</button>
+        <button type="button" id="imageInputButtonFromCamera" class="btn btn-primary imageInputButtonFromCamera" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
+        <!-- 隠れたinputタグ -->
+        <input type="file" id="imageInput" class="imageInput" style="display: none;" accept="image/*">
+        <script>
+          const imageInputButtonFromCamera = document.querySelector('.imageInputButtonFromCamera');
+          const inputButton = document.querySelector('.imageInput');
+          imageInputButtonFromCamera.addEventListener('click', function () {
+            inputButton.click();
+            return false;
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 画像トリミングモーダル -->
+<div class="modal fade trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh;">
+        <!-- 写真プレビュー表示エリア -->
+        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <!-- ボタンの位置を右上に調整 -->
+        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <!-- ここで撮影ボタンの位置を調整 -->
+        <button type="button" id="captureButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">決定</button>
+        <button type="button" id="writeButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">戻る</button>
+        <button type="button" id="imageInputButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@
 let maxWidth = 0;
 let maxHeight = 0;
 // 調べている間は「起動中」などのモーダルを表示する ※必須
+// capabilitiesは設定され得る値なのでsettings(実際に使用されている値)と違う場合があるかも知れない ※必須
 // 起動時にデバイスでサポートされている最大の解像度を調べる関数
 async function fetchMaxResolution() {
   const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -41,8 +42,11 @@ export async function processImage(blob) {
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
     }
   });
-
+  console.log("読み込み後：", response); // オブジェクトそのまま出力
+  
   const data = await response.json();
+
+  console.log("読み込み後json：", data); // オブジェクトそのまま出力
   return data;
 }
 

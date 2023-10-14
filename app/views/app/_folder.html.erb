@@ -1,0 +1,59 @@
+<!-- フォルダモーダル -->
+<div class="modal fade folderModal" id="folder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" id="closeSearch" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="folderTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="user-tab" data-bs-toggle="tab" href="#userQuestions" role="tab">自分が作成したカード</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="liked-tab" data-bs-toggle="tab" href="#likedQuestions" role="tab">自分がいいねしたカード</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="saved-tab" data-bs-toggle="tab" href="#savedQuestions" role="tab">自分が保存したカード</a>
+          </li>
+        </ul>
+        <% if user_signed_in? %>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="userQuestions" role="tabpanel">
+              <% if !user_questions.nil? %>
+                <% user_questions.each do |question| %>
+                  <div class="card">
+                    <!-- カードの内容をここに表示 -->
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="tab-pane fade" id="likedQuestions" role="tabpanel">
+              <% if !liked_questions.nil? %>
+                <% liked_questions.each do |question| %>
+                  <div class="card">
+                    <!-- カードの内容をここに表示 -->
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="tab-pane fade" id="savedQuestions" role="tabpanel">
+              <% if !saved_questions.nil? %>
+                <% saved_questions.each do |question| %>
+                  <div class="card">
+                    <!-- カードの内容をここに表示 -->
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div>
+            <a href="/users/sign_in">ログイン</a>
+            <a href="/users/sign_up">ユーザ登録</a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

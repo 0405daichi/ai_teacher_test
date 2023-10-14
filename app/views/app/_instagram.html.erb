@@ -1,0 +1,143 @@
+<!-- インスタグラムモーダル -->
+<div class="modal fade instagramModal" id="instagram" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" id="closeSearch" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+      </div>
+      <div class="modal-body">
+        <div class="top-container">
+          <div class="add-btn">+</div>
+          <div class="top-circles">
+              <!-- こちらに円を追加します -->
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+              <div class="circle"></div>
+          </div>
+        </div>
+        <div class="cards">
+            <!-- こちらにカードを追加します -->
+            <div class="card">
+                <div class="card-header">
+                    カードタイトル
+                </div>
+                <div class="card-body">
+                    カード内容
+                </div>
+                <div class="like">
+                    ❤️
+                </div>
+            </div>
+            <!-- 追加のカードも同様にこちらに -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.top-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* 追加: 子要素を左寄せ */
+}
+
+.top-circles {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding: 50%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-right: 10px;  /* 追加: add-btnとの間隔 */
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.circle {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+    scroll-snap-align: top;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.add-btn {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.cards .card {
+    margin-top: 20px;
+    position: relative;
+}
+
+.cards .like {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+</style>
+
+<script>
+const circlesContainer = document.querySelector('.top-circles');
+const circles = document.querySelectorAll('.circle');
+
+circlesContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('circle') && !e.target.classList.contains('add-btn')) {
+        circles.forEach(circle => {
+            circle.style.backgroundColor = "#ccc";
+        });
+        e.target.style.backgroundColor = "#007BFF";
+    }
+});
+</script>

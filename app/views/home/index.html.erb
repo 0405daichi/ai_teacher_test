@@ -49,205 +49,255 @@
   });
 </script> 
 
-<!-- app/views/your_view.html.erb -->
-<div class="container">
-  <div class="image-container">
-    <%= image_tag 'mobile.png', alt: 'Mobile Mockup', class: 'mobile-mockup' %>
-    <div class="slider">
-      <div class="slide" id="slide1">
-        <div class="icon-grid">
-          <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad small-icon' %>
-          <%= image_tag 'user-icon.png', alt: 'user', class: 'user-icon small-icon' %>
-          <%= image_tag 'folder-icon.png', alt: 'folder', class: 'folder-icon small-icon' %>
-          <%= image_tag 'search-icon.png', alt: 'search', class: 'search-icon small-icon' %>
-          <%= image_tag 'camera-icon.png', alt: 'camera', class: 'camera-icon small-icon', id: 'cameraApp1' %>
-          <%= image_tag 'takedajukuAD.png', alt: 'takedajuku-ad', class: 'takedajuku-ad small-icon' %>
-          <%= image_tag 'instagram-icon.png', alt: 'instagram', class: 'instagram-icon small-icon' %>
-          <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
-          <%= image_tag 'kyushinAD.png', alt: 'kyushin-ad', class: 'kyushin-ad small-icon' %>
-          <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
-          <%= image_tag 'x-icon.png', alt: 'x', class: 'x-icon small-icon' %>
+  <!-- app/views/your_view.html.erb -->
+  <div class="container">
+    <div class="image-container">
+
+  <!-- <%= image_tag 'mobile.png', alt: 'Mobile Mockup', class: 'mobile-mockup' %>  -->
+
+      <div class="slider">
+        <div class="slide" id="slide1">
+          <div class="icon-grid">
+            <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad ad-image' %>
+            <div class="icon-wrapper">
+              <%= image_tag 'single-neutral.png', alt: 'user', class: 'user-icon s-icon' %>
+            </div>
+            <div class="icon-wrapper">
+              <%= image_tag 'folder.png', alt: 'folder', class: 'folder-icon s-icon' %>
+            </div>
+            <div class="icon-wrapper">
+              <%= image_tag 'search-1.png', alt: 'search', class: 'search-icon s-icon' %>
+            </div>
+            <div class="icon-wrapper">
+              <%= image_tag 'camera-settings-focus.png', alt: 'camera', class: 'camera-icon s-icon', id: 'cameraApp1' %>
+            </div>
+            <%= image_tag 'takedajukuAD.png', alt: 'takedajuku-ad', class: 'takedajuku-ad ad-image' %>
+            <%= image_tag 'instagram-icon.png', alt: 'instagram', class: 'instagram-icon small-icon' %>
+            <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
+            <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad ad-image' %>
+            <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
+            <%= image_tag 'x-icon.png', alt: 'x', class: 'x-icon small-icon' %>
+          </div>
+        </div>
+        <div class="slide" id="slide2">2
+        </div>
+        <div class="slide" id="slide3">3
         </div>
       </div>
-      <div class="slide" id="slide2">2
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
       </div>
-      <div class="slide" id="slide3">3
-      </div>
-    </div>
-    <div class="dots">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-    <div class="tool-bar">
-      <div class="tool">
-        <%= image_tag 'search-icon.png', alt: 'search', class: 'search-icon small-icon' %>
-        <%= image_tag 'camera-icon.png', alt: 'camera', class: 'camera-icon small-icon' %>
-        <%= image_tag 'folder-icon.png', alt: 'folder', class: 'folder-icon small-icon' %>
+      <div class="tool-bar">
+        <div class="tool">
+          <div class="icon-wrapper">
+            <%= image_tag 'search-1.png', alt: 'search', class: 'search-icon s-icon' %>
+          </div>
+          <div class="icon-wrapper">
+            <%= image_tag 'camera-settings-focus.png', alt: 'camera', class: 'camera-icon s-icon', id: 'cameraApp1' %>
+          </div>
+          <div class="icon-wrapper">
+            <%= image_tag 'folder.png', alt: 'folder', class: 'folder-icon s-icon' %>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* background-color: black; */
+      background-image: radial-gradient(rgba(233, 233, 233, 1), rgba(114, 114, 114, 1));
 
-.container {
-  text-align: center;
-}
+  }
 
-.image-container {
-  position: relative;
-  max-width: 100vw;
-  max-height: 100vh;
-  display: inline-block;
-}
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* ビューポートの高さに合わせる */
+  }
 
-.mobile-mockup {
-  width: auto;
-  max-width: 100%;
-  max-height: 100vh;
-  height: auto;
-  display: block;
-}
+  .image-container {
+    width: 40%;
+    height: 100vh;
+    position: relative;
+  }
 
-.slider {
-  /* 以下の設定は必須 */
-  scroll-snap-type: x mandatory;
-  overflow-x: scroll;
-  display: flex;
-  -webkit-overflow-scrolling: touch; /* スマホ対応のため必須 */
-  overflow-scrolling: touch; /* スマホ対応のため必須 */
-  
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  width: 90%;
-  height: 73%;
-  transform: translate(6%, 7%);
-  /* background-color: rgba(0, 0, 0, 0.5); */
-}
+  .mobile-mockup {
+    width: auto;
+    max-width: 100%;
+    max-height: 100vh;
+    height: auto;
+    display: block;
+  }
 
-.slide{
-  scroll-snap-align: start;
-  flex: 0 0 100%; /* これを追加 */
-  max-width: 100%; /* これを追加 */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
+  .slider {
+    /* 以下の設定は必須 */
+    scroll-snap-type: x mandatory;
+    overflow-x: scroll;
+    display: flex;
+    -webkit-overflow-scrolling: touch; /* スマホ対応のため必須 */
+    overflow-scrolling: touch; /* スマホ対応のため必須 */
+    
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 90%;
+    height: 75%;
+    transform: translate(6%, 10%);
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    overflow-y: hidden;
+  }
 
-/* スクロールバーを非表示にする */
-.slider::-webkit-scrollbar {
-  display: none;
-}
+  .slide{
+    scroll-snap-align: start;
+    flex: 0 0 100%; /* これを追加 */
+    max-width: 100%; /* これを追加 */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: 2vh 3vw;
-  width: 90%;
-  height: 93%;
-  margin: 10% 5% 0 5%;
-}
+  /* スクロールバーを非表示にする */
+  .slider::-webkit-scrollbar {
+    display: none;
+  }
 
-.small-icon {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-}
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    /* gap: 1vh 1vw; */
+    width: 100%;
+    height: 100%;
+    /* margin: 10% 5% 0 5%; */
+  }
 
-.takedajuku-ad {
-  grid-column: span 4; /* 4列分を占める */
-  grid-row: span 2;    /* 2行分を占める */
-}
-
-.benesse-ad {
-  grid-column: span 2; /* 4列分を占める */
-  grid-row: span 2;    /* 2行分を占める */
-
-  transition: opacity 0.5s, transform 0.5s;
-  cursor: pointer;
-}
-
-.benesse-ad.animate {
-  opacity: 0;
-  transform: scale(10.2);
-}
-
-.kyushin-ad {
-  margin-top: 20%;
-  grid-column: span 2; /* 4列分を占める */
-  grid-row: span 2;    /* 2行分を占める */
-}
-
-#slide1{
-  
-}
-
-#slide2{
-  background: blue;
-}
-
-#slide3{
+  .icon-wrapper {
+  width: 60px; /* アイコンの大きさを設定 */
+  height: 60px;
+  border-radius: 20px; /* これにより背景が円形になります */
+  overflow: hidden; /* これにより、画像がこの要素の外にはみ出さないようにします */
+  position: relative; /* 子要素の位置をこの要素に対して相対的に設定するための基準とします */
+  /* background: -webkit-linear-gradient(black, white); */
+  /* background-image: radial-gradient(rgba(233, 233, 233, 1), rgba(114, 114, 114, 1)); */
   background: white;
+  margin: 5% 0 0 20%;
 }
 
-.dots {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: 65%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
+.s-icon {
+  width: 50%; /* 画像のサイズをicon-wrapperのサイズに合わせます */
+  height: 50%;
+  object-fit: cover; /* 画像がicon-wrapperのサイズを超える場合、画像がトリミングされます */
+  position: absolute; /* 画像をicon-wrapperの中央に配置します */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.dot {
-  height: 10px;
-  width: 10px;
-  margin: 0 5px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-}
+  .small-icon {
+    width: 60px;
+    height: 60px; 
+    border-radius: 5px;
+    margin: 5% 0 0 20%;
+  }
 
-.dot.active {
-  background: black;
-}
+  .ad-image {
+    width: 90%;
+    height: 90%;
+    margin: 0 0 0 5%;
+  }
 
-.tool-bar {
-  position: absolute;
-  top: 85%;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  width: 90%;
-  height: 11%;
-  transform: translate(6%, 7%);
-  /* background-color: rgba(0, 0, 0, 0.5); */
-}
+  .takedajuku-ad {
+    grid-column: span 4; /* 4列分を占める */
+    grid-row: span 1;    /* 2行分を占める */
+  }
 
-.tool {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5vw;
-  margin: 3% 10% 0 10%;
-}
-</style>
+  .benesse-ad {
+    grid-column: span 2; /* 4列分を占める */
+    grid-row: span 2;    /* 2行分を占める */
+
+    transition: opacity 0.5s, transform 0.5s;
+    cursor: pointer;
+  }
+
+  .benesse-ad.animate {
+    opacity: 0;
+    transform: scale(10.2);
+  }
+
+  .kyushin-ad {
+    margin-top: 20%;
+    grid-column: span 2; /* 4列分を占める */
+    grid-row: span 2;    /* 2行分を占める */
+  }
+
+  #slide1{
+    
+  }
+
+  #slide2{
+    background: blue;
+  }
+
+  #slide3{
+    background: white;
+  }
+
+  .dots {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 65%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+  }
+
+  .dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .dot.active {
+    background: white;
+  }
+
+  .tool-bar {
+    position: absolute;
+    top: 85%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    /* width: 90%;
+    height: 11%;
+    transform: translate(6%, 7%); */
+    /* background-color: rgba(0, 0, 0, 0.5); */
+  }
+
+  .tool {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5vw;
+    margin: 3% 10% 0 10%;
+  }
+  </style>
 
 <!-- Modal -->
 <div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -282,13 +332,15 @@ body {
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-body" id="answerModalBody" style="overflow: scroll;"></div>
+      <div class="modal-body answer-modal-body" id="answerModalBody" style="overflow: scroll;"></div>
     </div>
   </div>
 </div>
 
 <!-- 検索フォームモーダル -->
-<div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<%
+=begin%>
+ <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
     <div class="modal-content border-0" style="background-color: transparent;">
       <%= form_with url: search_questions_path, local: true, id: "searchForm", method: :get, remote: true do |f| %>
@@ -301,79 +353,14 @@ body {
       <% end %>
     </div>
   </div>
-</div>
+</div> 
+<%
+=end%>
 
-<!-- カメラモーダル -->
-<div class="modal fade cameraModal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content" style="height: 100vh;">
-      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
-        <!-- カメラプレビュー表示エリア -->
-        <video class="cameraPreview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <div class="option-carousel" style="position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%); display: block">
-          <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
-            <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
-              <%= option %>
-            </div>
-          <% end %>
-        </div>
-        <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", method: :post do |f| %>
-          <div style="position: absolute;">
-            <%= render partial: 'shared/option/hidden_option_field', locals: { f: f, default_value: '質問' } %>
-            <%= render 'shared/option/question_options', f: f %>
-            <%= render 'shared/option/translation_options', f: f %>
-            <%= render 'shared/option/summary_options', f: f %>
-            <%= render partial: 'shared/form/question_button_group', locals: { f: f } %>
-          </div>
-        <% end %>
-        <button type="button" id="closeCamera" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
-        <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">撮影</button>
-        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">入力</button>
-        <button type="button" id="imageInputButtonFromCamera" class="btn btn-primary imageInputButtonFromCamera" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
-        <!-- 隠れたinputタグ -->
-        <input type="file" id="imageInput" class="imageInput" style="display: none;" accept="image/*">
-        <script>
-          const imageInputButtonFromCamera = document.querySelector('.imageInputButtonFromCamera');
-          const inputButton = document.querySelector('.imageInput');
-          imageInputButtonFromCamera.addEventListener('click', function () {
-            inputButton.click();
-            return false;
-          });
-        </script>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render 'app/camera' %>
 
-<!-- 画像トリミングモーダル -->
-<div class="modal fade trimmingImageModal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content" style="height: 100vh;">
-      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh;">
-        <%= render 'shared/preview' %>
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <!-- ボタンの位置を右上に調整 -->
-        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
-        <!-- ここで撮影ボタンの位置を調整 -->
-        <button type="button" id="captureButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">決定</button>
-        <button type="button" id="writeButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">戻る</button>
-        <button type="button" id="imageInputButton" class="btn btn-primary" style="display: none; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render 'app/search' %>
 
-<!-- 検索結果表示モーダル -->
-<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="closeResultsButton">閉じる</button>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %> 
+
+<%= render 'app/instagram' %>

@@ -1,7 +1,11 @@
-<%= f.text_area :questionInputForm,
+<%
+=begin%>
+ <%= f.text_area :questionInputForm,
                 maxlength: "1800",
-                class: "form-control mr-2 border-0 scrollable-textarea",
+                class: "form-control mr-2 border-0 scrollable-textarea question-input-form",
                 required: true,
                 id: "questionInputForm",
                 placeholder: "問題や質問を入力してください。",
-                style: "resize: none; z-index: 10000; position: relative; display: none;" %>
+                style: "resize: none; z-index: 10000; position: relative; display: none;" %> 
+<%
+=end%>

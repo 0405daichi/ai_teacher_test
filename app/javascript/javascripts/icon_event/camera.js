@@ -17,7 +17,7 @@ document.addEventListener("turbolinks:load", function() {
   const trimmingImageModalElement = document.getElementById("trimmingImageModal");
   let imageCapture;
   let stream;
-  let track
+  let cameraTrack;
   const cameraModal = new Modal(cameraModalElement, {
     keyboard: false,
     backdrop: 'true'
@@ -30,13 +30,13 @@ document.addEventListener("turbolinks:load", function() {
     stream = await createStream(cameraPreview);
     // console.log("Stream object: ", stream);
     
-    track = stream.getVideoTracks()[0];
-    imageCapture = new ImageCapture(track);
+    cameraTrack = stream.getVideoTracks()[0];
+    imageCapture = new ImageCapture(cameraTrack);
 
     // カメラアプリ終了処理
     closeCamera.addEventListener('click', async () => {
       cameraModal.hide();
-      track.stop();
+      cameraTrack.stop();
     });
   });
 
@@ -59,10 +59,8 @@ document.addEventListener("turbolinks:load", function() {
     const originalImageUrl = URL.createObjectURL(photo);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
-    closeCamera.addEventListener('click', async () => {
-      cameraModal.hide();
-      track.stop();
-    });
+    cameraModal.hide();
+    cameraTrack.stop();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -70,10 +68,17 @@ document.addEventListener("turbolinks:load", function() {
     // カメラの実際の解像度を取得
     const track = stream.getVideoTracks()[0];
     const settings = track.getSettings();
+    if (!settings.width || !settings.height) {
+      console.warn("Width and height information is not available");
+    }
+    const capabilities = track.getCapabilities();
+    console.log("Capabilities:", capabilities);
+    console.log("capabilities.width", capabilities.width);
+    console.log("capabilities.height", capabilities.height);
 
     // 画面とカメラの解像度の比率を計算
-    const ratioX = settings.width / window.innerWidth;
-    const ratioY = settings.height / window.innerHeight;
+    const ratioX = capabilities.width.max / window.innerWidth;
+    const ratioY = capabilities.height.max / window.innerHeight;
 
     // maskRectの位置とサイズを取得（SVG内の座標系で）
     const svgRect = maskRect.getBoundingClientRect();  
@@ -93,11 +98,14 @@ document.addEventListener("turbolinks:load", function() {
 
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
-      // console.log('Response:', result);
+      // BlobをObject URLに変換
+      const imageUrl = URL.createObjectURL(blob);
+      console.log('image:', imageUrl);
+      console.log('Response:', result.text);
 
-      const questionInputForm = document.getElementById("questionInputForm");
+      const questionForm = cameraModalElement.querySelector(".question-form");
+      const questionInputForm = questionForm.querySelector(".question-input-form");
       questionInputForm.value = result.text;
-      const questionForm = document.getElementById("questionForm");
       submitFormAndShowModal(questionForm);
     }, 'image/png');
   });
@@ -113,13 +121,13 @@ document.addEventListener("turbolinks:load", function() {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = function(e) {
-      const preview = document.getElementById('preview');
+      const preview = trimmingImageModalElement.querySelector('.preview');
       preview.src = e.target.result;
     };
     reader.readAsDataURL(file);
 
     cameraModal.hide();
-    track.stop();
+    cameraTrack.stop();
 
     const trimmingImageModal = new Modal(trimmingImageModalElement, {
       keyboard: false,
@@ -131,50 +139,50 @@ document.addEventListener("turbolinks:load", function() {
 
 
 function submitFormAndShowModal(formElement) {
-  // デフォルトの送信プロセスをキャンセル
-  formElement.addEventListener('submit', function(e) {
-    e.preventDefault();
+  // FormDataを作成
+  var formData = new FormData(formElement);
 
-    // FormDataを作成
-    var formData = new FormData(formElement);
+  // データをサーバに送信
+  fetch('/questions/get_answer', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.content);
 
-    // データをサーバに送信
-    fetch('/questions/get_answer', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      // 既存のモーダルを閉じる
-      var questionModal = new Modal(document.getElementById('questionModal'));
-      questionModal.hide();
-      var questionModalButton = document.getElementById('questionModalButton');
-      questionModalButton.style.display = "block";
+    // 新しいモーダルの中身を設定
+    var content = convertNewlines(data.content);
+    var answerModalElement = document.getElementById('answerModal');
+    var answerModal = new Modal(answerModalElement);
+    var modalBody = answerModalElement.querySelector('.answer-modal-body');
+    modalBody.innerHTML = '';
 
-      // 新しいモーダルの中身を設定
-      var content = data.content;
-      var modalBody = document.getElementById('answerModalBody');
-      modalBody.innerHTML = '';
-
-      var index = 0;
-      function typeWriter() {
-        if (index < content.length) {
+    var index = 0;
+    function typeWriter() {
+      if (index < content.length) {
+        // <br>マーカーの検出
+        if (content.substr(index, 4) === '<br>') {
+          modalBody.innerHTML += '<br>';
+          index += 4;
+        } else {
           modalBody.innerHTML += content.charAt(index);
           index++;
-          setTimeout(typeWriter, 50); // 50ミリ秒ごとに文字を追加
         }
+        setTimeout(typeWriter, 50); // 50ミリ秒ごとに文字を追加
       }
-      typeWriter();
+    }
+    typeWriter();
 
-      // 新しいモーダルを表示
-      var answerModalElement = document.getElementById('answerModal');
-      var answerModal = new Modal(answerModalElement);
-      answerModal.show();
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('エラーが発生しました。');
-    });
+    // 新しいモーダルを表示
+    answerModal.show();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('エラーが発生しました。');
   });
+}
+
+function convertNewlines(text) {
+  return text.replace(/\n/g, '<br>');
 }

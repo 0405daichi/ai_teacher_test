@@ -10,7 +10,7 @@ class Gpt35Client
   def generate_answer(params)
     detailOptions = analyzeOptions(params)
 
-    prompt = returnPrompt(params["option"], detailOptions)
+    prompt = returnPrompt(params["option"], detailOptions) + "¥n" + params[:questionInputForm]
 
     system_message = { role: "system", content: "You are a helpful assistant." }
     user_message = { role: "user", content: prompt }
