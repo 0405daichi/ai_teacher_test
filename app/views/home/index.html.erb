@@ -1,333 +1,116 @@
 <!-- app/views/your_view.html.erb -->
 
+<div class="center-point"></div>
+<div id="circles"></div>
+
 <script>
-  document.addEventListener("DOMContentLoaded", function(){
-    const adImage = document.querySelector('.benesse-ad');
+  const numCircles = 8;
+  const circleContainer = document.getElementById('circles');
+  const radius = 100;
+  const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
 
-    adImage.addEventListener('click', function(){
-      this.classList.add('animate');
+  // 各画像に対応するクラス名とaltテキスト
+  const imageDetails = <%= raw(
+    [
+      {className: 'user-icon s-icon', path: asset_path('single-neutral.png'), alt: 'user'},
+      {className: 'folder-icon s-icon', path: asset_path('folder.png'), alt: 'folder'},
+      {className: 'search-icon s-icon', path: asset_path('search-1.png'), alt: 'search'},
+      {className: 'camera-icon s-icon', path: asset_path('camera-settings-focus.png'), alt: 'camera', id: 'cameraApp1'},
+      {className: 'instagram-icon small-icon', path: asset_path('instagram-logo.png'), alt: 'instagram'},
+      {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
+      {className: 'x-icon small-icon', path: asset_path('x-logo-twitter-logo.png'), alt: 'x'},
+      {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
+    ].to_json
+  ) %>;
 
-      this.addEventListener('transitionend', function() {
-        this.classList.remove('animate');
-      }, { once: true });
+  for (let i = 0; i < numCircles; i++) {
+    const angle = (i * 360) / numCircles;
+    const circle = document.createElement('div');
+    circle.className = 'rotating-circle';
+    circle.dataset.angle = angle;
+    setCirclePosition(circle, radius, angle);
+
+    const img = document.createElement('img');
+
+    // 画像の詳細を取得
+    const details = imageDetails[i];
+    
+    // 画像のパスを動的に設定
+    img.src = details.path;
+    
+    img.alt = details.alt;
+    img.className = details.className;
+    if(details.id) img.id = details.id;
+
+    circle.appendChild(img);
+    circleContainer.appendChild(circle);
+  }
+
+  // 自動で回転させる
+  setInterval(() => {
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+      const currentAngle = parseFloat(circle.dataset.angle);
+      const newAngle = currentAngle + rotationSpeed;
+      setCirclePosition(circle, radius, newAngle);
+      circle.dataset.angle = newAngle;
+    });
+  }, 16); // 約60FPSで更新
+
+  // ホイールで回転させる
+  circleContainer.addEventListener('wheel', function(e) {
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+      const currentAngle = parseFloat(circle.dataset.angle);
+      const newAngle = currentAngle - e.deltaY * 0.1;
+      setCirclePosition(circle, radius, newAngle);
+      circle.dataset.angle = newAngle;
     });
   });
 
-  document.addEventListener("DOMContentLoaded", function() {
-    let currentSlide = 0;  // これを1に変更してデフォルトのスライドをslider1にする
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const slider = document.querySelector('.slider');  // この行を追加
+  function setCirclePosition(circle, r, a) {
+    const x = r * Math.cos(a * Math.PI / 180);
+    const y = r * Math.sin(a * Math.PI / 180);
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    circle.style.left = `${centerX + x}px`;
+    circle.style.top = `${centerY + y}px`;
+    circle.style.transform = `rotate(${270-a}deg)`; 
+}
+</script>
 
-    function updateActiveSlide(newIndex) {
-      slides[currentSlide].classList.remove('active');
-      dots[currentSlide].classList.remove('active');
-      currentSlide = newIndex;
-      slides[currentSlide].classList.add('active');
-      dots[currentSlide].classList.add('active');
-    }
+<style>
+  .center-point {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+  }
 
-    function gotoSlide(n) {
-      updateActiveSlide((n + slides.length) % slides.length);
-      const slideWidth = slides[currentSlide].offsetWidth;
-      slider.scrollLeft = slideWidth * currentSlide;
-    }
-
-    gotoSlide(0);  // これをgotoSlide(1);に変更してデフォルトのスライドをslider1にする
-
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => gotoSlide(index));
-    });
-
-    // この部分を追加
-    slider.addEventListener('scroll', function() {
-      const newSlide = Math.round(slider.scrollLeft / slider.offsetWidth);
-      if (newSlide !== currentSlide) {
-        updateActiveSlide(newSlide);
-      }
-    });
-  });
-</script> 
-
-  <!-- app/views/your_view.html.erb -->
-  <div class="container">
-    <div class="image-container">
-
-  <!-- <%= image_tag 'mobile.png', alt: 'Mobile Mockup', class: 'mobile-mockup' %>  -->
-
-      <div class="slider">
-        <div class="slide" id="slide1">
-          <div class="icon-grid">
-            <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad ad-image' %>
-            <div class="icon-wrapper">
-              <%= image_tag 'single-neutral.png', alt: 'user', class: 'user-icon s-icon' %>
-            </div>
-            <div class="icon-wrapper">
-              <%= image_tag 'folder.png', alt: 'folder', class: 'folder-icon s-icon' %>
-            </div>
-            <div class="icon-wrapper">
-              <%= image_tag 'search-1.png', alt: 'search', class: 'search-icon s-icon' %>
-            </div>
-            <div class="icon-wrapper">
-              <%= image_tag 'camera-settings-focus.png', alt: 'camera', class: 'camera-icon s-icon', id: 'cameraApp1' %>
-            </div>
-            <%= image_tag 'takedajukuAD.png', alt: 'takedajuku-ad', class: 'takedajuku-ad ad-image' %>
-            <%= image_tag 'instagram-icon.png', alt: 'instagram', class: 'instagram-icon small-icon' %>
-            <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
-            <%= image_tag 'benesseAD.png', alt: 'benesse-ad', class: 'benesse-ad ad-image' %>
-            <%= image_tag 'ad-icon.png', alt: 'ad', class: 'ad-icon small-icon' %>
-            <%= image_tag 'x-icon.png', alt: 'x', class: 'x-icon small-icon' %>
-          </div>
-        </div>
-        <div class="slide" id="slide2">2
-        </div>
-        <div class="slide" id="slide3">3
-        </div>
-      </div>
-      <div class="dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
-      <div class="tool-bar">
-        <div class="tool">
-          <div class="icon-wrapper">
-            <%= image_tag 'search-1.png', alt: 'search', class: 'search-icon s-icon' %>
-          </div>
-          <div class="icon-wrapper">
-            <%= image_tag 'camera-settings-focus.png', alt: 'camera', class: 'camera-icon s-icon', id: 'cameraApp1' %>
-          </div>
-          <div class="icon-wrapper">
-            <%= image_tag 'folder.png', alt: 'folder', class: 'folder-icon s-icon' %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <style>
-  body {
-    margin: 0;
-    padding: 0;
+  .rotating-circle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: lightblue;
+    border-radius: 50%;
+    z-index: 0;
+    margin-top: -25px;
+    margin-left: -25px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    /* background-color: black; */
-      background-image: radial-gradient(rgba(233, 233, 233, 1), rgba(114, 114, 114, 1));
-
-  }
-
-  .container {
-    display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh; /* ビューポートの高さに合わせる */
   }
 
-  .image-container {
-    width: 40%;
-    height: 100vh;
-    position: relative;
-  }
-
-  .mobile-mockup {
-    width: auto;
-    max-width: 100%;
-    max-height: 100vh;
+  .rotating-circle img {
+    width: 70%; 
     height: auto;
     display: block;
+    margin: auto; 
   }
-
-  .slider {
-    /* 以下の設定は必須 */
-    scroll-snap-type: x mandatory;
-    overflow-x: scroll;
-    display: flex;
-    -webkit-overflow-scrolling: touch; /* スマホ対応のため必須 */
-    overflow-scrolling: touch; /* スマホ対応のため必須 */
-    
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    width: 90%;
-    height: 75%;
-    transform: translate(6%, 10%);
-    /* background-color: rgba(0, 0, 0, 0.5); */
-    overflow-y: hidden;
-  }
-
-  .slide{
-    scroll-snap-align: start;
-    flex: 0 0 100%; /* これを追加 */
-    max-width: 100%; /* これを追加 */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-
-  /* スクロールバーを非表示にする */
-  .slider::-webkit-scrollbar {
-    display: none;
-  }
-
-  .icon-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    /* gap: 1vh 1vw; */
-    width: 100%;
-    height: 100%;
-    /* margin: 10% 5% 0 5%; */
-  }
-
-  .icon-wrapper {
-  width: 60px; /* アイコンの大きさを設定 */
-  height: 60px;
-  border-radius: 20px; /* これにより背景が円形になります */
-  overflow: hidden; /* これにより、画像がこの要素の外にはみ出さないようにします */
-  position: relative; /* 子要素の位置をこの要素に対して相対的に設定するための基準とします */
-  /* background: -webkit-linear-gradient(black, white); */
-  /* background-image: radial-gradient(rgba(233, 233, 233, 1), rgba(114, 114, 114, 1)); */
-  background: white;
-  margin: 5% 0 0 20%;
-}
-
-.s-icon {
-  width: 50%; /* 画像のサイズをicon-wrapperのサイズに合わせます */
-  height: 50%;
-  object-fit: cover; /* 画像がicon-wrapperのサイズを超える場合、画像がトリミングされます */
-  position: absolute; /* 画像をicon-wrapperの中央に配置します */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-  .small-icon {
-    width: 60px;
-    height: 60px; 
-    border-radius: 5px;
-    margin: 5% 0 0 20%;
-  }
-
-  .ad-image {
-    width: 90%;
-    height: 90%;
-    margin: 0 0 0 5%;
-  }
-
-  .takedajuku-ad {
-    grid-column: span 4; /* 4列分を占める */
-    grid-row: span 1;    /* 2行分を占める */
-  }
-
-  .benesse-ad {
-    grid-column: span 2; /* 4列分を占める */
-    grid-row: span 2;    /* 2行分を占める */
-
-    transition: opacity 0.5s, transform 0.5s;
-    cursor: pointer;
-  }
-
-  .benesse-ad.animate {
-    opacity: 0;
-    transform: scale(10.2);
-  }
-
-  .kyushin-ad {
-    margin-top: 20%;
-    grid-column: span 2; /* 4列分を占める */
-    grid-row: span 2;    /* 2行分を占める */
-  }
-
-  #slide1{
-    
-  }
-
-  #slide2{
-    background: blue;
-  }
-
-  #slide3{
-    background: white;
-  }
-
-  .dots {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 65%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-  }
-
-  .dot {
-    height: 10px;
-    width: 10px;
-    margin: 0 5px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .dot.active {
-    background: white;
-  }
-
-  .tool-bar {
-    position: absolute;
-    top: 85%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    /* width: 90%;
-    height: 11%;
-    transform: translate(6%, 7%); */
-    /* background-color: rgba(0, 0, 0, 0.5); */
-  }
-
-  .tool {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5vw;
-    margin: 3% 10% 0 10%;
-  }
-  </style>
-
-<!-- Modal -->
-<div class="modal fade" id="questionOrSearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        Do you want to ask a question?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="questionButton">質問</button>
-        <button type="button" class="btn btn-secondary" id="searchButton">検索</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 質問フォームモーダル -->
-<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-  <div class="modal-dialog modal-xl q-mo custom-centering" role="document">
-    <div class="modal-content border-0 d-flex flex-column q-mo-co" style="background-color: transparent;">
-      <%= render 'shared/option/option_carousel' %>
-
-        <div class="modal-body flex-grow-1 overflow-auto q-mo-bo">
-          
-        </div>
-        <div class="modal-footer border-top-0">
-        </div>
-    </div>
-  </div>
-</div>
+</style>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
@@ -336,26 +119,6 @@
     </div>
   </div>
 </div>
-
-<!-- 検索フォームモーダル -->
-<%
-=begin%>
- <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
-    <div class="modal-content border-0" style="background-color: transparent;">
-      <%= form_with url: search_questions_path, local: true, id: "searchForm", method: :get, remote: true do |f| %>
-        <div class="modal-header border-bottom-0">
-          <%= f.text_area :searchInputForm, maxlength: "1800", class: "form-control mr-2 border-0", id: "searchInputForm", placeholder: "見つけたい問題を入力してください。", style: "resize: none;" %>
-          <button type="button" class="btn btn-primary photoButton m-1 border-0">写真で入力</button>
-        </div>
-        <div class="search-modal-body" style="background-color: transparent; max-height: 400px; overflow-y: auto;">
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div> 
-<%
-=end%>
 
 <%= render 'app/camera' %>
 

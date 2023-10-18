@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Layout</title>
+    <style>
+        .center-point {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            border-radius: 50%;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        .rotating-circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: lightblue;
+            border-radius: 50%;
+            z-index: 0;
+            margin-top: -25px;
+            margin-left: -25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center-point"></div>
+    <div id="circles"></div>
+
+    <script>
+        const numCircles = 8;
+        const circleContainer = document.getElementById('circles');
+        const radius = 100;
+        const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
+
+        // 各画像に対応するクラス名とaltテキスト
+        const imageDetails = <%= raw(
+      [
+        {className: 'benesse-ad ad-image', path: asset_path('benesseAD.png'), alt: 'benesse-ad'},
+        {className: 'user-icon s-icon', path: asset_path('single-neutral.png'), alt: 'user'},
+        {className: 'folder-icon s-icon', path: asset_path('folder.png'), alt: 'folder'},
+        {className: 'search-icon s-icon', path: asset_path('search-1.png'), alt: 'search'},
+        {className: 'camera-icon s-icon', path: asset_path('camera-settings-focus.png'), alt: 'camera', id: 'cameraApp1'},
+        {className: 'takedajuku-ad ad-image', path: asset_path('takedajukuAD.png'), alt: 'takedajuku-ad'},
+        {className: 'instagram-icon small-icon', path: asset_path('instagram-icon.png'), alt: 'instagram'},
+        {className: 'ad-icon small-icon', path: asset_path('ad-icon.png'), alt: 'ad'},
+      ].to_json
+    ) %>;
+
+            for (let i = 0; i < numCircles; i++) {
+            const angle = (i * 360) / numCircles;
+            const circle = document.createElement('div');
+            circle.className = 'rotating-circle';
+            circle.dataset.angle = angle;
+            setCirclePosition(circle, radius, angle);
+
+            const img = document.createElement('img');
+
+            // 画像の詳細を取得
+            const details = imageDetails[i];
+            
+            // 画像のパスを動的に設定
+            img.src = details.path;
+            
+            img.alt = details.alt;
+            img.className = details.className;
+            if(details.id) img.id = details.id;
+
+            circle.appendChild(img);
+            circleContainer.appendChild(circle);
+        }
+
+        // 自動で回転させる
+        setInterval(() => {
+            Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+                const currentAngle = parseFloat(circle.dataset.angle);
+                const newAngle = currentAngle + rotationSpeed;
+                setCirclePosition(circle, radius, newAngle);
+                circle.dataset.angle = newAngle;
+            });
+        }, 16); // 約60FPSで更新
+
+        // ホイールで回転させる
+        circleContainer.addEventListener('wheel', function(e) {
+            Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+                const currentAngle = parseFloat(circle.dataset.angle);
+                const newAngle = currentAngle - e.deltaY * 0.1;
+                setCirclePosition(circle, radius, newAngle);
+                circle.dataset.angle = newAngle;
+            });
+        });
+
+        function setCirclePosition(circle, r, a) {
+            const x = r * Math.cos(a * Math.PI / 180);
+            const y = r * Math.sin(a * Math.PI / 180);
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            circle.style.left = `${centerX + x}px`;
+            circle.style.top = `${centerY + y}px`;
+            circle.style.transform = `rotate(${a}deg)`;
+        }
+    </script>
+</body>
+
+</html>
