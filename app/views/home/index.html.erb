@@ -66,6 +66,28 @@
     });
   });
 
+  let touchStartY;
+
+  // タッチ開始時の位置を記録
+  circleContainer.addEventListener('touchstart', function(e) {
+    touchStartY = e.touches[0].clientY;
+  });
+
+  // タッチ中の動きに応じて回転させる
+  circleContainer.addEventListener('touchmove', function(e) {
+    const touchCurrentY = e.touches[0].clientY;
+    const deltaY = touchStartY - touchCurrentY;
+    
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+        const currentAngle = parseFloat(circle.dataset.angle);
+        const newAngle = currentAngle + deltaY * 0.1;
+        setCirclePosition(circle, radius, newAngle);
+        circle.dataset.angle = newAngle;
+    });
+
+    touchStartY = touchCurrentY;
+  });
+
   function setCirclePosition(circle, r, a) {
     const x = r * Math.cos(a * Math.PI / 180);
     const y = r * Math.sin(a * Math.PI / 180);
