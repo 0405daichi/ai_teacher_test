@@ -1,6 +1,7 @@
 // search.js
 
 import { Modal } from 'bootstrap';
+import { fadeOutCirclesSequentially, fadeInCirclesSequentially, moveToCenterAndResetRotation } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
   const searchApp = document.querySelector('.search-icon');
@@ -15,7 +16,12 @@ document.addEventListener("turbolinks:load", function() {
 
   // 検索アプリ起動処理
   searchApp.addEventListener('click', async () => {
-    searchModal.show();
+    if (await fadeOutCirclesSequentially())
+    {
+      if (await fadeInCirclesSequentially()) {
+        if (await moveToCenterAndResetRotation()) searchModal.show();
+      }
+    }
   });
 
   // 検索機能

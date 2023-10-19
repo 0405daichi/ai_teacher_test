@@ -14,7 +14,7 @@ async function fetchMaxResolution() {
   maxHeight = capabilities.height.max;
 
   videoTrack.stop();
-  alert(`width:${maxWidth} height:${maxHeight}`);
+  // alert(`width:${maxWidth} height:${maxHeight}`);
 }
 
 fetchMaxResolution()

@@ -9,6 +9,7 @@ import "../stylesheets/application";
 import "../javascripts/home"
 import "../javascripts/icon_event/camera"
 import "../javascripts/helpers/cameraFunctions"
+import "../javascripts/helpers/openApp"
 import "../javascripts/icon_event/search"
 import "../javascripts/icon_event/folder"
 import "../javascripts/icon_event/instagram"

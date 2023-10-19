@@ -1,6 +1,7 @@
 // instagram.js
 
 import { Modal } from 'bootstrap';
+import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
   const instagramApp = document.querySelector('.instagram-icon');
@@ -12,7 +13,12 @@ document.addEventListener("turbolinks:load", function() {
 
   // 検索アプリ起動処理
   instagramApp.addEventListener('click', async () => {
-    instagramModal.show();
+    const open = await fadeOutCirclesSequentially();
+    if (open == true)
+    {
+      const openEnd = await fadeInCirclesSequentially();
+      if (openEnd) instagramModal.show();
+    }
   });
 
   // const circlesContainer = instagramModalElement.querySelector('.top-circles');

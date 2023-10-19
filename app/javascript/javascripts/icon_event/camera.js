@@ -2,6 +2,7 @@
 
 import { Modal } from 'bootstrap';
 import { createStream, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
   // DOM取得
@@ -25,7 +26,12 @@ document.addEventListener("turbolinks:load", function() {
 
   // カメラアプリ起動処理
   cameraApp1.addEventListener('click', async () => {
-    cameraModal.show();
+    const open = await fadeOutCirclesSequentially();
+    if (open == true)
+    {
+      const openEnd = await fadeInCirclesSequentially();
+      if (openEnd) cameraModal.show();
+    }
     
     stream = await createStream(cameraPreview);
     // console.log("Stream object: ", stream);

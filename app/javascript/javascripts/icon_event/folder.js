@@ -1,6 +1,7 @@
 // folder.js
 
 import { Modal } from 'bootstrap';
+import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
   const folderApp = document.querySelector('.folder-icon');
@@ -12,7 +13,12 @@ document.addEventListener("turbolinks:load", function() {
 
   // 検索アプリ起動処理
   folderApp.addEventListener('click', async () => {
-    folderModal.show();
+    const open = await fadeOutCirclesSequentially();
+    if (open == true)
+    {
+      const openEnd = await fadeInCirclesSequentially();
+      if (openEnd) folderModal.show();
+    }
   });
 });
 
