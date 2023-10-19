@@ -71,38 +71,22 @@
     });
 
     let initialTouchY = null;
-    let lastMoveTime = null;
-    let lastTouchDelta = 0;
 
     // タッチ開始時の処理
     window.addEventListener('touchstart', function(event) {
       initialTouchY = event.touches[0].clientY;
-      lastMoveTime = Date.now();
     });
 
     // タッチ中の処理
     window.addEventListener('touchmove', function(event) {
       if (initialTouchY === null) return;
-
-      const currentTime = Date.now();
-      const timeDelta = currentTime - lastMoveTime;
-
       const touchY = event.touches[0].clientY;
-      let touchDelta = initialTouchY - touchY;
-
-      // 加速度を計算（オプション）
-      const acceleration = Math.abs(touchDelta - lastTouchDelta) / timeDelta;
-
-      // 加速度に基づいて、動的に円を動かす量（angleDelta）を計算
-      const angleDelta = touchDelta * (0.5 + acceleration); // 0.5は基本の動き、accelerationで加速度に応じた動きを追加
-
+      const touchDelta = (initialTouchY - touchY) * 0.5;
       initialTouchY = touchY; // update initialTouchY for next move
-      lastMoveTime = currentTime;
-      lastTouchDelta = touchDelta;
 
       Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
         const currentAngle = parseFloat(circle.dataset.angle);
-        const newAngle = currentAngle - angleDelta; // 向きを反対にするために '-' を使う
+        const newAngle = currentAngle + touchDelta;
         setCirclePosition(circle, radius, newAngle);
         circle.dataset.angle = newAngle;
       });
@@ -111,8 +95,6 @@
     // タッチ終了時の処理
     window.addEventListener('touchend', function() {
       initialTouchY = null;
-      lastMoveTime = null;
-      lastTouchDelta = 0;
     });
   
     function setCirclePosition(circle, r, a) {
