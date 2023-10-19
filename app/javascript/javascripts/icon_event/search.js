@@ -1,7 +1,7 @@
 // search.js
 
 import { Modal } from 'bootstrap';
-import { fadeOutCirclesSequentially, fadeInCirclesSequentially, moveToCenterAndResetRotation } from '../helpers/openApp.js';
+import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
   const searchApp = document.querySelector('.search-icon');
@@ -18,9 +18,7 @@ document.addEventListener("turbolinks:load", function() {
   searchApp.addEventListener('click', async () => {
     if (await fadeOutCirclesSequentially())
     {
-      if (await fadeInCirclesSequentially()) {
-        if (await moveToCenterAndResetRotation()) searchModal.show();
-      }
+      if (await fadeInCirclesSequentially()) searchModal.show();
     }
   });
 
