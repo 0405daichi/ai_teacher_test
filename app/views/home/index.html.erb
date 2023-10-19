@@ -70,6 +70,32 @@
       });
     });
 
+    let initialTouchY = null;
+
+    // タッチ開始時の処理
+    window.addEventListener('touchstart', function(event) {
+      initialTouchY = event.touches[0].clientY;
+    });
+
+    // タッチ中の処理
+    window.addEventListener('touchmove', function(event) {
+      if (initialTouchY === null) return;
+      const touchY = event.touches[0].clientY;
+      const touchDelta = (touchY - initialTouchY) * 0.1;
+      initialTouchY = touchY; // update initialTouchY for next move
+
+      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
+        const currentAngle = parseFloat(circle.dataset.angle);
+        const newAngle = currentAngle + touchDelta;
+        setCirclePosition(circle, radius, newAngle);
+        circle.dataset.angle = newAngle;
+      });
+    });
+
+    // タッチ終了時の処理
+    window.addEventListener('touchend', function() {
+      initialTouchY = null;
+    });
   
     function setCirclePosition(circle, r, a) {
       const x = r * Math.cos(a * Math.PI / 180);
