@@ -6,35 +6,35 @@
 //   position: relative;
 // }
 
-#logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+// #logo {
+//   position: absolute;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+// }
 
-#character {
-  position: absolute;
-  z-index: 1;
-}
+// #character {
+//   position: absolute;
+//   z-index: 1;
+// }
 
-.character-message {
-  position: relative;
-  margin-top: 20px;
-  width: 200px;
-  height: 80px;
-  padding: 10px;
-  background-color: #FFFFFF;
-  border: 2px solid #000000;
-  border-radius: 10px;
-  text-align: center;
-}
+// .character-message {
+//   position: relative;
+//   margin-top: 20px;
+//   width: 200px;
+//   height: 80px;
+//   padding: 10px;
+//   background-color: #FFFFFF;
+//   border: 2px solid #000000;
+//   border-radius: 10px;
+//   text-align: center;
+// }
 
-#mypage-button, #login-signup-buttons {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
+// #mypage-button, #login-signup-buttons {
+//   position: absolute;
+//   top: 20px;
+//   right: 20px;
+// }
 
 // 質問フォームのオプションスライドショー
 .option-carousel {

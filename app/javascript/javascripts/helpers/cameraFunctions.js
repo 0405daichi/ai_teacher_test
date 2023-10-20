@@ -56,11 +56,24 @@ export async function initResizableRect(rect, lightDarkArea) {
   let startWidth = 0, startHeight = 0;
   let initialCenterX = 0, initialCenterY = 0;
 
-  // ドラッグ開始
-  rect.addEventListener("mousedown", (e) => {
+  // PC向けのマウスイベント
+  rect.addEventListener("mousedown", startDrag);
+  window.addEventListener("mousemove", drag);
+  window.addEventListener("mouseup", endDrag);
+
+  // スマホ向けのタッチイベント
+  rect.addEventListener("touchstart", startDrag);
+  window.addEventListener("touchmove", drag);
+  window.addEventListener("touchend", endDrag);
+
+  function startDrag(e) {
+    // タッチイベントかマウスイベントかを判断
+    const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+
     isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
+    startX = clientX;
+    startY = clientY;
     startWidth = parseFloat(window.getComputedStyle(rect).width);
     startHeight = parseFloat(window.getComputedStyle(rect).height);
 
@@ -68,11 +81,14 @@ export async function initResizableRect(rect, lightDarkArea) {
     const rectBound = rect.getBoundingClientRect();
     initialCenterX = rectBound.left + startWidth / 2;
     initialCenterY = rectBound.top + startHeight / 2;
-  });
+  }
 
-  // ドラッグ中
-  window.addEventListener("mousemove", (e) => {
+  function drag(e) {
     if (!isDragging) return;
+
+    // タッチイベントかマウスイベントかを判断
+    const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
 
     // 新しいマウス座標から中心までの距離
     const newDistX = Math.abs(e.clientX - initialCenterX);
@@ -111,10 +127,9 @@ export async function initResizableRect(rect, lightDarkArea) {
     maskRect.setAttribute("width", newWidth);
     maskRect.setAttribute("height", newHeight);
     maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
-  });
+  }
 
-  // ドラッグ終了
-  window.addEventListener("mouseup", () => {
+  function endDrag() {
     isDragging = false;
-  });
+  }
 }
