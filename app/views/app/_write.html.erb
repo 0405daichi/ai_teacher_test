@@ -1,0 +1,159 @@
+<!-- 質問入力モーダル -->
+<div class="modal fade writeQuestionModal" id="write" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" id="questionModalContent">
+      <div class="modal-header">
+        <button type="button" id="closeWrite" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form-from-write", method: :post do |f| %>
+        <!-- ボタン・入力内容 -->
+        <div class="textarea-div">
+        <%= f.text_area :questionInputForm,
+                          class: "form-control mr-2 border-0 question-input-form",
+                          id: "questionInputForm",
+                          placeholder: "問題や質問を入力してください。",
+                          style: "resize: none; z-index: 10000; position: fixed; margin-top: 30px; max-height: 90%; max-width: 90%;" %>
+        </div>
+      </div>
+      <div class="modal-body">
+<div class="option-panel" style="margin-top: 50px;">
+          <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
+          <div class="option-carousel">
+            <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+              <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+                <%= option %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- 水平な直線とマージンを追加 -->
+          <hr style="margin: 5% 5%;">
+          
+          <!-- 各オプション用の詳細要素 -->
+          <div class="all-option-elements">
+            <!-- 質問オプション用のコード -->
+            <div class="how-to-answer">
+              <div class="container">
+                <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
+                  <div class="answerOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                      <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
+                      <%= option %>
+                  </div>
+                <% end %>   
+              </div>
+            </div>
+            <!-- 直訳・翻訳オプション用のコード -->
+            <div class="translate">
+              <div class="selectLanguage">
+                <div class="container">
+                  <div>
+                    <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
+                  </div>
+                  <div>
+                    <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
+                  </div>
+                  <div>
+                    <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
+                  </div>
+                </div>
+              </div>
+              <div class="how-to-translate">
+                <div class="container">
+                  <% ['翻訳', '直訳'].each_with_index do |option, index| %>
+                  <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                      <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
+                      <%= option %>
+                  </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <!-- 要約オプション用のコード -->
+            <div class="wrap-up-options">
+              <div class="container">
+                <div class="wrap-up-option">
+                  <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
+                </div>
+                <div class="wrap-up-option">
+                  <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
+                  <span id="character-count-text"></span>
+                  <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count"} %>
+                  <span id="word-count-text"></span>
+                </div>
+                <div class="wrap-up-option">
+                  <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
+                </div>
+              </div>
+            </div>
+          </div>
+</div>
+        
+      </div>
+      <div class="modal-bottom">
+        <div class="write-bottom-buttons d-flex justify-content-end">
+          <div class="write-to-camera m-1">
+            <button type="button" class="btn btn-outline-light">←</button>
+          </div>
+          <div class="write-submit m-1">
+          <%= f.submit "Submit", class: "btn btn-outline-light" %>
+          </div>
+        </div>
+      </div>
+        <% end %>
+    </div>
+  </div>
+</div>
+
+        
+          
+            <script>
+              const writeModalElement = document.querySelector(".writeQuestionModal");
+              console.log(writeModalElement);
+              const textarea = writeModalElement.querySelector('.question-input-form');
+              console.log(textarea);
+              const firstHeight = textarea.scrollHeight;
+              let lastHeight = firstHeight; // 初期値をfirstHeightに設定
+
+              // textareaの高さを調整する関数
+              function adjustHeight() {
+                  textarea.style.height = 'auto';
+                  textarea.style.height = textarea.scrollHeight + 'px';
+                  lastHeight = textarea.scrollHeight;
+              }
+
+              // inputイベント時の高さ調整
+              textarea.addEventListener('input', adjustHeight);
+
+              // 初期ロード時の高さ調整
+              adjustHeight();
+
+              // textarea以外の部分がクリックされた時の挙動
+              document.body.addEventListener('click', function(e) {
+                  if (!e.target.closest('#questionInputForm') || e.target.closest('#questionInputForm') == null) {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = firstHeight + 'px';
+                  }
+              });
+
+              // textareaにフォーカスが当たった時の挙動
+              textarea.addEventListener('focus', function() {
+                if (textarea.value === "") { // 入力内容が空の場合
+                  textarea.style.height = 'auto';
+                  textarea.style.height = firstHeight + 'px'; // 初期の高さに設定
+                } else {
+                  textarea.style.height = 'auto';
+                  textarea.style.height = lastHeight + 'px';
+                }
+              });
+
+              // textareaのclickイベントでbodyのclickイベントをキャンセル
+              textarea.addEventListener('click', function(e) {
+                  e.stopPropagation();
+              });
+            </script>
+
+<style>
+/* .write-bottom-buttons {
+  display: flex;
+  justify-content: center;
+} */
+</style>

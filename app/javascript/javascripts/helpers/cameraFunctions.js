@@ -50,86 +50,90 @@ export async function processImage(blob) {
   return data;
 }
 
+// pcとスマホ版の共通コード
 export async function initResizableRect(rect, lightDarkArea) {
   let isDragging = false;
   let startX = 0, startY = 0;
   let startWidth = 0, startHeight = 0;
   let initialCenterX = 0, initialCenterY = 0;
 
-  // PC向けのマウスイベント
-  rect.addEventListener("mousedown", startDrag);
-  window.addEventListener("mousemove", drag);
-  window.addEventListener("mouseup", endDrag);
-
-  // スマホ向けのタッチイベント
-  rect.addEventListener("touchstart", startDrag);
-  window.addEventListener("touchmove", drag);
-  window.addEventListener("touchend", endDrag);
-
   function startDrag(e) {
-    // タッチイベントかマウスイベントかを判断
-    const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
-
     isDragging = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     startX = clientX;
     startY = clientY;
     startWidth = parseFloat(window.getComputedStyle(rect).width);
     startHeight = parseFloat(window.getComputedStyle(rect).height);
 
-    // 矩形の中心座標を計算
     const rectBound = rect.getBoundingClientRect();
     initialCenterX = rectBound.left + startWidth / 2;
     initialCenterY = rectBound.top + startHeight / 2;
   }
 
-  function drag(e) {
+  function duringDrag(e) {
     if (!isDragging) return;
 
-    // タッチイベントかマウスイベントかを判断
-    const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-    // 新しいマウス座標から中心までの距離
-    const newDistX = Math.abs(e.clientX - initialCenterX);
-    const newDistY = Math.abs(e.clientY - initialCenterY);
+    const newDistX = Math.abs(clientX - initialCenterX);
+    const newDistY = Math.abs(clientY - initialCenterY);
 
-    // 初期マウス座標から中心までの距離
     const initialDistX = Math.abs(startX - initialCenterX);
     const initialDistY = Math.abs(startY - initialCenterY);
 
-    // 拡大または縮小を決定
     const deltaX = newDistX - initialDistX;
     const deltaY = newDistY - initialDistY;
 
     let newWidth = startWidth + deltaX * 2;
     let newHeight = startHeight + deltaY * 2;
 
-    newWidth = Math.max(100, Math.min(window.innerWidth - 100, newWidth));
-    newHeight = Math.max(100, Math.min(window.innerHeight - 100, newHeight));
+    newWidth = Math.max(100, Math.min(window.innerWidth - 50, newWidth));
+    newHeight = Math.max(100, Math.min(window.innerHeight - 50, newHeight));
 
     rect.style.width = `${newWidth}px`;
     rect.style.height = `${newHeight}px`;
 
-    // 新しい幅と高さに基づいてpath要素を更新
-    const topLeftCorner = rect.querySelector('.top-left-corner');
-    const topRightCorner = rect.querySelector('.top-right-corner');
-    const bottomRightCorner = rect.querySelector('.bottom-right-corner');
-    const bottomLeftCorner = rect.querySelector('.bottom-left-corner');
+    // pathの位置とmask-rectの位置とサイズを更新
+    const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
+    corners.forEach(corner => {
+      const path = rect.querySelector(`.${corner}-corner`);
+      const maskRect = lightDarkArea.querySelector('.mask-rect');
 
-    topLeftCorner.setAttribute("d", `M 2,22 Q 2,2 22,2`);
-    topRightCorner.setAttribute("d", `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`);
-    bottomRightCorner.setAttribute("d", `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`);
-    bottomLeftCorner.setAttribute("d", `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`);
+      let pathD = '';
+      let maskRectTransform = `translate(-${newWidth / 2}, -${newHeight / 2})`;
 
-    // 新しい幅と高さに基づいてmaskのrectを更新
-    const maskRect = lightDarkArea.querySelector('.mask-rect');
-    maskRect.setAttribute("width", newWidth);
-    maskRect.setAttribute("height", newHeight);
-    maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
+      switch (corner) {
+        case 'top-left':
+          pathD = `M 2,22 Q 2,2 22,2`;
+          break;
+        case 'top-right':
+          pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
+          break;
+        case 'bottom-right':
+          pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
+          break;
+        case 'bottom-left':
+          pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
+          break;
+      }
+
+      path.setAttribute("d", pathD);
+      maskRect.setAttribute("width", newWidth);
+      maskRect.setAttribute("height", newHeight);
+      maskRect.setAttribute("transform", maskRectTransform);
+    });
   }
 
   function endDrag() {
     isDragging = false;
   }
+
+  rect.addEventListener("mousedown", startDrag);
+  rect.addEventListener("touchstart", startDrag);
+  window.addEventListener("mousemove", duringDrag);
+  window.addEventListener("touchmove", duringDrag);
+  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("touchend", endDrag);
 }

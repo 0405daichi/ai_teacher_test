@@ -1,8 +1,9 @@
 <!-- app/views/your_view.html.erb -->
 
-<div id="overlay" class="overlay"></div>
+<div id="overlay" class="overlay home"></div>
 <div class="center-point"></div>
 <div id="circles"></div>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -111,7 +112,9 @@
 </script>
 
 <style>
-  .overlay {
+
+
+  .home {
     display: none;
     position: fixed;
     top: 0;
@@ -159,6 +162,18 @@
     opacity: 0;
     transition: opacity 0.1s ease;
   }
+
+  #cardContentModal {
+      z-index: 1100 !important; 
+  }
+
+  .card-content-question {
+    margin: 30px 10px 100px 10px;
+  }
+
+  .card-content-answer {
+    margin: 0 10px 30px 10px;
+  }
 </style>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
@@ -169,10 +184,23 @@
   </div>
 </div>
 
+<div id="cardContentModal" class="modal fade card-content" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-content" style="background-color: white;">
+      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll; background-color: white;">
+        <div class="card-content-question"></div>
+        <div class="card-content-answer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%= render 'app/camera' %>
 
 <%= render 'app/search' %>
 
 <%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %> 
 
-<%= render 'app/instagram' %>
+<%= render 'app/instagram', all_cards: @all_cards, user_questions: @user_questions, user_likes: @user_likes, user_bookmarks: @user_bookmarks %>
+
+<%= render 'app/write' %>

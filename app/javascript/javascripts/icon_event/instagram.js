@@ -11,7 +11,14 @@ document.addEventListener("turbolinks:load", function() {
     backdrop: 'true'
   });
 
-  // 検索アプリ起動処理
+  const cards = document.querySelectorAll('.cards .card');
+  const cardContentModalElement = document.getElementById('cardContentModal');
+  const cardContentModal = new Modal(cardContentModalElement, {
+    keyboard: true,
+    backdrop: 'true'
+  });
+
+  // インスタグラムアプリ起動処理
   instagramApp.addEventListener('click', async () => {
     const open = await fadeOutCirclesSequentially();
     if (open == true)
@@ -19,6 +26,24 @@ document.addEventListener("turbolinks:load", function() {
       const openEnd = await fadeInCirclesSequentially();
       if (openEnd) instagramModal.show();
     }
+  });
+
+  cards.forEach(card => {
+    card.addEventListener('click', function() {
+      console.log(cardContentModal);
+      if (cardContentModal._isShown !== true) {
+        const questionElement = card.querySelector(".card-body");
+        const questionContent = questionElement.textContent.trim();
+        const answerElement = card.querySelector(".card-answer");
+        const answerContent = answerElement.textContent.trim();
+        const question = cardContentModalElement.querySelector(".card-content-question");
+        const answer = cardContentModalElement.querySelector(".card-content-answer");
+        question.textContent = questionContent;
+        answer.textContent = answerContent;
+
+        cardContentModal.show();
+      }
+    });
   });
 
   // const circlesContainer = instagramModalElement.querySelector('.top-circles');
@@ -33,3 +58,7 @@ document.addEventListener("turbolinks:load", function() {
   //     }
   // });
 });
+
+function convertNewlines(text) {
+  return text.replace(/\n/g, '<br>');
+}

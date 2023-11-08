@@ -141,6 +141,54 @@ document.addEventListener("turbolinks:load", function() {
     });
     trimmingImageModal.show();
   });
+
+  // DOM取得
+  const writeButton = document.querySelector('.write-button');
+  const writeQuestionModalElement = document.querySelector('.writeQuestionModal');
+  const writeToCameraButton = writeQuestionModalElement.querySelector(".write-to-camera");
+  const writeSubmitButton = writeQuestionModalElement.querySelector(".write-submit");
+  const writeQuestionModal = new Modal(writeQuestionModalElement, {
+    keyboard: false,
+    backdrop: 'true'
+  });
+
+  // カメラアプリ起動処理
+  writeButton.addEventListener('click', async () => {
+    console.log(cameraModal._isShown);
+    if (cameraModal._isShown == true) 
+    {
+      cameraModal.hide();
+      cameraTrack.stop();
+      writeQuestionModal.show();
+      console.log("show write modal");
+    }
+  });
+  
+  writeToCameraButton.addEventListener('click', async () => {
+    if (writeQuestionModal._isShown == true) 
+    {
+      writeQuestionModal.hide();
+      cameraModal.show();
+      stream = await createStream(cameraPreview);
+      
+      cameraTrack = stream.getVideoTracks()[0];
+      imageCapture = new ImageCapture(cameraTrack);
+
+      closeCamera.addEventListener('click', async () => {
+        cameraModal.hide();
+        cameraTrack.stop();
+      });
+    }
+  });
+
+  writeSubmitButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const questionForm = writeQuestionModalElement.querySelector(".question-form-from-write");
+    console.log(questionForm);
+    writeQuestionModal.hide();
+    
+    submitFormAndShowModal(questionForm);
+  });
 });
 
 
@@ -185,7 +233,7 @@ function submitFormAndShowModal(formElement) {
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('エラーが発生しました。');
+    alert('エラーが発生しました。', error);
   });
 }
 

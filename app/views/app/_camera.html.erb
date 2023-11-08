@@ -7,50 +7,55 @@
         <video class="cameraPreview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
-        <div class="option-carousel" style="position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%);">
-          <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
-            <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
-              <%= option %>
-            </div>
-          <% end %>
-        </div>
         <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form", method: :post do |f| %>
-          <div style="position: absolute;">
+
+<div id="option-panel">
+<div id="option-panel-elements">
+
+
+
             <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
+            <div class="option-carousel">
+              <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
+                <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+                  <%= option %>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- 水平な直線とマージンを追加 -->
+            <hr style="margin: 10% 5%;">
+            
             <!-- 各オプション用の詳細要素 -->
-            <div class="all-option-elements" style="position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);">
+            <div class="all-option-elements">
               <!-- 質問オプション用のコード -->
               <div class="how-to-answer">
                 <div class="container">
-                  <div class="row answer-option-row">
                     <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
-                    <div class="answerOption m-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                    <div class="answerOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
                         <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
                         <%= option %>
                     </div>
-                    <% end %>
-                  </div>
+                    <% end %>   
                 </div>
               </div>
               <!-- 直訳・翻訳オプション用のコード -->
-              <div class="selectLanguage">
-                <div class="container">
-                  <div class="row align-items-center">
-                    <div class="col">
+              <div class="translate">
+                <div class="selectLanguage">
+                  <div class="container">
+                    <div>
                       <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
                     </div>
-                    <div class="col-auto">
-                      <button type="button" id="switchLanguage" class="btn btn-secondary">→</button>
+                    <div>
+                      <button type="button" id="switchLanguage" class="btn btn-light">→</button>
                     </div>
-                    <div class="col">
+                    <div>
                       <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="how-to-translate">
-                <div class="container">
-                  <div class="row translate-option-row">
+                <div class="how-to-translate">
+                  <div class="container">
                     <% ['翻訳', '直訳'].each_with_index do |option, index| %>
                     <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
                         <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
@@ -62,55 +67,66 @@
               </div>
               <!-- 要約オプション用のコード -->
               <div class="wrap-up-options">
-                <div class="d-flex justify-content-start">
-                  <div class="mt-1 mb-1 mr-1">
+                <div class="container">
+                  <div class="wrap-up-option">
                     <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
                   </div>
-                  <div class="m-1">
+                  <div class="wrap-up-option">
                     <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
                     <span id="character-count-text"></span>
                     <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count"} %>
                     <span id="word-count-text"></span>
                   </div>
-                  <div class="m-1">
+                  <div class="wrap-up-option">
                     <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- ボタン・入力内容 -->
-            <div class="mb-3" id="questionModalButton" style="display: none;">
-              <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
-                <%= f.text_area :questionInputForm,
-                                  maxlength: "1800",
-                                  class: "form-control mr-2 border-0 scrollable-textarea question-input-form",
-                                  required: true,
-                                  id: "questionInputForm",
-                                  placeholder: "問題や質問を入力してください。",
-                                  style: "resize: none; z-index: 10000; position: relative; display: none;" %>
-                <div>
-                  <button type="button" class="btn btn-primary photoButton border-0">写真</button>
-                  <%= f.submit "Submit", class: "btn btn-primary" %>
-                  <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
-                </div>
+
+
+
+</div>
+</div>
+<div class="circle-bg"></div>
+
+          <!-- ボタン・入力内容 -->
+          <div class="mb-3" id="questionModalButton" style="display: none;">
+            <div class="d-flex scrollable-container position-relative" style="overflow: scroll;">
+              <%= f.text_area :questionInputForm,
+                                maxlength: "1800",
+                                class: "form-control mr-2 border-0 scrollable-textarea question-input-form",
+                                id: "questionInputForm",
+                                placeholder: "問題や質問を入力してください。",
+                                style: "resize: none; z-index: 10000; position: relative; display: none;" %>
+              <div>
+                <button type="button" class="btn btn-primary photoButton border-0">写真</button>
+                <%= f.submit "Submit", class: "btn btn-primary" %>
+                <button type="button" class="btn btn-secondary" id="closeQuestionButton">閉じる</button>
               </div>
             </div>
           </div>
         <% end %>
-        <button type="button" id="closeCamera" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
-        <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">撮影</button>
-        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">入力</button>
-        <button type="button" id="imageInputButtonFromCamera" class="btn btn-primary imageInputButtonFromCamera" style="display: block; position: absolute; bottom: 200px; left: 75%; transform: translateX(-75%);">画像</button>
-        <!-- 隠れたinputタグ -->
-        <input type="file" id="imageInput" class="imageInput" style="display: none;" accept="image/*">
-        <script>
-          const imageInputButtonFromCamera = document.querySelector('.imageInputButtonFromCamera');
-          const inputButton = document.querySelector('.imageInput');
-          imageInputButtonFromCamera.addEventListener('click', function () {
-            inputButton.click();
-            return false;
-          });
-        </script>
+        <div class="button-elements">
+          <button type="button" id="closeCamera" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+          <button type="button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
+          <button type="button" id="writeButton" class="btn btn-primary write-button" style="display: block; position: absolute; bottom: 50px; left: 25%; transform: translateX(-25%);">入力</button>
+          <button type="button" id="imageInputButtonFromCamera" class="btn btn-primary imageInputButtonFromCamera" style="display: block; position: absolute; bottom: 50px; left: 75%; transform: translateX(-75%);">画像</button>
+          <!-- 隠れたinputタグ -->
+          <input type="file" id="imageInput" class="imageInput" style="display: none;" accept="image/*">
+          <script>
+            const imageInputButtonFromCamera = document.querySelector('.imageInputButtonFromCamera');
+            const inputButton = document.querySelector('.imageInput');
+            imageInputButtonFromCamera.addEventListener('click', function () {
+              inputButton.click();
+              return false;
+            });
+          </script>
+        </div>
+        <!-- 円 -->
+        <div class="circle-quarter">
+          <%= image_tag 'cog.png', alt: 'cog', class: 'gear' %>
+        </div>
       </div>
     </div>
   </div>
@@ -136,5 +152,294 @@
   </div>
 </div>
 
+<script>
+// ボタンがクリックされたら
+document.querySelector('.circle-quarter').addEventListener('click', function() {
+  this.classList.toggle('active'); // ボタン自身に activeクラスを付与し
+  document.getElementById('option-panel').classList.toggle('panelactive'); // ナビゲーションに panelactiveクラスを付与
+  document.querySelector('.circle-bg').classList.toggle('circleactive'); // 丸背景に circleactiveクラスを付与
+});
+
+</script>
+
 <style>
+
+  
+
+.option-carousel {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: calc(4 * 50px);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding: 50%;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;  // Chrome
+  }
+}
+
+.option-carousel .option {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  color: white;
+  background-color: transparent;
+}
+
+.option-carousel .option.active {
+  background: white;
+  color: black;
+}
+
+.how-to-answer .container {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  align-items: center;
+}
+
+.answerOption {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 30px;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  color: white;
+  background-color: transparent;
+}
+
+.answerOption.active {
+  background: white;
+  color: black;
+}
+
+.how-to-translate .container {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  align-items: center;
+}
+
+.selectLanguage .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* セレクトボックスの基本的なスタイル */
+.form-select {
+  appearance: none; /* デフォルトのブラウザスタイルをリセット */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  border: 1px solid #d1d1d1;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+/* セレクトボックスのドロップダウンリストの位置を調整 */
+.form-select option {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+/* セレクトボックスにホバーした時のスタイル */
+.form-select:hover {
+  border-color: #007BFF;
+  background-color: #e8e8e8;
+}
+
+/* セレクトボックスのアイコン (矢印) をカスタマイズ */
+.form-select::after {
+  content: "⌵"; /* 下向き矢印の文字を使用 */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #666;
+  pointer-events: none; /* クリックイベントを無効にする */
+}
+
+/* ボタンのスタイルを少し改善 */
+#switchLanguage {
+  border: none;
+  border-radius: 50px;
+  padding: 8px 15px;
+  margin: 0 10px;
+}
+
+.translateOption {
+  flex: 0 0 auto;
+  width: 200px;
+  height: 30px;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  color: black;
+  background-color: transparent;
+}
+
+.translateOption.active {
+  background: white;
+  color: black;
+}
+
+.wrap-up-options .container {
+  display: flex;
+  justify-content: center;
+  justify-content: space-around;
+}
+
+.wrap-up-option {
+  
+}
+
+/*========= ナビゲーションのためのCSS ===============*/
+
+.circle-quarter {
+  width: 20%; /* 半分の幅で円を形成するため */
+  height: 10%; /* 半分の高さで円を形成するため */
+  background-color: #999;
+  border-radius: 100% 0 0 0; /* 右下の四分の一円を形成するため */
+  position: absolute; /* 絶対位置 */
+  bottom: 0; /* 画面の一番下に配置 */
+  right: 0; /* 画面の一番右に配置 */
+  z-index: 999;
+}
+
+.gear {
+  width: 70%;
+  height: 70%;
+  position: absolute; /* 絶対位置 */
+  bottom: 0; /* 画面の一番下に配置 */
+  right: 0; /* 画面の一番右に配置 */
+}
+
+/* .op {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+#option-panel {
+    position: fixed; /* 画面に固定 */
+    overflow: hidden; 
+    /* max-height: 100vh; 画面の高さを超えないようにする */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+}
+
+/*アクティブになったエリア*/
+#option-panel.panelactive{
+    /*position:fixed;にし、z-indexの数値を大きくして前面へ*/
+    position:fixed;
+    z-index: 999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    box-sizing: border-box;   /* paddingを含む全体の幅をwidthで指定 */
+    display: flex;
+}
+
+/*丸の拡大*/
+.circle-bg{
+    position: fixed;
+  z-index:3;
+    /*丸の形*/
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #999;
+    /*丸のスタート位置と形状*/
+  transform: scale(0);/*scaleをはじめは0に*/
+  right:-50px;
+    bottom:-50px;
+    transition: all .6s;/*0.6秒かけてアニメーション*/
+}
+
+.circle-bg.circleactive{
+  transform: scale(30);/*クラスが付与されたらscaleを拡大*/
+}
+
+/*ナビゲーションの縦スクロール*/
+#option-panel-elements{
+    display: none; /*はじめは表示なし*/
+    z-index: 999; 
+    /* overflow: hidden; */
+    -webkit-overflow-scrolling: touch;
+    width: 100vw; /* 画面の幅に合わせる */
+}
+
+#option-panel.panelactive #option-panel-elements{
+     display: block; /*クラスが付与されたら出現*/
+}
+
+/* .all-option-elements {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+} */
+
+/*ナビゲーション*/
+#option-panel ul {
+  opacity: 0;/*はじめは透過0*/
+    z-index: 999;
+    width: 100%;
+    height: 100vh;
+}
+
+/*背景が出現後にナビゲーションを表示*/
+#option-panel.panelactive ul {
+    opacity:1;
+}
+
+/* 背景が出現後にナビゲーション li を表示※レイアウトによって調整してください。不必要なら削除*/
+#option-panel.panelactive ul li{
+animation-name:gnaviAnime;
+animation-duration:1s;
+animation-delay:.2s;/*0.2 秒遅らせて出現*/
+animation-fill-mode:forwards;
+opacity:0;
+}
+@keyframes gnaviAnime{
+0% {
+opacity: 0;
+}
+100% {
+opacity: 1;
+}
+}
 </style>

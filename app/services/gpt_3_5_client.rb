@@ -20,7 +20,7 @@ class Gpt35Client
 
     response = @api_client.chat(
       parameters: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4-1106-preview',
         messages: [
           system_message,
           user_message
@@ -31,7 +31,7 @@ class Gpt35Client
     )
 
     if response
-      content = response['choices'].first['message']['content'].strip if response
+      content = response['choices'][0]['message']['content'].strip if response
       puts "これがapiの返答内容#{response}"
       content
     else

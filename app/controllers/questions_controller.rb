@@ -20,9 +20,10 @@ class QuestionsController < ApplicationController
     question = params[:questionInputForm]
     puts "コントローラー側：#{question}"
     ai_answer = generate_ai_response(params)
-  
+    
     @question = Question.new(content: question)
     @question.build_answer(content: ai_answer)
+    puts "@question：#{@question}"
   
     if @question.save
       render json: { content: ai_answer }

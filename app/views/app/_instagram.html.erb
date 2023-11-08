@@ -1,3 +1,5 @@
+<!-- app/views/app/_instagram.html.erb -->
+
 <!-- インスタグラムモーダル -->
 <div class="modal fade instagramModal" id="instagram" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
@@ -6,40 +8,14 @@
         <button type="button" id="closeSearch" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
       </div>
       <div class="modal-body">
+        <% if user_signed_in? %>
         <div class="top-container">
-          <div class="add-btn">+</div>
           <div class="top-circles">
-              <!-- こちらに円を追加します -->
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
+              <!-- こちらに円を追加します -->  
+              <div class="circle1 circle" data-category="all"></div>
+              <div class="circle2 circle" data-category="user"></div>
+              <div class="circle3 circle" data-category="liked"></div>
+              <div class="circle4 circle" data-category="bookmarked"></div>
               <div class="circle"></div>
               <div class="circle"></div>
               <div class="circle"></div>
@@ -47,21 +23,76 @@
               <div class="circle"></div>
           </div>
         </div>
-        <div class="cards">
-            <!-- こちらにカードを追加します -->
-            <div class="card">
-                <div class="card-header">
-                    カードタイトル
+        <div class="cards-panel">
+          <div class="cards all-cards" id="all-cards" style="display: block;">
+              <!-- 全てのカード -->
+              <% all_cards.each do |card| %>
+                <div class="card">
+                    <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
+                    <div class="card-body">
+                        <%= card.content %>
+                    </div>
+                    <div class="like">
+                        ❤️
+                    </div>
                 </div>
-                <div class="card-body">
-                    カード内容
-                </div>
-                <div class="like">
-                    ❤️
-                </div>
-            </div>
-            <!-- 追加のカードも同様にこちらに -->
+              <% end %>
+          </div>
+
+            <% if user_questions.nil? %>
+              <div class="cards user-cards" id="user-cards" style="display:none;">
+                <!-- ユーザーのカード -->
+                <% user_questions.each do |card| %>
+                  <div class="card">
+                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
+                      <div class="card-body">
+                          <%= card.content %> <!-- 質問の内容を表示 -->
+                      </div>
+                      <div class="like">
+                          ❤️
+                      </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+            
+            <% if user_likes.nil? %>
+              <div class="cards user-liked-cards" id="user-liked-cards" style="display:none;">
+                <!-- ユーザーがいいねしたカード -->
+                <% user_likes.each do |card| %>
+                  <div class="card">
+                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
+                      <div class="card-body">
+                          <%= card.content %> <!-- 質問の内容を表示 -->
+                      </div>
+                      <div class="like">
+                          ❤️
+                      </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+            
+            <% if user_bookmarks.nil? %>
+              <div class="cards user-bookmarked-cards" id="user-bookmarked-cards" style="display:none;">
+                <!-- ユーザーが保存したカード -->
+                <% user_bookmarks.each do |card| %>
+                  <div class="card">
+                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
+                      <div class="card-body">
+                          <%= card.content %> <!-- 質問の内容を表示 -->
+                      </div>
+                      <div class="like">
+                          ❤️
+                      </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
         </div>
+        <% else %>
+          <%= render 'shared/auth_buttons', text: "自分がした質問や保存した質問を閲覧できます。" %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -71,7 +102,8 @@
 .top-container {
     display: flex;
     align-items: center;
-    justify-content: flex-start;  /* 追加: 子要素を左寄せ */
+    justify-content: center;  /* 追加: 子要素を左寄せ */
+    margin: 0 0 30px 0;
 }
 
 .top-circles {
@@ -93,7 +125,8 @@
     flex: 0 0 auto;
     width: 100px;
     height: 100px;
-    background-color: #ccc;
+    background-color: transparent;
+    border: 2px solid white;
     border-radius: 50%;
     margin-right: 10px;
     scroll-snap-align: top;
@@ -115,29 +148,93 @@
     text-align: center;
 }
 
-.cards .card {
-    margin-top: 20px;
-    position: relative;
+.cards-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
 }
 
 .cards .like {
     position: absolute;
     bottom: 10px;
     right: 10px;
+    color: inherit; /* like の色をcardの文字色に合わせます */
+}
+
+/* デフォルトのカードスタイル */
+.cards .card {
+  height: 500px;
+  width: 500px;
+  background-color: transparent; /* 既定の背景色 */
+  color: white;
+  transition: background-color 0.3s ease; /* 背景色の変更を滑らかに */
+}
+
+/* カードにホバー（PC）またはタッチ（スマホ）したときのスタイル */
+.cards .card:hover, 
+.cards .card:active {
+    background-color: white; /* 背景を透明に */
+    color: black;
+}
+
+.card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 </style>
 
 <script>
-const circlesContainer = document.querySelector('.top-circles');
-const circles = document.querySelectorAll('.circle');
+document.addEventListener('turbolinks:load', () => {
+  const circlesContainer = document.querySelector('.top-circles');
+  const allCardsElement = document.getElementById('all-cards');
+  const userCardsElement = document.getElementById('user-cards');
+  const likedCardsElement = document.getElementById('user-liked-cards');
+  const bookmarkedCardsElement = document.getElementById('user-bookmarked-cards');
+  const circles = document.querySelectorAll('.circle');
 
-circlesContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('circle') && !e.target.classList.contains('add-btn')) {
-        circles.forEach(circle => {
-            circle.style.backgroundColor = "#ccc";
-        });
-        e.target.style.backgroundColor = "#007BFF";
-    }
+  // クリックされた円によって表示するカードを切り替える
+  circles.forEach(circle => {
+    circle.addEventListener('click', (e) => {
+      // Reset the background color for all circles
+      circles.forEach(c => {
+        c.style.backgroundColor = 'transparent';
+        c.style.color = 'white';
+      });
+
+      // Change the background color of the clicked circle
+      e.target.style.backgroundColor = 'white';
+      e.target.style.color = 'black';
+
+      // Hide all cards
+      [allCardsElement, userCardsElement, likedCardsElement, bookmarkedCardsElement].forEach(el => {
+        if (el) {
+          el.style.display = 'none';
+        }
+      });
+
+      // Show the corresponding cards
+      switch (e.target.dataset.category) {
+        case 'all':
+          if (allCardsElement) allCardsElement.style.display = 'block';
+          break;
+        case 'user':
+          if (userCardsElement) userCardsElement.style.display = 'block';
+          break;
+        case 'liked':
+          if (likedCardsElement) likedCardsElement.style.display = 'block';
+          break;
+        case 'bookmarked':
+          if (bookmarkedCardsElement) bookmarkedCardsElement.style.display = 'block';
+          break;
+      }
+    });
+  });
+
+  // ページがロードされたら全てのカードを表示
+  if (allCardsElement) allCardsElement.style.display = 'block';
 });
+
 </script>

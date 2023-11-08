@@ -1,0 +1,93 @@
+// app/javascript/stylesheets/devise.scss
+
+/* 背景を覆う薄暗いレイヤーのスタイルを定義します */
+.registrations-bg, .sessions-bg {
+  position: fixed;  /* 画面全体に固定 */
+  top: 0;
+  left: 0;
+  width: 100%;  /* 画面全幅 */
+  height: 100%;  /* 画面全高 */
+  background-color: rgba(0, 0, 0, 0.7);  /* 背景色（黒）を半透明に */
+  display: flex;
+  justify-content: center;  /* 子要素を中央寄せ */
+  align-items: center;  /* 子要素を上下中央揃え */
+  z-index: 10;  /* z-indexを高くして他の要素より前面に */
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #333;  /* 背景色 */
+  color: white;  /* テキスト色 */
+  background-color: transparent;  /* 透明度を追加 */
+  padding: 20px;
+  border-radius: 10px;  /* 角を丸める */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* シャドウを追加 */
+}
+
+.field {
+  margin-bottom: 20px;
+  width: 300px;
+}
+
+.field input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+}
+
+.field label {
+  margin-bottom: 5px;
+}
+
+.actions {
+  text-align: center;
+}
+
+.actions input[type="submit"] {
+  padding: 10px 20px;
+}
+
+/* Remember meのスタイル修正 */
+.remember-field {
+  display: flex;  
+  align-items: center;
+  justify-content: flex-start;  // 子要素を左寄せに
+  gap: 5px;  // チェックボックスとラベルの間のスペースを縮める
+}
+
+.remember-field label {
+  white-space: nowrap;  // テキストの途中での折り返しを防ぐ
+  margin: 0;  // マージンをリセット
+}
+
+.remember-field input[type="checkbox"] {
+  width: auto;
+}
+
+#error_explanation {
+  width: 300px;  // フィールドの幅と同じ
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #f44336;  // 赤色の境界線
+  background-color: rgba(244, 67, 54, 0.1);  // 軽い赤色の背景
+  border-radius: 5px;
+}
+
+#error_explanation ul {
+  padding: 0;
+  margin: 0;
+}
+
+#error_explanation li {
+  font-size: 14px;
+  color: #f44336;  // エラーテキストの赤色
+  list-style: none;  // リストマークを削除
+}

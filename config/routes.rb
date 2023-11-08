@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'users/show'
   devise_for :users
+  devise_scope :users do
+    get '/users', to: redirect("/users/sign_up")
+  end
+  
   resources :questions do
     collection do
       post :get_answer

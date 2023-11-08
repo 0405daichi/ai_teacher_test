@@ -1,0 +1,50 @@
+<!-- app/views/shared/_auth_buttons.html.erb -->
+
+<div class="auth-buttons-container">
+    <div class="auth-text">
+        <p><%= text %></p>
+    </div>
+    
+    <div class="auth-buttons">
+      <%= link_to "ログイン", new_user_session_path, class: "auth-button login-button btn btn-outline-light" %>
+      <%= link_to "ユーザー登録", new_user_registration_path, class: "auth-button signup-button btn btn-outline-light" %>
+    </div>
+
+</div>
+
+<style>
+.auth-buttons-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.auth-text {
+    margin-bottom: 10px;
+    color: white;
+}
+
+.auth-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.auth-button {
+    display: inline-block;
+    width: 130px;  /* ボタンの幅を一定にする */
+    padding: 10px 0;  /* 左右のパディングを削除して、テキストが中央に配置されるように */
+    margin-top: 5px;
+    margin-right: 10px;  /* ボタン同士の間隔を追加 */
+
+    &:last-child {
+      margin-right: 0;  /* 最後のボタンの右側のマージンを削除 */
+    }
+}
+</style>
+
+<script>
+</script>
