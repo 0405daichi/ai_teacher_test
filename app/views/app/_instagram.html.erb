@@ -11,16 +11,16 @@
         <% if user_signed_in? %>
         <div class="top-container">
           <div class="top-circles">
-              <!-- こちらに円を追加します -->  
-              <div class="circle1 circle" data-category="all"></div>
-              <div class="circle2 circle" data-category="user"></div>
-              <div class="circle3 circle" data-category="liked"></div>
-              <div class="circle4 circle" data-category="bookmarked"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
-              <div class="circle"></div>
+            <!-- こちらに円を追加します -->  
+            <div class="circle1 circle" data-category="all"></div>
+            <div class="circle2 circle" data-category="user"></div>
+            <div class="circle3 circle" data-category="liked"></div>
+            <div class="circle4 circle" data-category="bookmarked"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
           </div>
         </div>
         <div class="cards-panel">
@@ -28,12 +28,21 @@
               <!-- 全てのカード -->
               <% all_cards.each do |card| %>
                 <div class="card">
+                    <div class="card-id" style="display:none;"><%= card.id %></div>
                     <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
                     <div class="card-body">
                         <%= card.content %>
                     </div>
                     <div class="like">
-                        ❤️
+                      <% if !card.likes.find_by(user: current_user) %>
+                        <%= link_to like_question_path(card.id), method: :post, remote: true, data: {"turbolinks" => false} do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-2.5 -2.5 139.99 139.99" height="139.99" width="139.99"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M67.53453278571429 119.39479814285716 14.749875192857145 71.58297930714286c-28.687399850000002 -28.687399850000002 13.482994042857143 -83.76708028571429 52.78465759285715 -39.20610991428571 39.30137428571428 -44.560970371428574 81.28133585714286 10.710010178571428 52.78494685714286 39.20610991428571L67.53453278571429 119.39479814285716Z" stroke-width="2"></path></g></svg>
+                        <% end %>
+                      <% else %>
+                        <%= link_to unlike_question_path(card.id), method: :delete, remote: true, data: {"turbolinks" => false} do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-2.5 -2.5 139.99 139.99" height="139.99" width="139.99"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M67.53453278571429 119.39479814285716 14.749875192857145 71.58297930714286c-28.687399850000002 -28.687399850000002 13.482994042857143 -83.76708028571429 52.78465759285715 -39.20610991428571 39.30137428571428 -44.560970371428574 81.28133585714286 10.710010178571428 52.78494685714286 39.20610991428571L67.53453278571429 119.39479814285716Z" stroke-width="0"></path></g></svg>
+                        <% end %>
+                      <% end %>
                     </div>
                 </div>
               <% end %>
@@ -182,6 +191,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.heart {
+  fill: red;
 }
 
 </style>

@@ -80,6 +80,7 @@ class QuestionsController < ApplicationController
 
   def generate_ai_response(params)
     api_key = ENV['OPENAI_API_KEY']
+    puts "アクセストークン：#{ENV['OPENAI_API_KEY']}"
     gpt_client = Gpt35Client.new(api_key)
     response = gpt_client.generate_answer(params)
     response

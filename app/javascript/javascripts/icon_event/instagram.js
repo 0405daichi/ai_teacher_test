@@ -32,12 +32,16 @@ document.addEventListener("turbolinks:load", function() {
     card.addEventListener('click', function() {
       console.log(cardContentModal);
       if (cardContentModal._isShown !== true) {
+        const questionIdElement = card.querySelector(".card-id");
+        const questionId = questionIdElement.textContent.trim();
         const questionElement = card.querySelector(".card-body");
         const questionContent = questionElement.textContent.trim();
         const answerElement = card.querySelector(".card-answer");
         const answerContent = answerElement.textContent.trim();
+        const selectedCardId = cardContentModalElement.querySelector(".selected-card-id");
         const question = cardContentModalElement.querySelector(".card-content-question");
         const answer = cardContentModalElement.querySelector(".card-content-answer");
+        selectedCardId.textContent = questionId;
         question.textContent = questionContent;
         answer.textContent = answerContent;
 
@@ -45,18 +49,6 @@ document.addEventListener("turbolinks:load", function() {
       }
     });
   });
-
-  // const circlesContainer = instagramModalElement.querySelector('.top-circles');
-
-  // circlesContainer.addEventListener('click', (e) => {
-  //     if (e.target.classList.contains('circle') && !e.target.classList.contains('add-btn')) {
-  //         circlesContainer.scrollBy({ 
-  //             top: 0, 
-  //             left: e.target.offsetWidth + 10, 
-  //             behavior: 'smooth' 
-  //         });
-  //     }
-  // });
 });
 
 function convertNewlines(text) {
