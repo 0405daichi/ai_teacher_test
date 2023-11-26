@@ -15,14 +15,14 @@ Rails.application.routes.draw do
       post 'like', to: 'likes#create', as: 'like' # 質問に対するいいねのルート
       delete 'unlike', to: 'likes#destroy', as: 'unlike' # いいねの取り消しのルート
       post 'save', to: 'saved_questions#create', as: 'save' # 質問の保存のルート
-    end
-  end
-
-  resources :saved_questions, only: [:destroy] do
-    member do
       delete 'unsave', to: 'saved_questions#destroy', as: 'unsave' # 保存の取り消しのルート
     end
   end
+
+  # resources :saved_questions, only: [:destroy] do
+  #   member do
+  #   end
+  # end
 
   resources :users, only: [:show] do
     member do

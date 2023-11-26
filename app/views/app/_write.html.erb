@@ -6,16 +6,26 @@
         <button type="button" id="closeWrite" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
         <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form-from-write", method: :post do |f| %>
         <!-- ボタン・入力内容 -->
-        <div class="textarea-div">
-        <%= f.text_area :questionInputForm,
-                          class: "form-control mr-2 border-0 question-input-form",
-                          id: "questionInputForm",
-                          placeholder: "問題や質問を入力してください。",
-                          style: "resize: none; z-index: 10000; position: fixed; margin-top: 30px; max-height: 90%; max-width: 90%;" %>
-        </div>
       </div>
       <div class="modal-body">
-<div class="option-panel" style="margin-top: 50px;">
+        <div class="textarea-div">
+          <%= f.text_area :questionInputForm,
+                            class: "form-control mr-2 border-0 question-input-form",
+                            id: "questionInputForm",
+                            placeholder: "問題や質問を入力してください。",
+                            style: "resize: none; z-index: 10000; position: fixed; max-height: 90%; max-width: 90%;" %>
+        </div>
+        <div class="question-input-items">
+          <div class="question-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="camera-1--photos-picture-camera-photography-photo-pictures"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 20.71428571428571c0 -1.0987685714285713 -0.4366571428571428 -2.1525042857142855 -1.213442857142857 -2.929455714285714C53.93834285714285 17.00792 52.88439999999999 16.57142857142857 51.78571428571428 16.57142857142857h-8.285714285714285L37.28571428571428 8.285714285714285H20.71428571428571L14.499999999999998 16.57142857142857h-8.285714285714285c-1.0987685714285713 0 -2.1525042857142855 0.4364914285714285 -2.9294432857142856 1.2134014285714283C2.5079075714285715 18.561781428571425 2.071428571428571 19.61551714285714 2.071428571428571 20.71428571428571v24.857142857142854c0 1.098685714285714 0.43647899999999995 2.152628571428571 1.213413857142857 2.929414285714285C4.061781428571428 49.277628571428565 5.115517142857142 49.71428571428571 6.2142857142857135 49.71428571428571h45.57142857142857c1.098685714285714 0 2.152628571428571 -0.4366571428571428 2.929414285714285 -1.213442857142857S55.92857142857142 46.67011428571428 55.92857142857142 45.57142857142857V20.71428571428571Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M28.999999999999996 40.39285714285714c5.148079999999999 0 9.32142857142857 -4.173348571428571 9.32142857142857 -9.32142857142857S34.14807999999999 21.749999999999996 28.999999999999996 21.749999999999996 19.678571428571427 25.92334857142857 19.678571428571427 31.07142857142857 23.85192 40.39285714285714 28.999999999999996 40.39285714285714Z" stroke-width="2"></path></g></svg>
+          </div>
+          <div class="question-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
+            <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
+          </div>
+        </div>
+        <hr style="margin: 30px 30px;">
+<div class="option-panel" style="margin-top: 5px;">
           <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
           <div class="option-carousel">
             <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
@@ -26,7 +36,7 @@
           </div>
 
           <!-- 水平な直線とマージンを追加 -->
-          <hr style="margin: 5% 5%;">
+          <hr style="margin: 30px 30px;">
           
           <!-- 各オプション用の詳細要素 -->
           <div class="all-option-elements">
@@ -88,7 +98,7 @@
 </div>
         
       </div>
-      <div class="modal-bottom">
+      <div class="modal-footer">
         <div class="write-bottom-buttons d-flex justify-content-end">
           <div class="write-to-camera m-1">
             <button type="button" class="btn btn-outline-light">←</button>
@@ -152,8 +162,48 @@
             </script>
 
 <style>
-/* .write-bottom-buttons {
+.question-input-items {
   display: flex;
-  justify-content: center;
-} */
+  justify-content: end;
+  margin-top: 45px;
+}
+
+.question-circle {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 50%;
+    margin-right: 10px;
+    scroll-snap-align: top;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    position: relative; /* 追加 */
+    border: solid 1px white;
+}
+
+.question-circle svg {
+    position: absolute; /* 絶対位置指定 */
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+    width: 60%; /* SVGのサイズ（必要に応じて調整） */
+    height: 60%; /* SVGのサイズ（必要に応じて調整） */
+}
+
+.question-circle:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+}
+
+/* 通常状態でのSVGの線の色 */
+.question-circle svg path {
+    stroke: white; /* デフォルトは白色 */
+    transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+}
+
+/* マウスが乗ったときのSVGの線の色 */
+.question-circle:hover svg path {
+    stroke: black; /* マウスが乗ったときは黒色 */
+}
 </style>

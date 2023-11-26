@@ -1,13 +1,13 @@
 <!-- app/views/your_view.html.erb -->
 
 <div id="overlay" class="overlay home"></div>
-<div class="center-point"></div>
+<div class="center-point"><%= image_tag 'logo-kids.png' %></div>
 <div id="circles"></div>
 
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const numCircles = 8;
+    const numCircles = 5;
     const circleContainer = document.getElementById('circles');
     const radius = 100;
     const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
@@ -16,12 +16,11 @@
     const imageDetails = <%= raw(
       [
         {className: 'user-icon s-icon', path: asset_path('single-neutral.png'), alt: 'user'},
-        {className: 'folder-icon s-icon', path: asset_path('folder.png'), alt: 'folder'},
-        {className: 'search-icon s-icon', path: asset_path('search-1.png'), alt: 'search'},
+        
         {className: 'camera-icon s-icon', path: asset_path('camera-settings-focus.png'), alt: 'camera', id: 'cameraApp1'},
-        {className: 'instagram-icon small-icon', path: asset_path('instagram-logo.png'), alt: 'instagram'},
+        {className: 'instagram-icon small-icon', path: asset_path('search-1.png'), alt: 'instagram'},
         {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
-        {className: 'x-icon small-icon', path: asset_path('x-logo-twitter-logo.png'), alt: 'x'},
+        
         {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
       ].to_json
     ) %>;
@@ -125,16 +124,36 @@
   }
 
   .center-point {
-    display: none;
+    display: block;
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 10px;
-    height: 10px;
-    background-color: black;
+    width: 150px;
+    height: 150px;
+    background-color: white;
     border-radius: 50%;
     z-index: 1;
     transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center; /* 水平方向の中央寄せ */
+    align-items: center; /* 垂直方向の中央寄せ */
+    transform: translate(-50%, -50%) rotate(0deg);
+    animation: rotateInfinite 50s linear infinite; /* 10秒で1回転、無限に繰り返す */
+  }
+
+  @keyframes rotateInfinite {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(-360deg);
+    }
+  }
+
+  .center-point img {
+    max-width: 100%; /* 画像がコンテナの幅より大きくならないようにする */
+    max-height: 100%; /* 画像がコンテナの高さより大きくならないようにする */
+    object-fit: contain; /* 画像のアスペクト比を保持しつつ、コンテナに収める */
   }
 
   .rotating-circle {
@@ -174,6 +193,12 @@
   .card-content-answer {
     margin: 0 10px 30px 10px;
   }
+
+  .card-content .modal-footer {
+    display: flex;
+    justify-content: end;
+    height: 40px;
+  }
 </style>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
@@ -189,9 +214,14 @@
     <div class="modal-content" style="background-color: white;">
       <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll; background-color: white;">
         <div class="card-content-question"></div>
+        <hr style="margin: 10% 5%;">
         <div class="card-content-answer"></div>
       </div>
-      <div class="modal-bottom">
+      <div class="modal-footer" style="height: auto;">
+        <div class="like"></div>
+        <div class="like-count"></div>
+        <div class="bookmark"></div>
+        <div class="bookmark-count"></div>
       </div>
     </div>
   </div>

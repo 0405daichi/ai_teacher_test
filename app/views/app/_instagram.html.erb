@@ -7,115 +7,236 @@
       <div class="modal-header">
         <button type="button" id="closeSearch" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body cards-panel-modal-body">
         <% if user_signed_in? %>
-        <div class="top-container">
-          <div class="top-circles">
-            <!-- こちらに円を追加します -->  
-            <div class="circle1 circle" data-category="all"></div>
-            <div class="circle2 circle" data-category="user"></div>
-            <div class="circle3 circle" data-category="liked"></div>
-            <div class="circle4 circle" data-category="bookmarked"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-          </div>
-        </div>
-        <div class="cards-panel">
-          <div class="cards all-cards" id="all-cards" style="display: block;">
-              <!-- 全てのカード -->
+          <div class="cards-panel">
+            <!-- 全てのカード -->
+            <div class="cards all-cards" id="all-cards" style="display: block;">
               <% all_cards.each do |card| %>
-                <div class="card">
+                <div class="card" data-card-id="<%= card.id %>">
+                  <div class="card-id" style="display:none;"><%= card.id %></div>
+                  <div class="card-body">
+                      <%= card.content %>
+                  </div>
+                  <div class="card-bottom">
+                    <div class="like">
+                      <% if !card.likes.find_by(user: current_user) %>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                      <% else %>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                      <% end %>
+                    </div>
+                    <div class="like-count"><%= card.likes.count %></div>
+                    <div class="bookmark">
+                      <% if !card.bookmarks.find_by(user: current_user) %>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                      <% else %>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                      <% end %>
+                    </div>
+                    <div class="bookmark-count"><%= card.bookmarks.count %></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- ユーザーのカード -->
+            <% unless user_questions.empty? %>
+              <div class="cards user-cards" id="user-cards">
+                <% user_questions.each do |card| %>
+                  <div class="card" data-card-id="<%= card.id %>">
                     <div class="card-id" style="display:none;"><%= card.id %></div>
-                    <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
                     <div class="card-body">
                         <%= card.content %>
                     </div>
-                    <div class="like">
-                      <% if !card.likes.find_by(user: current_user) %>
-                        <%= link_to like_question_path(card.id), method: :post, remote: true, data: {"turbolinks" => false} do %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-2.5 -2.5 139.99 139.99" height="139.99" width="139.99"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M67.53453278571429 119.39479814285716 14.749875192857145 71.58297930714286c-28.687399850000002 -28.687399850000002 13.482994042857143 -83.76708028571429 52.78465759285715 -39.20610991428571 39.30137428571428 -44.560970371428574 81.28133585714286 10.710010178571428 52.78494685714286 39.20610991428571L67.53453278571429 119.39479814285716Z" stroke-width="2"></path></g></svg>
+                    <div class="card-bottom">
+                      <div class="like">
+                        <% if !card.likes.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
                         <% end %>
-                      <% else %>
-                        <%= link_to unlike_question_path(card.id), method: :delete, remote: true, data: {"turbolinks" => false} do %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-2.5 -2.5 139.99 139.99" height="139.99" width="139.99"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M67.53453278571429 119.39479814285716 14.749875192857145 71.58297930714286c-28.687399850000002 -28.687399850000002 13.482994042857143 -83.76708028571429 52.78465759285715 -39.20610991428571 39.30137428571428 -44.560970371428574 81.28133585714286 10.710010178571428 52.78494685714286 39.20610991428571L67.53453278571429 119.39479814285716Z" stroke-width="0"></path></g></svg>
+                      </div>
+                      <div class="like-count"><%= card.likes.count %></div>
+                      <div class="bookmark">
+                        <% if !card.bookmarks.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
                         <% end %>
-                      <% end %>
+                      </div>
+                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
                     </div>
-                </div>
-              <% end %>
-          </div>
-
-            <% if user_questions.nil? %>
-              <div class="cards user-cards" id="user-cards" style="display:none;">
-                <!-- ユーザーのカード -->
-                <% user_questions.each do |card| %>
-                  <div class="card">
-                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
-                      <div class="card-body">
-                          <%= card.content %> <!-- 質問の内容を表示 -->
-                      </div>
-                      <div class="like">
-                          ❤️
-                      </div>
                   </div>
                 <% end %>
               </div>
             <% end %>
-            
-            <% if user_likes.nil? %>
-              <div class="cards user-liked-cards" id="user-liked-cards" style="display:none;">
-                <!-- ユーザーがいいねしたカード -->
+              
+            <!-- ユーザーがいいねしたカード -->
+            <% unless user_likes.empty? %>
+              <div class="cards user-liked-cards" id="user-liked-cards">
                 <% user_likes.each do |card| %>
-                  <div class="card">
-                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
-                      <div class="card-body">
-                          <%= card.content %> <!-- 質問の内容を表示 -->
-                      </div>
+                  <div class="card" data-card-id="<%= card.id %>">
+                    <div class="card-id" style="display:none;"><%= card.id %></div>
+                    <div class="card-body">
+                        <%= card.content %> <!-- 質問の内容を表示 -->
+                    </div>
+                    <div class="card-bottom">
                       <div class="like">
-                          ❤️
+                        <% if !card.likes.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                        <% end %>
                       </div>
+                      <div class="like-count"><%= card.likes.count %></div>
+                      <div class="bookmark">
+                        <% if !card.bookmarks.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                        <% end %>
+                      </div>
+                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
+                    </div>
                   </div>
                 <% end %>
               </div>
             <% end %>
-            
-            <% if user_bookmarks.nil? %>
-              <div class="cards user-bookmarked-cards" id="user-bookmarked-cards" style="display:none;">
-                <!-- ユーザーが保存したカード -->
+              
+            <!-- ユーザーが保存したカード -->
+            <% unless user_bookmarks.empty? %>
+              <div class="cards user-bookmarked-cards" id="user-bookmarked-cards">
                 <% user_bookmarks.each do |card| %>
-                  <div class="card">
-                      <div class="card-answer" style="display:none;"><%= card.answer.content %></div>
-                      <div class="card-body">
-                          <%= card.content %> <!-- 質問の内容を表示 -->
-                      </div>
-                      <div class="like">
-                          ❤️
-                      </div>
+                  <div class="card" data-card-id="<%= card.id %>">
+                    <div class="card-id" style="display:none;"><%= card.id %></div>
+                    <div class="card-body">
+                      <%= card.content %> <!-- 質問の内容を表示 -->
+                    </div>
+                    <div class="like">
+                        ❤️
+                    </div>
                   </div>
                 <% end %>
               </div>
             <% end %>
-        </div>
+
+            <!-- カード検索 -->
+            <div class="cards user-search-cards" id="user-search-cards">
+              <%= form_with url: search_questions_path, method: :get, class: 'search-form' do |form| %>
+                <%= form.text_area :query, id: 'searchQuery', placeholder: '質問を入力して下さい。', class: 'search-textarea' %>
+              <% end %>
+              <div class="search-results"></div>
+
+                <div class="circle camera-circle input-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="camera-1--photos-picture-camera-photography-photo-pictures"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 20.71428571428571c0 -1.0987685714285713 -0.4366571428571428 -2.1525042857142855 -1.213442857142857 -2.929455714285714C53.93834285714285 17.00792 52.88439999999999 16.57142857142857 51.78571428571428 16.57142857142857h-8.285714285714285L37.28571428571428 8.285714285714285H20.71428571428571L14.499999999999998 16.57142857142857h-8.285714285714285c-1.0987685714285713 0 -2.1525042857142855 0.4364914285714285 -2.9294432857142856 1.2134014285714283C2.5079075714285715 18.561781428571425 2.071428571428571 19.61551714285714 2.071428571428571 20.71428571428571v24.857142857142854c0 1.098685714285714 0.43647899999999995 2.152628571428571 1.213413857142857 2.929414285714285C4.061781428571428 49.277628571428565 5.115517142857142 49.71428571428571 6.2142857142857135 49.71428571428571h45.57142857142857c1.098685714285714 0 2.152628571428571 -0.4366571428571428 2.929414285714285 -1.213442857142857S55.92857142857142 46.67011428571428 55.92857142857142 45.57142857142857V20.71428571428571Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M28.999999999999996 40.39285714285714c5.148079999999999 0 9.32142857142857 -4.173348571428571 9.32142857142857 -9.32142857142857S34.14807999999999 21.749999999999996 28.999999999999996 21.749999999999996 19.678571428571427 25.92334857142857 19.678571428571427 31.07142857142857 23.85192 40.39285714285714 28.999999999999996 40.39285714285714Z" stroke-width="2"></path></g></svg>
+                </div>
+                <div class="circle image-circle input-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
+                  <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
+                </div>
+
+            </div>
+          </div>
         <% else %>
           <%= render 'shared/auth_buttons', text: "自分がした質問や保存した質問を閲覧できます。" %>
         <% end %>
+      </div>
+      <div class="modal-footer">
+        <div class="bottom-container">
+          <div class="bottom-circles">
+            <!-- こちらに円を追加します -->  
+            <div class="circle1 circle option-circle" data-category="all">
+              <svg data-category="all" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.43 -1.43 60 60" height="60" width="60"><g id="home-4--home-house-roof-shelter"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M2.0407142857142855 32.65142857142857 28.569999999999997 6.122142857142856 55.099285714285706 32.65142857142857" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="m10.203571428571427 24.488571428571426 0 26.529285714285713h36.73285714285714V24.488571428571426" stroke-width="2"></path></g></svg>
+            </div>
+            <div class="circle2 circle option-circle" data-category="user">
+              <svg data-category="user" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.43 -1.43 60 60" height="60" width="60"><g id="user-circle-single--circle-geometric-human-person-single-user"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M28.569999999999997 32.65142857142857c5.6352692428571425 0 10.203571428571427 -4.568302185714285 10.203571428571427 -10.203571428571427S34.20526924285714 12.244285714285713 28.569999999999997 12.244285714285713 18.36642857142857 16.8125879 18.36642857142857 22.44785714285714 22.934730757142855 32.65142857142857 28.569999999999997 32.65142857142857Z" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M11.14221837142857 48.568999999999996c1.8212966857142856 -2.9896464285714286 4.381046242857142 -5.4605432857142855 7.433138528571428 -7.1747432857142845 3.0520922857142856 -1.7146897714285712 6.493879371428571 -2.615216171428571 9.99456147142857 -2.615216171428571 3.5006820999999997 0 6.942469185714285 0.9005264 9.99456147142857 2.615216171428571 3.0522147285714283 1.7141999999999997 5.611678585714285 4.185096857142857 7.4332201571428556 7.1747432857142845" stroke-width="2"></path><path id="Vector_3" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M28.569999999999997 55.099285714285706c14.651920428571428 0 26.529285714285713 -11.877365285714284 26.529285714285713 -26.529285714285713C55.099285714285706 13.91828364285714 43.22192042857142 2.0407142857142855 28.569999999999997 2.0407142857142855 13.91828364285714 2.0407142857142855 2.0407142857142855 13.91828364285714 2.0407142857142855 28.569999999999997c0 14.651920428571428 11.877569357142855 26.529285714285713 26.529285714285713 26.529285714285713Z" stroke-width="2"></path></g></svg>
+            </div>
+            <div class="circle3 circle option-circle" data-category="user-liked">
+              <svg data-category="user-liked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="60" width="60"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1.5"></path></g></svg>
+            </div>
+            <div class="circle4 circle option-circle" data-category="user-bookmarked">
+              <svg data-category="user-bookmarked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="60" width="60"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1.5"></path></g></svg>
+            </div>
+            <div class="circle5 circle option-circle search-circle" data-category="user-search">
+              <svg data-category="user-search" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="magnifying-glass--glass-search-magnifying"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M24.857142857142854 47.64285714285714c12.58421857142857 0 22.785714285714285 -10.201495714285713 22.785714285714285 -22.785714285714285S37.441361428571426 2.071428571428571 24.857142857142854 2.071428571428571 2.071428571428571 12.272924285714284 2.071428571428571 24.857142857142854s10.201495714285713 22.785714285714285 22.785714285714285 22.785714285714285Z" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 55.92857142857142 41.42857142857142 41.42857142857142" stroke-width="2"></path></g></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade search-camera-modal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
+        <!-- カメラプレビュー表示エリア -->
+        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="button-elements">
+          <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
+          <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 画像トリミングモーダル -->
+<div class="modal fade trimming-image-modal search-trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh; background-color: white;">
+        <!-- 写真プレビュー表示エリア -->
+        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <!-- ボタンの位置を右上に調整 -->
+        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+        <!-- ここで撮影ボタンの位置を調整 -->
+        <button type="button" class="btn btn-primary search-write-out-image" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">決定</button>
+        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">←</button>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-.top-container {
+.search-results {
+  margin-top: 80px;
+}
+/* .search-items {
+  position: fixed;
+  bottom: 150px;
+  right: 30px;
+} */
+.search-textarea {
+  position: fixed;
+  background-color: transparent; /* 背景を透明に */
+  border: 1px solid white; /* 境界線を削除 */
+  outline: none; /* フォーカス時のアウトラインを削除 */
+  box-shadow: none; /* 影を削除 */
+  border-radius: 10px;
+  resize: none;
+  z-index: 10000;
+  max-height: 700px;
+  left: 80px;
+  right: 80px;
+}
+.search-textarea::placeholder {
+  color: white;
+}
+.bottom-container {
     display: flex;
     align-items: center;
     justify-content: center;  /* 追加: 子要素を左寄せ */
-    margin: 0 0 30px 0;
+    /* margin: 0 0 30px 0; */
 }
 
-.top-circles {
+.bottom-circles {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -135,13 +256,39 @@
     width: 100px;
     height: 100px;
     background-color: transparent;
-    border: 2px solid white;
     border-radius: 50%;
     margin-right: 10px;
     scroll-snap-align: top;
     transition: background-color 0.3s ease;
     cursor: pointer;
+    position: relative; /* 追加 */
 }
+
+.circle svg {
+    position: absolute; /* 絶対位置指定 */
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+    width: 60%; /* SVGのサイズ（必要に応じて調整） */
+    height: 60%; /* SVGのサイズ（必要に応じて調整） */
+}
+
+.circle:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+}
+
+/* 通常状態でのSVGの線の色 */
+.circle svg path {
+    stroke: white; /* デフォルトは白色 */
+    transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+}
+
+/* マウスが乗ったときのSVGの線の色 */
+.circle:hover svg path {
+    stroke: black; /* マウスが乗ったときは黒色 */
+}
+
 
 .add-btn {
     flex: 0 0 auto;
@@ -164,23 +311,18 @@
   flex-flow: column;
 }
 
-.cards .like {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    color: inherit; /* like の色をcardの文字色に合わせます */
-}
-
 /* デフォルトのカードスタイル */
 .cards .card {
-  height: 500px;
-  width: 500px;
+  height: 300px;
+  width: 600px;
   background-color: transparent; /* 既定の背景色 */
   color: white;
   transition: background-color 0.3s ease; /* 背景色の変更を滑らかに */
+  border: 1px solid white;
+  border-radius: 50px;
 }
 
-/* カードにホバー（PC）またはタッチ（スマホ）したときのスタイル */
+/* カードにホバー（PC）またはタッチ（スマホ）したときのスタイル */ 
 .cards .card:hover, 
 .cards .card:active {
     background-color: white; /* 背景を透明に */
@@ -191,63 +333,186 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
-.heart {
-  fill: red;
+.card-bottom {
+  display: flex;
+  justify-content: end;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 40px;
+  margin-right: 20px;
+  margin-bottom: 10px;
 }
 
+.invisible {
+  visibility: hidden;
+  position: absolute;
+}
+
+.camera-circle,
+.image-circle {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0 35px 16px 0;
+  visibility: hidden;
+}
+
+@keyframes moveUpAndRotateImage {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    visibility: hidden;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-115px) rotate(360deg); /* 位置と回転を設定 */
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+/* カメラアイコンのための別のキーフレームアニメーション */
+@keyframes moveUpAndRotateCamera {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    visibility: hidden;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-220px) rotate(360deg);
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+/* アニメーションがトリガーされたときの赤い円の状態 */
+.image-circle.move-up {
+  animation: moveUpAndRotateImage 0.5s forwards; /* アニメーションの適用 */
+}
+
+.camera-circle.move-up {
+  animation: moveUpAndRotateCamera 0.5s forwards;
+}
 </style>
 
 <script>
 document.addEventListener('turbolinks:load', () => {
-  const circlesContainer = document.querySelector('.top-circles');
-  const allCardsElement = document.getElementById('all-cards');
-  const userCardsElement = document.getElementById('user-cards');
-  const likedCardsElement = document.getElementById('user-liked-cards');
-  const bookmarkedCardsElement = document.getElementById('user-bookmarked-cards');
-  const circles = document.querySelectorAll('.circle');
+  const optionCircles = document.querySelectorAll('.option-circle');
+  const circle5 = document.querySelector('.search-circle');
+  const inputCircle = document.querySelectorAll('.input-circle');
 
-  // クリックされた円によって表示するカードを切り替える
-  circles.forEach(circle => {
-    circle.addEventListener('click', (e) => {
-      // Reset the background color for all circles
-      circles.forEach(c => {
-        c.style.backgroundColor = 'transparent';
-        c.style.color = 'white';
-      });
+    console.log(circle5)
+  circle5.addEventListener('click', () => {
+    console.log("OK")
+    inputCircle.forEach(circle => {
+      circle.classList.add('move-up');
+    });
+  });
 
-      // Change the background color of the clicked circle
-      e.target.style.backgroundColor = 'white';
-      e.target.style.color = 'black';
-
-      // Hide all cards
-      [allCardsElement, userCardsElement, likedCardsElement, bookmarkedCardsElement].forEach(el => {
-        if (el) {
-          el.style.display = 'none';
-        }
-      });
-
-      // Show the corresponding cards
-      switch (e.target.dataset.category) {
-        case 'all':
-          if (allCardsElement) allCardsElement.style.display = 'block';
-          break;
-        case 'user':
-          if (userCardsElement) userCardsElement.style.display = 'block';
-          break;
-        case 'liked':
-          if (likedCardsElement) likedCardsElement.style.display = 'block';
-          break;
-        case 'bookmarked':
-          if (bookmarkedCardsElement) bookmarkedCardsElement.style.display = 'block';
-          break;
+  optionCircles.forEach(circle => {
+    circle.addEventListener('click', () => {
+      if (circle5.style.visibility == 'visible' && circle !== circle5)
+      {
+        circle5.classList.remove('move-up');
       }
     });
   });
 
-  // ページがロードされたら全てのカードを表示
-  if (allCardsElement) allCardsElement.style.display = 'block';
+  const searchQuery = document.querySelector('.search-textarea');
+  const firstHeight = '52';
+  let lastHeight = firstHeight; // 初期値をfirstHeightに設定
+
+  // inputイベント時の高さ調整
+  searchQuery.addEventListener('input', adjustHeight);
+
+  // 初期ロード時の高さ調整
+  adjustHeight();
+
+  // textarea以外の部分がクリックされた時の挙動
+  document.body.addEventListener('click', function(e) {
+      if (!e.target.closest('#searchQuery') || e.target.closest('#searchQuery') == null) {
+        // searchQuery.style.height = 'auto';
+        searchQuery.style.height = firstHeight + 'px';
+      }
+  });
+
+  // textareaにフォーカスが当たった時の挙動
+  searchQuery.addEventListener('focus', function() {
+    if (searchQuery.value === "") { // 入力内容が空の場合
+      // searchQuery.style.height = 'auto';
+      searchQuery.style.height = firstHeight + 'px'; // 初期の高さに設定
+    } else {
+      // searchQuery.style.height = 'auto';
+      searchQuery.style.height = lastHeight + 'px';
+    }
+  });
+
+  // textareaのclickイベントでbodyのclickイベントをキャンセル
+  searchQuery.addEventListener('click', function(e) {
+      e.stopPropagation();
+  });
+
+  // textareaの高さを調整する関数
+  function adjustHeight() {
+      // searchQuery.style.height = 'auto';
+      searchQuery.style.height = searchQuery.scrollHeight + 'px';
+      lastHeight = searchQuery.scrollHeight;
+  }
+
+  // 画像から入力
+  const imageCircle = document.querySelector('.image-circle');
+  const inputImageButton = document.querySelector('.image-input-search');
+
+  imageCircle.addEventListener('click', function () {
+    inputImageButton.click();
+  });
+
+  // inputImageButton.addEventListener('change', async function(e) { // asyncを追加
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = async function(e) { // asyncを追加
+  //       const result = await processImage(file); // awaitを追加
+  //       searchQuery.value = result.text;
+  //       const event = new Event('input', {
+  //         bubbles: true, // イベントをバブリングさせる
+  //         cancelable: true, // イベントをキャンセル可能にする
+  //       });
+  //       // テキストエリア要素でイベントを発火
+  //       searchQuery.dispatchEvent(event);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // });
+
+  async function processImage(blob) { // asyncを追加
+    const formData = new FormData();
+    formData.append('image', blob, 'image.png');
+
+    try {
+      const response = await fetch('/ocr', { // awaitを追加
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      });
+      console.log("読み込み後：", response); // オブジェクトそのまま出力
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json(); // awaitを追加
+      console.log("読み込み後json：", data); // オブジェクトそのまま出力
+      return data;
+    } catch (error) {
+      console.error("画像の読み込みに失敗しました：", error);
+    }
+  }
 });
 
 </script>

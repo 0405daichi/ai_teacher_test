@@ -12,10 +12,18 @@ class QuestionsController < ApplicationController
     #   @saved_questions = current_user.saved_questions # 自分が保存したカード
     # end
   end
-  
+
+  def show
+    @card = Question.find(params[:id])
+    is_liked = @card.likes.exists?(user: current_user) # ユーザーがいいねしているか
+    is_bookmarked = @card.bookmarks.exists?(user: current_user) # ユーザーが保存しているか
+    respond_to do |format|
+      format.html # 通常のHTMLレスポンス
+      format.json { render json: { question: @card.content, answer: @card.answer.content, is_liked: is_liked, is_bookmarked: is_bookmarked } } # JSONレスポンス
+    end
+  end  
   
   def get_answer
-    # binding.pry
     puts "params: #{params.inspect}"
     question = params[:questionInputForm]
     puts "コントローラー側：#{question}"
@@ -23,6 +31,10 @@ class QuestionsController < ApplicationController
     
     @question = Question.new(content: question)
     @question.build_answer(content: ai_answer)
+    
+    # ログインしているユーザーのIDを紐づける
+    @question.user = current_user if user_signed_in?
+    
     puts "@question：#{@question}"
   
     if @question.save
@@ -36,15 +48,14 @@ class QuestionsController < ApplicationController
   def search
     query = params[:query]
     questions = Question.all.includes(:answer)
-    
+  
     calculator = SimilarityCalculator.new
-    similar_questions = calculator.similar_questions(query, questions)
-    similar_questions_with_answers = similar_questions.map do |question, similarity|
-      { question: question, answer: question.answer, similarity: similarity }
+    @results = calculator.similar_questions(query, questions)
+    respond_to do |format|
+      format.html { render partial: 'shared/search_results', locals: { results: @results } }
+      format.js   # JavaScriptからのリクエストに応答
     end
-    
-    render json: { similar_questions: similar_questions_with_answers }
-  end
+  end  
 
   def analyze_image
     # Get the path to the temporary file

@@ -1,31 +1,34 @@
 # app/controllers/likes_controller.rb
 class LikesController < ApplicationController
+  before_action :authenticate_user!
 
   def create
-    if user_signed_in?
-      @question = Question.find(params[:id])
-      @like = @question.likes.new(user: current_user)
+    question = Question.find(params[:id])
+    like = question.likes.new(user: current_user)
 
-      if @like.save
-        render json: { status: 'success', like_id: @like.id, action: 'created' }
+    respond_to do |format|
+      if like.save
+        format.js # JavaScript形式での応答
+        format.json { render json: { status: 'success', like_id: like.id, like_count: question.likes.count } }
       else
-        render json: { status: 'error', message: @like.errors.full_messages }, status: :unprocessable_entity
+        format.js # JavaScript形式での応答
+        format.json { render json: { status: 'error', message: like.errors.full_messages }, status: :unprocessable_entity }
       end
-    else
-      render json: { message: 'ログインが必要です', status: 'error' }, status: :unauthorized
     end
-  end  
+  end
 
   def destroy
-    if user_signed_in?
-      @like = Like.find(params[:id])
-      if @like.destroy
-        render json: { status: 'success' }
+    question = Question.find(params[:id])
+    like = question.likes.find_by(user: current_user)
+
+    respond_to do |format|
+      if like&.destroy
+        format.js # JavaScript形式での応答
+        format.json { render json: { status: 'success', like_count: question.likes.count } }
       else
-        render json: { status: 'error' }
+        format.js # JavaScript形式での応答
+        format.json { render json: { status: 'error' } }
       end
-    else
-      render json: { message: 'ログインが必要です', status: 'error' }, status: :unauthorized
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_23_112531) do
+ActiveRecord::Schema.define(version: 2023_11_15_082752) do
 
   create_table "answers", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
@@ -18,6 +18,15 @@ ActiveRecord::Schema.define(version: 2023_06_23_112531) do
     t.integer "question_id", null: false
     t.text "content"
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "question_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["question_id"], name: "index_bookmarks_on_question_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -33,6 +42,8 @@ ActiveRecord::Schema.define(version: 2023_06_23_112531) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "content"
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_questions_on_user_id"
   end
 
   create_table "saved_questions", force: :cascade do |t|
@@ -58,6 +69,8 @@ ActiveRecord::Schema.define(version: 2023_06_23_112531) do
   end
 
   add_foreign_key "answers", "questions"
+  add_foreign_key "bookmarks", "questions"
+  add_foreign_key "bookmarks", "users"
   add_foreign_key "likes", "questions"
   add_foreign_key "likes", "users"
   add_foreign_key "saved_questions", "questions"

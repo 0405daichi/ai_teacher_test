@@ -4,7 +4,7 @@ class SimilarityCalculator
   def initialize
   end
 
-  def similar_questions(input_question, questions, threshold = 0.1) # 閾値を0.1に変更
+  def similar_questions(input_question, questions, threshold = 0.0001) # 閾値を0.1に変更
     @questions = questions
     all_documents = @questions.map(&:content) + [input_question]
     input_question_vector = tfidf_vector(input_question, all_documents)
@@ -76,7 +76,7 @@ class SimilarityCalculator
     end
     
     similarity = dot_product / (magnitude1 * magnitude2)
-    puts "Similarity: #{similarity}"
+    puts "Similarity: #{format('%.100f', similarity)}"
     similarity
   end
   

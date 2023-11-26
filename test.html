@@ -1,25 +1,88 @@
+
 <div class="container">
-  <img class="mobile-image" src="mobile.png">
-  <div class="overlay-rectangle"></div>
-</div>
+  <div class="circle blue-circle"></div>
+  <div class="circle red-circle camera"></div>
+  <div class="circle red-circle image"></div>
+</div>  
 
 <style>
 .container {
   position: relative;
-  width: 50%; /* または任意のサイズ */
+  height: 100%;
 }
 
-.mobile-image {
-  width: 100%;
-  height: auto;
-}
-
-.overlay-rectangle {
+.circle {
+  width: 50px;
+  height: 40px;
+  border-radius: 50%;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* 透明度0.5の黒色 */
 }
+
+.blue-circle {
+  background-color: blue;
+  left: 0;
+  cursor: pointer;
+  bottom: 0;
+}
+
+/* 他のスタイルはそのままで */
+
+.red-circle {
+  background-color: red;
+  visibility: hidden; /* 最初は赤い円を隠す */
+  opacity: 0;
+  bottom: 0;
+  /* トランジションを削除し、アニメーションに置き換えます */
+}
+
+/* キーフレームアニメーションを定義 */
+@keyframes moveUpAndRotate {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    visibility: hidden;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-100px) rotate(-360deg); /* 位置と回転を設定 */
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+/* カメラアイコンのための別のキーフレームアニメーション */
+@keyframes moveUpAndRotateCamera {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    visibility: hidden;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-200px) rotate(-360deg);
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+/* アニメーションがトリガーされたときの赤い円の状態 */
+.image.move-up {
+  animation: moveUpAndRotate 0.5s forwards; /* アニメーションの適用 */
+}
+
+.camera.move-up {
+  animation: moveUpAndRotateCamera 0.5s forwards;
+}
+
+
 </style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const blueCircle = document.querySelector('.blue-circle');
+    const redCircles = document.querySelectorAll('.red-circle');
+
+    blueCircle.addEventListener('click', () => {
+      redCircles.forEach(circle => {
+        circle.classList.add('move-up');
+      });
+    });
+  });
+</script>
