@@ -441,6 +441,7 @@ document.addEventListener("turbolinks:load", function() {
     
     // 元の画像をプレビューに表示
     const originalImageUrl = URL.createObjectURL(photo);
+    console.log("origin", originalImageUrl);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     searchCameraModal.hide();
@@ -482,6 +483,7 @@ document.addEventListener("turbolinks:load", function() {
     
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
+      console.log(blob);
       searchQuery.value = result.text;
       // 新しい 'input' イベントを作成
       const event = new Event('input', {
