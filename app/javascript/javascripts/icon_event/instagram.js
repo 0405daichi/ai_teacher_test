@@ -467,14 +467,14 @@ document.addEventListener("turbolinks:load", function() {
 
     const x = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (cameraPreview.videoWidth / renderWidth);
     const y = (svgRect.top - cameraPreview.offsetTop - offsetY) * (cameraPreview.videoHeight / renderHeight);
-    const width = svgRect.width * (cameraPreview.videoWidth / renderWidth);
-    const height = svgRect.height * (cameraPreview.videoHeight / renderHeight);
+    const width = svgRect.width;
+    const height = svgRect.height;
 
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
 
     // imageBitmapからmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imageBitmap, svgRect.left, svgRect.top, width, height, 0, 0, canvas.width, canvas.height);
     
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
