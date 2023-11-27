@@ -447,36 +447,25 @@ document.addEventListener("turbolinks:load", function() {
     searchCameraModal.hide();
     cameraTrack.stop();
 
-    const imageAspectRatio = cameraPreview.videoWidth / cameraPreview.videoHeight;
-    const containerAspectRatio = cameraPreview.offsetWidth / cameraPreview.offsetHeight;
-
-    let renderWidth, renderHeight, offsetX, offsetY;
-    if (containerAspectRatio > imageAspectRatio) {
-      renderHeight = cameraPreview.offsetHeight;
-      renderWidth = imageAspectRatio * renderHeight;
-      offsetX = (cameraPreview.offsetWidth - renderWidth) / 2;
-      offsetY = 0;
-    } else {
-      renderWidth = cameraPreview.offsetWidth;
-      renderHeight = renderWidth / imageAspectRatio;
-      offsetX = 0;
-      offsetY = (cameraPreview.offsetHeight - renderHeight) / 2;
-    }
-
-    // カメラプレビューの位置とサイズを取得
     const previewRect = cameraPreview.getBoundingClientRect();
-
     const svgRect = maskRect.getBoundingClientRect();
 
-    // カメラプレビュー内でのmaskRectの位置を計算
+    // カメラプレビュー内でのmaskRectの相対位置を計算
     const relativeX = svgRect.left - previewRect.left;
     const relativeY = svgRect.top - previewRect.top;
 
-    // 切り取り位置とサイズを計算
-    const x = relativeX * (cameraPreview.videoWidth / previewRect.width);
-    const y = relativeY * (cameraPreview.videoHeight / previewRect.height);
-    const width = svgRect.width * (cameraPreview.videoWidth / previewRect.width);
-    const height = svgRect.height * (cameraPreview.videoHeight / previewRect.height);
+    // カメラプレビューの実際の表示領域を計算
+    const scale = Math.min(previewRect.width / cameraPreview.videoWidth, previewRect.height / cameraPreview.videoHeight);
+    const renderWidth = cameraPreview.videoWidth * scale;
+    const renderHeight = cameraPreview.videoHeight * scale;
+    const offsetX = (previewRect.width - renderWidth) / 2;
+    const offsetY = (previewRect.height - renderHeight) / 2;
+
+    // 切り取り座標を計算
+    const x = (relativeX - offsetX) / scale;
+    const y = (relativeY - offsetY) / scale;
+    const width = svgRect.width / scale;
+    const height = svgRect.height / scale;
 
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
