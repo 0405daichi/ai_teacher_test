@@ -264,6 +264,8 @@ document.addEventListener("turbolinks:load", function() {
     
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
+      const imageUrl = URL.createObjectURL(blob);
+      console.log('image:', imageUrl);
       writeQuery.value = result.text;
       // 新しい 'input' イベントを作成
       const event = new Event('input', {
