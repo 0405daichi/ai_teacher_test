@@ -72,31 +72,43 @@
     });
 
     let initialTouchY = null;
-
-    // タッチ開始時の処理
-    window.addEventListener('touchstart', function(event) {
-      initialTouchY = event.touches[0].clientY;
-    });
+    let touchVelocity = 0; // タッチによる回転速度
+    const friction = 0.95; // 摩擦係数
 
     // タッチ中の処理
     window.addEventListener('touchmove', function(event) {
       if (initialTouchY === null) return;
       const touchY = event.touches[0].clientY;
       const touchDelta = (initialTouchY - touchY) * 0.5;
-      initialTouchY = touchY; // update initialTouchY for next move
+      initialTouchY = touchY;
 
-      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
-        const currentAngle = parseFloat(circle.dataset.angle);
-        const newAngle = currentAngle + touchDelta;
-        setCirclePosition(circle, radius, newAngle);
-        circle.dataset.angle = newAngle;
-      });
+      touchVelocity = touchDelta; // タッチによる回転速度を設定
+
+      updateCircles(touchDelta);
     });
 
     // タッチ終了時の処理
     window.addEventListener('touchend', function() {
       initialTouchY = null;
+      animateDeceleration(); // 減速アニメーションを開始
     });
+
+    function animateDeceleration() {
+      if (Math.abs(touchVelocity) > 0.1) {
+        updateCircles(touchVelocity);
+        touchVelocity *= friction; // 摩擦により速度を減少
+        requestAnimationFrame(animateDeceleration);
+      }
+    }
+
+    function updateCircles(delta) {
+      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
+        const currentAngle = parseFloat(circle.dataset.angle);
+        const newAngle = currentAngle + delta;
+        setCirclePosition(circle, radius, newAngle);
+        circle.dataset.angle = newAngle;
+      });
+    }
   
     function setCirclePosition(circle, r, a) {
       const x = r * Math.cos(a * Math.PI / 180);

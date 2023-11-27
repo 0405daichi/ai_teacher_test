@@ -501,6 +501,10 @@ document.addEventListener("turbolinks:load", function() {
   const resizableRectsSe = searchTrimmingImageModalElement.querySelector('.resizable-rect');
   const lightDarkAreasSe = searchTrimmingImageModalElement.querySelector('.light-dark-area');
   // const maskRect = searchCameraModalElement.querySelector(".mask-rect");
+  const trimmingImageModal = new Modal(searchTrimmingImageModalElement, {
+    keyboard: false,
+    backdrop: 'true'
+  });
   
   initResizableRect(resizableRectsSe, lightDarkAreasSe);
 
@@ -515,10 +519,6 @@ document.addEventListener("turbolinks:load", function() {
       };
       reader.readAsDataURL(file);
 
-      const trimmingImageModal = new Modal(searchTrimmingImageModalElement, {
-        keyboard: false,
-        backdrop: 'true'
-      });
       trimmingImageModal.show();
     }
   });
@@ -568,13 +568,27 @@ document.addEventListener("turbolinks:load", function() {
     // 画像をロードして切り取り範囲を描画
     const image = new Image();
     image.src = previewImage.src;
-    image.onload = function() {
+    // 画像をトリミングして処理する部分
+    image.onload = async function() {
       // 切り取り範囲をキャンバスに描画
       ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
-  
-      // canvasの内容をデータURLに変換してログに表示
-      const dataUrl = canvas.toDataURL('image/png');
-      console.log("トリミングされた画像のDataURL:", dataUrl);
+
+      // canvasからblobを生成
+      canvas.toBlob(async (blob) => {
+        // processImage関数でOCR処理
+        const result = await processImage(blob);
+        if (result && result.text) {
+          searchQuery.value = result.text;
+
+          // 新しい 'input' イベントを作成して発火
+          const event = new Event('input', {
+            bubbles: true,
+            cancelable: true,
+          });
+          searchQuery.dispatchEvent(event);
+          trimmingImageModal.hide();
+        }
+      }, 'image/png');
     };
   });
   
