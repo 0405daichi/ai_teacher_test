@@ -172,8 +172,7 @@
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
-        <!-- カメラプレビュー表示エリア -->
-        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
         <div class="button-elements">
@@ -191,7 +190,7 @@
     <div class="modal-content" style="height: 100vh;">
       <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh; background-color: white;">
         <!-- 写真プレビュー表示エリア -->
-        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
+        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain;">
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
         <!-- ボタンの位置を右上に調整 -->

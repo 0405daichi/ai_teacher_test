@@ -430,56 +430,51 @@ document.addEventListener("turbolinks:load", function() {
 
   const resizableRects = searchCameraModalElement.querySelector('.resizable-rect');
   const lightDarkAreas = searchCameraModalElement.querySelector('.light-dark-area');
-  const maskRect = searchCameraModalElement.querySelector(".mask-rect");
   
   initResizableRect(resizableRects, lightDarkAreas);
   
   // 撮影ボタンクリック時の処理
   captureButton.addEventListener("click", async () => {
+    const maskRect = searchCameraModalElement.querySelector('.mask-rect');
     const photo = await imageCapture.takePhoto();
+    const imageUrl = URL.createObjectURL(photo);
     const imageBitmap = await createImageBitmap(photo);
-    
-    // 元の画像をプレビューに表示
-    const originalImageUrl = URL.createObjectURL(photo);
-    console.log("origin", originalImageUrl);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    console.log("origin", imageUrl);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     searchCameraModal.hide();
     cameraTrack.stop();
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    
-    // カメラの実際の解像度を取得
-    const track = stream.getVideoTracks()[0];
-    const settings = track.getSettings();
-    if (!settings.width || !settings.height) {
-      console.warn("Width and height information is not available");
+    const imageAspectRatio = cameraPreview.videoWidth / cameraPreview.videoHeight;
+    const containerAspectRatio = window.innerWidth / window.innerHeight;
+
+    let renderWidth, renderHeight, offsetX, offsetY;
+    if (containerAspectRatio > imageAspectRatio) {
+      renderHeight = window.innerHeight;
+      renderWidth = imageAspectRatio * renderHeight;
+      offsetX = (window.innerWidth - renderWidth) / 2;
+      offsetY = 0;
+    } else {
+      renderWidth = window.innerWidth;
+      renderHeight = renderWidth / imageAspectRatio;
+      offsetX = 0;
+      offsetY = (window.innerHeight - renderHeight) / 2;
     }
-    const capabilities = track.getCapabilities();
-    console.log("Capabilities:", capabilities);
-    console.log("capabilities.width", capabilities.width);
-    console.log("capabilities.height", capabilities.height);
 
-    // 画面とカメラの解像度の比率を計算
-    const ratioX = capabilities.width.max / window.innerWidth;
-    const ratioY = capabilities.height.max / window.innerHeight;
-    
-    // maskRectの位置とサイズを取得（SVG内の座標系で）
-    const svgRect = maskRect.getBoundingClientRect();  
+    const svgRect = maskRect.getBoundingClientRect();
 
-    // 実際の座標を計算（解像度の比率を考慮）
-    const x = svgRect.x * ratioX;
-    const y = svgRect.y * ratioY;
-    const width = svgRect.width * ratioX;
-    const height = svgRect.height * ratioY;
-    
-    // canvasのサイズをmaskRectのサイズに合わせる（解像度の比率を考慮）
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
+    const x = (svgRect.left - offsetX) * (cameraPreview.videoWidth / renderWidth);
+    const y = (svgRect.top - offsetY) * (cameraPreview.videoHeight / renderHeight);
+    const width = svgRect.width * (cameraPreview.videoWidth / renderWidth);
+    const height = svgRect.height * (cameraPreview.videoHeight / renderHeight);
+
+    canvas.width = svgRect.width;
+    canvas.height = svgRect.height;
+
     // imageBitmapからmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, x, y, width, height, svgRect.x, svgRect.y, svgRect.width, svgRect.height);
+    ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
     
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
