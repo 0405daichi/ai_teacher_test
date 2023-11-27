@@ -63,6 +63,7 @@ document.addEventListener("turbolinks:load", function() {
     
     // 元の画像をプレビューに表示
     const originalImageUrl = URL.createObjectURL(photo);
+    console.log(originalImageUrl);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     cameraModal.hide();
