@@ -448,25 +448,25 @@ document.addEventListener("turbolinks:load", function() {
     cameraTrack.stop();
 
     const imageAspectRatio = cameraPreview.videoWidth / cameraPreview.videoHeight;
-    const containerAspectRatio = window.innerWidth / window.innerHeight;
+    const containerAspectRatio = cameraPreview.offsetWidth / cameraPreview.offsetHeight;
 
     let renderWidth, renderHeight, offsetX, offsetY;
     if (containerAspectRatio > imageAspectRatio) {
-      renderHeight = window.innerHeight;
+      renderHeight = cameraPreview.offsetHeight;
       renderWidth = imageAspectRatio * renderHeight;
-      offsetX = (window.innerWidth - renderWidth) / 2;
+      offsetX = (cameraPreview.offsetWidth - renderWidth) / 2;
       offsetY = 0;
     } else {
-      renderWidth = window.innerWidth;
+      renderWidth = cameraPreview.offsetWidth;
       renderHeight = renderWidth / imageAspectRatio;
       offsetX = 0;
-      offsetY = (window.innerHeight - renderHeight) / 2;
+      offsetY = (cameraPreview.offsetHeight - renderHeight) / 2;
     }
 
     const svgRect = maskRect.getBoundingClientRect();
 
-    const x = (svgRect.left - offsetX) * (cameraPreview.videoWidth / renderWidth);
-    const y = (svgRect.top - offsetY) * (cameraPreview.videoHeight / renderHeight);
+    const x = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (cameraPreview.videoWidth / renderWidth);
+    const y = (svgRect.top - cameraPreview.offsetTop - offsetY) * (cameraPreview.videoHeight / renderHeight);
     const width = svgRect.width * (cameraPreview.videoWidth / renderWidth);
     const height = svgRect.height * (cameraPreview.videoHeight / renderHeight);
 
@@ -566,6 +566,7 @@ document.addEventListener("turbolinks:load", function() {
     // 画像をロードして切り取り範囲を描画
     const image = new Image();
     image.src = previewImage.src;
+    console.log("origin", image);
     // 画像をトリミングして処理する部分
     image.onload = async function() {
       // 切り取り範囲をキャンバスに描画
@@ -575,6 +576,8 @@ document.addEventListener("turbolinks:load", function() {
       canvas.toBlob(async (blob) => {
         // processImage関数でOCR処理
         const result = await processImage(blob);
+        const imageUrl = URL.createObjectURL(blob);
+        console.log('image:', imageUrl);
         if (result && result.text) {
           searchQuery.value = result.text;
 
