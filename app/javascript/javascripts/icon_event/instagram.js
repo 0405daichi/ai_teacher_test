@@ -431,7 +431,7 @@ document.addEventListener("turbolinks:load", function() {
   const resizableRects = searchCameraModalElement.querySelector('.resizable-rect');
   const lightDarkAreas = searchCameraModalElement.querySelector('.light-dark-area');
   
-  initResizableRect(resizableRects, lightDarkAreas);
+  initResizableRect(resizableRects, lightDarkAreas, cameraPreview);
   
   // 撮影ボタンクリック時の処理
   captureButton.addEventListener("click", async () => {
@@ -495,6 +495,7 @@ document.addEventListener("turbolinks:load", function() {
   const imageCircle = document.querySelector('.image-circle');
   const searchTrimmingImageModalElement = document.querySelector('.search-trimming-image-modal');
   const inputImageButton = document.querySelector('.image-input-search');
+  const searchImagePreview = searchTrimmingImageModalElement.querySelector('.preview');
 
   const resizableRectsSe = searchTrimmingImageModalElement.querySelector('.resizable-rect');
   const lightDarkAreasSe = searchTrimmingImageModalElement.querySelector('.light-dark-area');
@@ -504,7 +505,7 @@ document.addEventListener("turbolinks:load", function() {
     backdrop: 'true'
   });
   
-  initResizableRect(resizableRectsSe, lightDarkAreasSe);
+  initResizableRect(resizableRectsSe, lightDarkAreasSe, searchImagePreview);
 
   // 画像が選択されたらプレビューに表示
   inputImageButton.addEventListener('change', function(e) {
@@ -512,8 +513,7 @@ document.addEventListener("turbolinks:load", function() {
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        const preview = searchTrimmingImageModalElement.querySelector('.preview');
-        preview.src = e.target.result;
+        searchImagePreview.src = e.target.result;
       };
       reader.readAsDataURL(file);
 

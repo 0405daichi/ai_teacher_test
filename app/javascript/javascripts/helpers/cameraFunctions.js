@@ -51,7 +51,7 @@ export async function processImage(blob) {
 }
 
 // pcとスマホ版の共通コード
-export async function initResizableRect(rect, lightDarkArea) {
+export async function initResizableRect(rect, lightDarkArea, preview) {
   let isDragging = false;
   let startX = 0, startY = 0;
   let startWidth = 0, startHeight = 0;
@@ -89,8 +89,11 @@ export async function initResizableRect(rect, lightDarkArea) {
     let newWidth = startWidth + deltaX * 2;
     let newHeight = startHeight + deltaY * 2;
 
-    newWidth = Math.max(100, Math.min(window.innerWidth - 50, newWidth));
-    newHeight = Math.max(100, Math.min(window.innerHeight - 50, newHeight));
+    const previewRect = preview.getBoundingClientRect();
+
+    // プレビュー画像の範囲内でのみリサイズを許可
+    newWidth = Math.max(100, Math.min(newWidth, previewRect.width - (rect.getBoundingClientRect().left - previewRect.left)));
+    newHeight = Math.max(100, Math.min(newHeight, previewRect.height - (rect.getBoundingClientRect().top - previewRect.top)));
 
     rect.style.width = `${newWidth}px`;
     rect.style.height = `${newHeight}px`;

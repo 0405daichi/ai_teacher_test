@@ -9,7 +9,6 @@ document.addEventListener("turbolinks:load", function() {
   const cameraApp1 = document.getElementById('cameraApp1');
   const cameraModalElement = document.getElementById('cameraModal');
   const cameraPreview = document.getElementById("cameraPreview");
-  const preview = document.getElementById("preview");
   const maskRect = document.getElementById("maskRect");
   const captureButton = document.getElementById("captureButton");
   const closeCamera = document.getElementById("closeCamera");
@@ -52,8 +51,9 @@ document.addEventListener("turbolinks:load", function() {
   place.forEach(element => {
     const resizableRects = element.querySelector('.resizable-rect');
     const lightDarkAreas = element.querySelector('.light-dark-area');
+    const preview = element.querySelector('.preview');
 
-    initResizableRect(resizableRects, lightDarkAreas);
+    initResizableRect(resizableRects, lightDarkAreas, preview);
   });
 
   // 撮影ボタンクリック時の処理
@@ -193,7 +193,7 @@ document.addEventListener("turbolinks:load", function() {
 
   const cameraCircle = writeQuestionModalElement.querySelector('.camera-circle');
   const writeCameraModalElement = document.querySelector('.write-camera-modal');
-  const writeCameraPreview = writeCameraModalElement.querySelector(".camera-preview");
+  const writeCameraPreview = writeCameraModalElement.querySelector(".preview");
   const writeCaptureButton = writeCameraModalElement.querySelector('.write-camera-capture-button');
   const writeCameraModal = new Modal(writeCameraModalElement, {
     keyboard: false,
@@ -212,7 +212,7 @@ document.addEventListener("turbolinks:load", function() {
   const maskRectWrite = writeCameraModalElement.querySelector(".mask-rect");
   const writeQuery = writeQuestionModalElement.querySelector(".question-input-form")
   
-  initResizableRect(resizableRects, lightDarkAreas);
+  initResizableRect(resizableRects, lightDarkAreas, writeCameraPreview);
   
   // 撮影ボタンクリック時の処理
   writeCaptureButton.addEventListener("click", async () => {
