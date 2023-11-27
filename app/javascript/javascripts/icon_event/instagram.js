@@ -463,18 +463,26 @@ document.addEventListener("turbolinks:load", function() {
       offsetY = (cameraPreview.offsetHeight - renderHeight) / 2;
     }
 
+    // カメラプレビューの位置とサイズを取得
+    const previewRect = cameraPreview.getBoundingClientRect();
+
     const svgRect = maskRect.getBoundingClientRect();
 
-    const x = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (cameraPreview.videoWidth / renderWidth);
-    const y = (svgRect.top - cameraPreview.offsetTop - offsetY) * (cameraPreview.videoHeight / renderHeight);
-    const width = svgRect.width;
-    const height = svgRect.height;
+    // カメラプレビュー内でのmaskRectの位置を計算
+    const relativeX = svgRect.left - previewRect.left;
+    const relativeY = svgRect.top - previewRect.top;
+
+    // 切り取り位置とサイズを計算
+    const x = relativeX * (cameraPreview.videoWidth / previewRect.width);
+    const y = relativeY * (cameraPreview.videoHeight / previewRect.height);
+    const width = svgRect.width * (cameraPreview.videoWidth / previewRect.width);
+    const height = svgRect.height * (cameraPreview.videoHeight / previewRect.height);
 
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
 
     // imageBitmapからmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, svgRect.left, svgRect.top, width, height, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
     
     canvas.toBlob(async (blob) => {
       const result = await processImage(blob);
