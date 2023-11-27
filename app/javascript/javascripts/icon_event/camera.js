@@ -144,7 +144,7 @@ document.addEventListener("turbolinks:load", function() {
 
   // DOM取得
   const writeButton = document.querySelector('.write-button');
-  const writeQuestionModalElement = document.querySelector('.writeQuestionModal');
+  const writeQuestionModalElement = document.querySelector('.write-question-modal');
   const writeToCameraButton = writeQuestionModalElement.querySelector(".write-to-camera");
   const writeSubmitButton = writeQuestionModalElement.querySelector(".write-submit");
   const writeQuestionModal = new Modal(writeQuestionModalElement, {
@@ -188,6 +188,91 @@ document.addEventListener("turbolinks:load", function() {
     writeQuestionModal.hide();
     
     submitFormAndShowModal(questionForm);
+  });
+
+  const cameraCircle = writeQuestionModalElement.querySelector('.camera-circle');
+  const writeCameraModalElement = document.querySelector('.write-camera-modal');
+  const writeCameraPreview = writeCameraModalElement.querySelector(".camera-preview");
+  const writeCaptureButton = writeCameraModalElement.querySelector('.write-camera-capture-button');
+  const writeCameraModal = new Modal(writeCameraModalElement, {
+    keyboard: false,
+    backdrop: 'true'
+  });
+
+  cameraCircle.addEventListener('click', async () => {
+    writeCameraModal.show();
+    stream = await createStream(writeCameraPreview);    
+    cameraTrack = stream.getVideoTracks()[0];
+    imageCapture = new ImageCapture(cameraTrack);
+  });
+
+  const resizableRects = writeCameraModalElement.querySelector('.resizable-rect');
+  const lightDarkAreas = writeCameraModalElement.querySelector('.light-dark-area');
+  const maskRectWrite = writeCameraModalElement.querySelector(".mask-rect");
+  const writeQuery = writeQuestionModalElement.querySelector(".question-input-form")
+  
+  initResizableRect(resizableRects, lightDarkAreas);
+  
+  // 撮影ボタンクリック時の処理
+  writeCaptureButton.addEventListener("click", async () => {
+    const photo = await imageCapture.takePhoto();
+    const imageBitmap = await createImageBitmap(photo);
+    
+    // 元の画像をプレビューに表示
+    const originalImageUrl = URL.createObjectURL(photo);
+    console.log(originalImageUrl);
+    // preview.src = originalImageUrl;
+    // カメラアプリ終了処理
+    writeCameraModal.hide();
+    cameraTrack.stop();
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    
+    // カメラの実際の解像度を取得
+    const track = stream.getVideoTracks()[0];
+    console.log(track);
+    const settings = track.getSettings();
+    if (!settings.width || !settings.height) {
+      console.warn("Width and height information is not available");
+    }
+    const capabilities = track.getCapabilities();
+    console.log("Capabilities:", capabilities);
+    console.log("capabilities.width", capabilities.width);
+    console.log("capabilities.height", capabilities.height);
+
+    // 画面とカメラの解像度の比率を計算
+    const ratioX = capabilities.width.max / window.innerWidth;
+    const ratioY = capabilities.height.max / window.innerHeight;
+    
+    // maskRectの位置とサイズを取得（SVG内の座標系で）
+    const svgRect = maskRectWrite.getBoundingClientRect();  
+
+    // 実際の座標を計算（解像度の比率を考慮）
+    const x = svgRect.x * ratioX;
+    const y = svgRect.y * ratioY;
+    const width = svgRect.width * ratioX;
+    const height = svgRect.height * ratioY;
+    
+    // canvasのサイズをmaskRectのサイズに合わせる（解像度の比率を考慮）
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // imageBitmapからmaskRectの範囲だけを切り出して描画
+    ctx.drawImage(imageBitmap, x, y, width, height, svgRect.x, svgRect.y, svgRect.width, svgRect.height);
+    
+    canvas.toBlob(async (blob) => {
+      const result = await processImage(blob);
+      writeQuery.value = result.text;
+      // 新しい 'input' イベントを作成
+      const event = new Event('input', {
+        bubbles: true, // イベントをバブリングさせる
+        cancelable: true, // イベントをキャンセル可能にする
+      });
+
+      // テキストエリア要素でイベントを発火
+      writeQuery.dispatchEvent(event);
+    }, 'image/png');
   });
 });
 
