@@ -457,6 +457,9 @@ document.addEventListener("turbolinks:load", function() {
     console.log("svgRect.left", svgRect.left);
     console.log("svgRect.top", svgRect.top);
 
+    console.log("previewRect.left", previewRect.left);
+    console.log("previewRect.top", previewRect.top);
+
     console.log("relativeX", relativeX);
     console.log("relativeY", relativeY);
 
