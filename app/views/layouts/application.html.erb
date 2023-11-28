@@ -12,7 +12,7 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
+  <body id="main-body">
     <%
 =begin%>
  <% if user_signed_in? %>
@@ -32,3 +32,8 @@
     <%= yield %>
   </body>
 </html>
+
+<script>
+var vh=window.innerHeight;
+document.getElementById('main-body').style.height=vh+'px';
+</script>
