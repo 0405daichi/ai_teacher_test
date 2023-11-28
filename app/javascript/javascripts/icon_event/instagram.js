@@ -454,6 +454,12 @@ document.addEventListener("turbolinks:load", function() {
     const relativeX = svgRect.left - previewRect.left;
     const relativeY = svgRect.top - previewRect.top;
 
+    console.log("svgRect.left", svgRect.left);
+    console.log("svgRect.top", svgRect.top);
+
+    console.log("relativeX", relativeX);
+    console.log("relativeY", relativeY);
+
     // 写真上での切り取り座標とサイズを計算
     const x = relativeX * scaleWidth;
     const y = relativeY * scaleHeight;
