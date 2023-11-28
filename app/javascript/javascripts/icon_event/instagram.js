@@ -448,6 +448,11 @@ document.addEventListener("turbolinks:load", function() {
     const scaleWidth = cameraPreview.videoWidth / cameraPreview.offsetWidth;
     const scaleHeight = cameraPreview.videoHeight / cameraPreview.offsetHeight;
 
+    console.log("cameraPreview.videoWidth", cameraPreview.videoWidth);
+    console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
+    console.log("cameraPreview.videoHeight", cameraPreview.videoHeight);
+    console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
+
     // プレビュー上のmaskRectの相対位置を取得
     const svgRect = maskRect.getBoundingClientRect();
     const previewRect = cameraPreview.getBoundingClientRect();
@@ -462,16 +467,25 @@ document.addEventListener("turbolinks:load", function() {
 
     console.log("relativeX", relativeX);
     console.log("relativeY", relativeY);
-
+    
     // 写真上での切り取り座標とサイズを計算
     const x = relativeX * scaleWidth;
     const y = relativeY * scaleHeight;
     const width = svgRect.width * scaleWidth;
     const height = svgRect.height * scaleHeight;
 
+    console.log("x", x);
+    console.log("y", y);
+
+    console.log("width", width);
+    console.log("height", height);
+    
     // Canvasのサイズを設定
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
+
+    console.log("svgRect.width", svgRect.width);
+    console.log("svgRect.height", svgRect.height);
 
     // imageBitmapからmaskRectの範囲だけを切り出して描画
     ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
