@@ -437,36 +437,30 @@ document.addEventListener("turbolinks:load", function() {
   captureButton.addEventListener("click", async () => {
     const maskRect = searchCameraModalElement.querySelector('.mask-rect');
     const photo = await imageCapture.takePhoto();
-    const imageUrl = URL.createObjectURL(photo);
     const imageBitmap = await createImageBitmap(photo);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    console.log("origin", imageUrl);
-    // preview.src = originalImageUrl;
-    // カメラアプリ終了処理
+
     searchCameraModal.hide();
     cameraTrack.stop();
 
-    const previewRect = cameraPreview.getBoundingClientRect();
-    const svgRect = maskRect.getBoundingClientRect();
+    // カメラプレビューと写真の解像度の比を計算
+    const scaleWidth = cameraPreview.videoWidth / cameraPreview.offsetWidth;
+    const scaleHeight = cameraPreview.videoHeight / cameraPreview.offsetHeight;
 
-    // カメラプレビュー内でのmaskRectの相対位置を計算
+    // プレビュー上のmaskRectの相対位置を取得
+    const svgRect = maskRect.getBoundingClientRect();
+    const previewRect = cameraPreview.getBoundingClientRect();
     const relativeX = svgRect.left - previewRect.left;
     const relativeY = svgRect.top - previewRect.top;
 
-    // カメラプレビューの実際の表示領域を計算
-    const scale = Math.min(previewRect.width / cameraPreview.videoWidth, previewRect.height / cameraPreview.videoHeight);
-    const renderWidth = cameraPreview.videoWidth * scale;
-    const renderHeight = cameraPreview.videoHeight * scale;
-    const offsetX = (previewRect.width - renderWidth) / 2;
-    const offsetY = (previewRect.height - renderHeight) / 2;
+    // 写真上での切り取り座標とサイズを計算
+    const x = relativeX * scaleWidth;
+    const y = relativeY * scaleHeight;
+    const width = svgRect.width * scaleWidth;
+    const height = svgRect.height * scaleHeight;
 
-    // 切り取り座標を計算
-    const x = (relativeX - offsetX) / scale;
-    const y = (relativeY - offsetY) / scale;
-    const width = svgRect.width / scale;
-    const height = svgRect.height / scale;
-
+    // Canvasのサイズを設定
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
 
