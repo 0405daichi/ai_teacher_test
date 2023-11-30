@@ -444,9 +444,9 @@ document.addEventListener("turbolinks:load", function() {
     searchCameraModal.hide();
     cameraTrack.stop();
 
-    // カメラプレビューと写真の解像度の比を計算
-    const scaleWidth = cameraPreview.videoWidth / cameraPreview.offsetWidth;
-    const scaleHeight = cameraPreview.videoHeight / cameraPreview.offsetHeight;
+    // カメラプレビューと実際の写真の解像度の比を計算
+    const scaleWidth = imageBitmap.width / cameraPreview.offsetWidth;
+    const scaleHeight = imageBitmap.height / cameraPreview.offsetHeight;
 
     if (imageBitmap.width == cameraPreview.videoWidth){
       console.log("イメージビットマップとプレビューの幅は同じ");
