@@ -440,7 +440,7 @@ document.addEventListener("turbolinks:load", function() {
     const imageBitmap = await createImageBitmap(photo);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-
+    console.log(imageBitmap);
     searchCameraModal.hide();
     cameraTrack.stop();
 
@@ -448,6 +448,15 @@ document.addEventListener("turbolinks:load", function() {
     const scaleWidth = cameraPreview.videoWidth / cameraPreview.offsetWidth;
     const scaleHeight = cameraPreview.videoHeight / cameraPreview.offsetHeight;
 
+    if (imageBitmap.width == cameraPreview.videoWidth){
+      console.log("イメージビットマップとプレビューの幅は同じ");
+    }
+    if (imageBitmap.height == cameraPreview.videoHeight){
+      console.log("イメージビットマップとプレビューの高さは同じ");
+    }
+
+    console.log("imageBitmap.width", imageBitmap.width);
+    console.log("imageBitmap.height", imageBitmap.height);
     console.log("cameraPreview.videoWidth", cameraPreview.videoWidth);
     console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
     console.log("cameraPreview.videoHeight", cameraPreview.videoHeight);
