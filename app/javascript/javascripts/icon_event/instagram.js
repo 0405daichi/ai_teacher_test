@@ -448,53 +448,21 @@ document.addEventListener("turbolinks:load", function() {
     const scaleWidth = imageBitmap.width / cameraPreview.offsetWidth;
     const scaleHeight = imageBitmap.height / cameraPreview.offsetHeight;
 
-    if (imageBitmap.width == cameraPreview.videoWidth){
-      console.log("イメージビットマップとプレビューの幅は同じ");
-    }
-    if (imageBitmap.height == cameraPreview.videoHeight){
-      console.log("イメージビットマップとプレビューの高さは同じ");
-    }
-
-    console.log("imageBitmap.width", imageBitmap.width);
-    console.log("imageBitmap.height", imageBitmap.height);
-    console.log("cameraPreview.videoWidth", cameraPreview.videoWidth);
-    console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
-    console.log("cameraPreview.videoHeight", cameraPreview.videoHeight);
-    console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
-
     // プレビュー上のmaskRectの相対位置を取得
     const svgRect = maskRect.getBoundingClientRect();
     const previewRect = cameraPreview.getBoundingClientRect();
     const relativeX = svgRect.left - previewRect.left;
     const relativeY = svgRect.top - previewRect.top;
-
-    console.log("svgRect.left", svgRect.left);
-    console.log("svgRect.top", svgRect.top);
-
-    console.log("previewRect.left", previewRect.left);
-    console.log("previewRect.top", previewRect.top);
-
-    console.log("relativeX", relativeX);
-    console.log("relativeY", relativeY);
     
     // 写真上での切り取り座標とサイズを計算
     const x = relativeX * scaleWidth;
     const y = relativeY * scaleHeight;
     const width = svgRect.width * scaleWidth;
     const height = svgRect.height * scaleHeight;
-
-    console.log("x", x);
-    console.log("y", y);
-
-    console.log("width", width);
-    console.log("height", height);
     
     // Canvasのサイズを設定
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
-
-    console.log("svgRect.width", svgRect.width);
-    console.log("svgRect.height", svgRect.height);
 
     // imageBitmapからmaskRectの範囲だけを切り出して描画
     ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
@@ -548,47 +516,35 @@ document.addEventListener("turbolinks:load", function() {
   searchTrimmingImageModalElement.querySelector('.search-write-out-image').addEventListener('click', function() {
     const previewImage = searchTrimmingImageModalElement.querySelector('.preview');
     const maskRect = searchTrimmingImageModalElement.querySelector('.mask-rect');
+
+    // 画像をロードして切り取り範囲を描画
+    const image = new Image();
+    image.src = previewImage.src;
   
     // canvas要素を作成
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
   
     // プレビュー画像とコンテナのアスペクト比を計算
-    const imageAspectRatio = previewImage.naturalWidth / previewImage.naturalHeight;
-    const containerAspectRatio = previewImage.offsetWidth / previewImage.offsetHeight;
-  
-    // 実際の表示サイズとコンテナ内でのオフセットを計算
-    let renderWidth, renderHeight, offsetX, offsetY;
-    if (containerAspectRatio > imageAspectRatio) {
-      // コンテナの幅が画像の幅よりも広い場合
-      renderHeight = previewImage.offsetHeight;
-      renderWidth = imageAspectRatio * renderHeight;
-      offsetX = (previewImage.offsetWidth - renderWidth) / 2;
-      offsetY = 0;
-    } else {
-      // コンテナの高さが画像の高さよりも高い場合
-      renderWidth = previewImage.offsetWidth;
-      renderHeight = renderWidth / imageAspectRatio;
-      offsetX = 0;
-      offsetY = (previewImage.offsetHeight - renderHeight) / 2;
-    }
+    const scaleWidth = previewImage.naturalWidth / previewImage.naturalHeight;
+    const scaleHeight = previewImage.offsetWidth / previewImage.offsetHeight;
   
     // SVG内でのmaskRectの位置とサイズを取得
     const svgRect = maskRect.getBoundingClientRect();
+    const previewRect = previewImage.getBoundingClientRect();
+    const relativeX = svgRect.left - previewRect.left;
+    const relativeY = svgRect.top - previewRect.top;
   
     // 実際の座標を計算
-    const x = (svgRect.left - previewImage.offsetLeft - offsetX) * (previewImage.naturalWidth / renderWidth);
-    const y = (svgRect.top - previewImage.offsetTop - offsetY) * (previewImage.naturalHeight / renderHeight);
-    const width = svgRect.width * (previewImage.naturalWidth / renderWidth);
-    const height = svgRect.height * (previewImage.naturalHeight / renderHeight);
+    const x = relativeX * scaleWidth;
+    const y = relativeY * scaleHeight;
+    const width = svgRect.width * scaleWidth;
+    const height = svgRect.height * scaleHeight;
   
     // canvasのサイズをmaskRectのサイズに合わせる
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
-  
-    // 画像をロードして切り取り範囲を描画
-    const image = new Image();
-    image.src = previewImage.src;
+
     console.log("origin", image);
     // 画像をトリミングして処理する部分
     image.onload = async function() {
