@@ -520,6 +520,7 @@ document.addEventListener("turbolinks:load", function() {
   // "読み込む"ボタンのクリックイベント
   searchTrimmingImageModalElement.querySelector('.search-write-out-image').addEventListener('click', function() {
     const maskRect = searchTrimmingImageModalElement.querySelector('.mask-rect');
+    const preview = searchTrimmingImageModalElement.querySelector('.preview');
 
     // オリジナルの画像ファイルを使用して画像をロード
     const image = new Image();
@@ -532,17 +533,20 @@ document.addEventListener("turbolinks:load", function() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
+        const scaleWidth = image.width / preview.offsetWidth;
+        const scaleHeight = image.height / preview.offsetHeight;
+
         // SVG内でのmaskRectの位置とサイズを取得
         const svgRect = maskRect.getBoundingClientRect();
-        const previewRect = image.getBoundingClientRect();
+        const previewRect = preview.getBoundingClientRect();
         const relativeX = svgRect.left - previewRect.left;
         const relativeY = svgRect.top - previewRect.top;
 
         // 実際の座標を計算
-        const x = relativeX * (image.naturalWidth / previewRect.width);
-        const y = relativeY * (image.naturalHeight / previewRect.height);
-        const width = svgRect.width * (image.naturalWidth / previewRect.width);
-        const height = svgRect.height * (image.naturalHeight / previewRect.height);
+        const x = relativeX * scaleWidth;
+        const y = relativeY * scaleHeight;
+        const width = svgRect.width * scaleWidth;
+        const height = svgRect.height * scaleHeight;
 
         // canvasのサイズをmaskRectのサイズに合わせる
         canvas.width = svgRect.width;
@@ -554,6 +558,8 @@ document.addEventListener("turbolinks:load", function() {
         // canvasからblobを生成してOCR処理
         canvas.toBlob(async (blob) => {
           const result = await processImage(blob);
+          const imageUrl = URL.createObjectURL(blob);
+          console.log('image:', imageUrl);
           if (result && result.text) {
             searchQuery.value = result.text;
 
