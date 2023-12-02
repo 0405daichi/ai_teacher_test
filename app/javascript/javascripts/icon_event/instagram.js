@@ -498,13 +498,18 @@ document.addEventListener("turbolinks:load", function() {
   
   initResizableRect(resizableRectsSe, lightDarkAreasSe, searchImagePreview);
 
-  // 画像が選択されたらプレビューに表示
+  // グローバル変数としてオリジナルの画像ファイルを保持
+  let originalImageFile = null;
+
+  // 画像が選択されたらプレビューに表示し、ファイルを保持
   inputImageButton.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
+      originalImageFile = file; // 画像ファイルを保持
       const reader = new FileReader();
       reader.onload = function(e) {
-        searchImagePreview.src = e.target.result;
+        const preview = searchTrimmingImageModalElement.querySelector('.preview');
+        preview.src = e.target.result;
       };
       reader.readAsDataURL(file);
 
@@ -514,62 +519,56 @@ document.addEventListener("turbolinks:load", function() {
 
   // "読み込む"ボタンのクリックイベント
   searchTrimmingImageModalElement.querySelector('.search-write-out-image').addEventListener('click', function() {
-    const previewImage = searchTrimmingImageModalElement.querySelector('.preview');
     const maskRect = searchTrimmingImageModalElement.querySelector('.mask-rect');
 
-    // 画像をロードして切り取り範囲を描画
+    // オリジナルの画像ファイルを使用して画像をロード
     const image = new Image();
-    image.src = previewImage.src;
-  
-    // canvas要素を作成
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-  
-    // プレビュー画像とコンテナのアスペクト比を計算
-    const scaleWidth = image.width / previewImage.offsetWidth;
-    const scaleHeight = image.height / previewImage.offsetHeight;
-  
-    // SVG内でのmaskRectの位置とサイズを取得
-    const svgRect = maskRect.getBoundingClientRect();
-    const previewRect = previewImage.getBoundingClientRect();
-    const relativeX = svgRect.left - previewRect.left;
-    const relativeY = svgRect.top - previewRect.top;
-  
-    // 実際の座標を計算
-    const x = relativeX * scaleWidth;
-    const y = relativeY * scaleHeight;
-    const width = svgRect.width * scaleWidth;
-    const height = svgRect.height * scaleHeight;
-  
-    // canvasのサイズをmaskRectのサイズに合わせる
-    canvas.width = svgRect.width;
-    canvas.height = svgRect.height;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      image.src = e.target.result;
 
-    console.log("origin", image);
-    // 画像をトリミングして処理する部分
-    image.onload = async function() {
-      // 切り取り範囲をキャンバスに描画
-      ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+      image.onload = function() {
+        // canvas要素を作成
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-      // canvasからblobを生成
-      canvas.toBlob(async (blob) => {
-        // processImage関数でOCR処理
-        const result = await processImage(blob);
-        const imageUrl = URL.createObjectURL(blob);
-        console.log('image:', imageUrl);
-        if (result && result.text) {
-          searchQuery.value = result.text;
+        // SVG内でのmaskRectの位置とサイズを取得
+        const svgRect = maskRect.getBoundingClientRect();
+        const previewRect = image.getBoundingClientRect();
+        const relativeX = svgRect.left - previewRect.left;
+        const relativeY = svgRect.top - previewRect.top;
 
-          // 新しい 'input' イベントを作成して発火
-          const event = new Event('input', {
-            bubbles: true,
-            cancelable: true,
-          });
-          searchQuery.dispatchEvent(event);
-          trimmingImageModal.hide();
-        }
-      }, 'image/png');
+        // 実際の座標を計算
+        const x = relativeX * (image.naturalWidth / previewRect.width);
+        const y = relativeY * (image.naturalHeight / previewRect.height);
+        const width = svgRect.width * (image.naturalWidth / previewRect.width);
+        const height = svgRect.height * (image.naturalHeight / previewRect.height);
+
+        // canvasのサイズをmaskRectのサイズに合わせる
+        canvas.width = svgRect.width;
+        canvas.height = svgRect.height;
+
+        // 切り取り範囲をキャンバスに描画
+        ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+
+        // canvasからblobを生成してOCR処理
+        canvas.toBlob(async (blob) => {
+          const result = await processImage(blob);
+          if (result && result.text) {
+            searchQuery.value = result.text;
+
+            // 新しい 'input' イベントを作成して発火
+            const event = new Event('input', {
+              bubbles: true,
+              cancelable: true,
+            });
+            searchQuery.dispatchEvent(event);
+            trimmingImageModal.hide();
+          }
+        }, 'image/png');
+      };
     };
+    reader.readAsDataURL(originalImageFile);
   });
   
   const returnSearchButton = searchCameraModalElement.querySelector('.return-search-button');
