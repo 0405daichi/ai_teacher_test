@@ -526,8 +526,8 @@ document.addEventListener("turbolinks:load", function() {
     const ctx = canvas.getContext('2d');
   
     // プレビュー画像とコンテナのアスペクト比を計算
-    const scaleWidth = previewImage.naturalWidth / previewImage.naturalHeight;
-    const scaleHeight = previewImage.offsetWidth / previewImage.offsetHeight;
+    const scaleWidth = image.width / previewImage.offsetWidth;
+    const scaleHeight = image.height / previewImage.offsetHeight;
   
     // SVG内でのmaskRectの位置とサイズを取得
     const svgRect = maskRect.getBoundingClientRect();
