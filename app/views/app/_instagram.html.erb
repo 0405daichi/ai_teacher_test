@@ -172,14 +172,12 @@
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
-        <div class="search-camera-area" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%;">
-          <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain; display: block;" autoplay></video>
-          <%= render 'shared/light_dark_area' %>
-          <%= render 'shared/resizable_rect' %>
-          <div class="button-elements">
-            <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
-            <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
-          </div>
+        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="button-elements">
+          <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
+          <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
         </div>
       </div>
     </div>
