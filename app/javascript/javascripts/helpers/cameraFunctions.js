@@ -140,3 +140,71 @@ export async function initResizableRect(rect, lightDarkArea, preview) {
   window.addEventListener("mouseup", endDrag);
   window.addEventListener("touchend", endDrag);
 }
+
+// カメラプレビューの位置とサイズを取得して調整する関数
+export async function adjustOverlayElements(rect, lightDarkArea, preview) {
+  const previewRect = cameraPreview.getBoundingClientRect();
+  const maskRect = lightDarkArea.querySelector('.mask-rect');
+  // 四つ角のパスを調整
+  const newWidth = previewRect.width / 2;
+  const newHeight = previewRect.height / 2;
+  lightDarkArea.style.width = `${previewRect.width}px`;
+  lightDarkArea.style.height = `${previewRect.height}px`;
+  rect.style.width = `${newWidth}px`;
+  rect.style.height = `${newHeight}px`;
+  rect.style.left = `${newWidth}px`;
+  rect.style.top = `${newHeight}px`;
+  maskRect.setAttribute("width", newWidth);
+  maskRect.setAttribute("height", newHeight);
+  maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
+
+  // pathの位置とmask-rectの位置とサイズを更新
+  const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
+  corners.forEach(corner => {
+    const path = rect.querySelector(`.${corner}-corner`);
+
+    let pathD = '';
+
+    switch (corner) {
+      case 'top-left':
+        pathD = `M 2,22 Q 2,2 22,2`;
+        break;
+      case 'top-right':
+        pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
+        break;
+      case 'bottom-right':
+        pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
+        break;
+      case 'bottom-left':
+        pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
+        break;
+    }
+
+    path.setAttribute("d", pathD);
+  });
+  
+  // ウィンドウのリサイズ時に調整を行う
+  window.addEventListener('resize', () => adjustOverlayElements(rect, lightDarkArea, preview));
+}
+
+function calculateDisplayedImageSize(preview) {
+  const naturalAspectRatio = preview.naturalWidth / preview.naturalHeight;
+  const containerAspectRatio = preview.offsetWidth / preview.offsetHeight;
+  let displayedWidth, displayedHeight;
+
+  if (containerAspectRatio > naturalAspectRatio) {
+    // 高さに基づいて幅を計算
+    displayedHeight = preview.offsetHeight;
+    displayedWidth = displayedHeight * naturalAspectRatio;
+  } else {
+    // 幅に基づいて高さを計算
+    displayedWidth = preview.offsetWidth;
+    displayedHeight = displayedWidth / naturalAspectRatio;
+  }
+
+  return { width: displayedWidth, height: displayedHeight };
+}
+// // 四つ角のパス要素を更新する関数
+// function updateCorners(newWidth, newHeight) {
+  
+// }

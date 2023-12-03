@@ -172,13 +172,14 @@
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
-        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain; display: block;" autoplay>
-        </video>
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <div class="button-elements">
-          <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
-          <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
+        <div class="search-camera-area" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%;">
+          <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain; display: block;" autoplay></video>
+          <%= render 'shared/light_dark_area' %>
+          <%= render 'shared/resizable_rect' %>
+          <div class="button-elements">
+            <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
+            <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
+          </div>
         </div>
       </div>
     </div>
@@ -513,62 +514,62 @@ document.addEventListener('turbolinks:load', () => {
     }
   }
 
-  // カメラプレビュー要素を取得
-  const searchCameraModalElement = document.querySelector('.search-camera-modal');
-  const cameraPreview = searchCameraModalElement.querySelector('.camera-preview');
-  const lightDarkArea = searchCameraModalElement.querySelector('.light-dark-area');
-  const resizableRect = searchCameraModalElement.querySelector('.resizable-rect');
+  // // カメラプレビュー要素を取得
+  // const searchCameraModalElement = document.querySelector('.search-camera-modal');
+  // const cameraPreview = searchCameraModalElement.querySelector('.camera-preview');
+  // const lightDarkArea = searchCameraModalElement.querySelector('.light-dark-area');
+  // const resizableRect = searchCameraModalElement.querySelector('.resizable-rect');
 
-  // カメラプレビューの位置とサイズを取得して調整する関数
-  function adjustOverlayElements() {
-    const previewRect = cameraPreview.getBoundingClientRect();
-    const maskRect = lightDarkArea.querySelector('.mask-rect');
-    // 四つ角のパスを調整
-    const newWidth = previewRect.width / 2;
-    const newHeight = previewRect.height / 2;
-    lightDarkArea.style.width = `${previewRect.width}px`;
-    lightDarkArea.style.height = `${previewRect.height}px`;
-    resizableRect.style.width = `${newWidth}px`;
-    resizableRect.style.height = `${newHeight}px`;
-    resizableRect.style.left = `${newWidth}px`;
-    resizableRect.style.top = `${newHeight}px`;
-    maskRect.setAttribute("width", newWidth);
-    maskRect.setAttribute("height", newHeight);
-    maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
-    updateCorners(newWidth, newHeight);
-  }
+  // // カメラプレビューの位置とサイズを取得して調整する関数
+  // function adjustOverlayElements() {
+  //   const previewRect = cameraPreview.getBoundingClientRect();
+  //   const maskRect = lightDarkArea.querySelector('.mask-rect');
+  //   // 四つ角のパスを調整
+  //   const newWidth = previewRect.width / 2;
+  //   const newHeight = previewRect.height / 2;
+  //   lightDarkArea.style.width = `${previewRect.width}px`;
+  //   lightDarkArea.style.height = `${previewRect.height}px`;
+  //   resizableRect.style.width = `${newWidth}px`;
+  //   resizableRect.style.height = `${newHeight}px`;
+  //   resizableRect.style.left = `${newWidth}px`;
+  //   resizableRect.style.top = `${newHeight}px`;
+  //   maskRect.setAttribute("width", newWidth);
+  //   maskRect.setAttribute("height", newHeight);
+  //   maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
+  //   updateCorners(newWidth, newHeight);
+  // }
 
-  // 四つ角のパス要素を更新する関数
-  function updateCorners(newWidth, newHeight) {
-    // pathの位置とmask-rectの位置とサイズを更新
-    const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
-    corners.forEach(corner => {
-      const path = resizableRect.querySelector(`.${corner}-corner`);
+  // // 四つ角のパス要素を更新する関数
+  // function updateCorners(newWidth, newHeight) {
+  //   // pathの位置とmask-rectの位置とサイズを更新
+  //   const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
+  //   corners.forEach(corner => {
+  //     const path = resizableRect.querySelector(`.${corner}-corner`);
 
-      let pathD = '';
+  //     let pathD = '';
 
-      switch (corner) {
-        case 'top-left':
-          pathD = `M 2,22 Q 2,2 22,2`;
-          break;
-        case 'top-right':
-          pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
-          break;
-        case 'bottom-right':
-          pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
-          break;
-        case 'bottom-left':
-          pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
-          break;
-      }
+  //     switch (corner) {
+  //       case 'top-left':
+  //         pathD = `M 2,22 Q 2,2 22,2`;
+  //         break;
+  //       case 'top-right':
+  //         pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
+  //         break;
+  //       case 'bottom-right':
+  //         pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
+  //         break;
+  //       case 'bottom-left':
+  //         pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
+  //         break;
+  //     }
 
-      path.setAttribute("d", pathD);
-    });
-  }
+  //     path.setAttribute("d", pathD);
+  //   });
+  // }
 
-  // イベントリスナーを追加
-  cameraPreview.addEventListener('loadedmetadata', adjustOverlayElements);
-  window.addEventListener('resize', adjustOverlayElements);
+  // // イベントリスナーを追加
+  // cameraPreview.addEventListener('loadedmetadata', adjustOverlayElements);
+  // window.addEventListener('resize', adjustOverlayElements);
 });
 
 </script>

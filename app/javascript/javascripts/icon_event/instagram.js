@@ -1,7 +1,7 @@
 // instagram.js
 
 import { Modal } from 'bootstrap';
-import { createStream, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+import { createStream, processImage, initResizableRect, adjustOverlayElements } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
@@ -504,16 +504,23 @@ document.addEventListener("turbolinks:load", function() {
   // 画像が選択されたらプレビューに表示し、ファイルを保持
   inputImageButton.addEventListener('change', function(e) {
     const file = e.target.files[0];
+    console.log(file);
     if (file) {
       originalImageFile = file; // 画像ファイルを保持
       const reader = new FileReader();
+      const preview = searchTrimmingImageModalElement.querySelector('.preview');
       reader.onload = function(e) {
-        const preview = searchTrimmingImageModalElement.querySelector('.preview');
         preview.src = e.target.result;
       };
       reader.readAsDataURL(file);
-
-      trimmingImageModal.show();
+      
+      // 画像のロードが完了したらオーバーレイ要素を調整
+      preview.onload = function() {
+        console.log("画像ロード後のサイズ：", preview.getBoundingClientRect());
+        trimmingImageModal.show();
+        adjustOverlayElements(resizableRectsSe, lightDarkAreasSe, preview);
+      };
+      
     }
   });
 
