@@ -444,13 +444,14 @@ document.addEventListener("turbolinks:load", function() {
     searchCameraModal.hide();
     cameraTrack.stop();
 
-    // カメラプレビューと実際の写真の解像度の比を計算
-    const scaleWidth = imageBitmap.width / cameraPreview.offsetWidth;
-    const scaleHeight = imageBitmap.height / cameraPreview.offsetHeight;
-
-    // プレビュー上のmaskRectの相対位置を取得
     const svgRect = maskRect.getBoundingClientRect();
     const previewRect = cameraPreview.getBoundingClientRect();
+
+    // カメラプレビューと実際の写真の解像度の比を計算
+    const scaleWidth = imageBitmap.width / previewRect.width;
+    const scaleHeight = imageBitmap.height / previewRect.height;
+
+    // プレビュー上のmaskRectの相対位置を取得
     const relativeX = svgRect.left - previewRect.left;
     const relativeY = svgRect.top - previewRect.top;
     
