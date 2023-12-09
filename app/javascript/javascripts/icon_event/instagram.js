@@ -410,188 +410,223 @@ document.addEventListener("turbolinks:load", function() {
   }
 
   const cameraCircle = document.querySelector('.camera-circle');
-  const searchCameraModalElement = document.querySelector('.search-camera-modal');
-  const cameraPreview = searchCameraModalElement.querySelector(".camera-preview");
-  const captureButton = searchCameraModalElement.querySelector('.search-camera-capture-button');
-  const searchCameraModal = new Modal(searchCameraModalElement, {
+  let simpleCameraImageCapture;
+  let simpleCameraStream;
+  let simpleCameraTrack;
+
+  const simpleCameraModalElement = document.querySelector('.simple-camera-modal');
+  const simpleCameraPreview = simpleCameraModalElement.querySelector(".preview");
+  const simpleCameraCaptureButton = simpleCameraModalElement.querySelector('.capture-button');
+  const simpleCameraModal = new Modal(simpleCameraModalElement, {
     keyboard: false,
     backdrop: 'true'
   });
-  let imageCapture;
-  let stream;
-  let cameraTrack;
 
-  cameraCircle.addEventListener('click', async () => {
-    searchCameraModal.show();
-    stream = await createStream(cameraPreview);    
-    cameraTrack = stream.getVideoTracks()[0];
-    imageCapture = new ImageCapture(cameraTrack);
-  });
-
-  const resizableRects = searchCameraModalElement.querySelector('.resizable-rect');
-  const lightDarkAreas = searchCameraModalElement.querySelector('.light-dark-area');
+  const resizableRects = simpleCameraModalElement.querySelector('.resizable-rect');
+  const lightDarkAreas = simpleCameraModalElement.querySelector('.light-dark-area');
+  initResizableRect(resizableRects, lightDarkAreas, simpleCameraPreview);
   
-  initResizableRect(resizableRects, lightDarkAreas, cameraPreview);
+  cameraCircle.addEventListener('click', async () => {
+    instagramModal.hide();
+    simpleCameraModal.show();
+    simpleCameraStream = await createStream(simpleCameraPreview);    
+    simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
+    simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
+
+    setBackButtonListener(async () => {
+      // ここに戻るボタンが押されたときの処理を記述
+      if (simpleCameraModal._isShown == true) {
+        simpleCameraModal.hide();
+        simpleCameraTrack.stop();
+        instagramModal.show();
+      }
+    }, simpleCameraModalElement, '.return-button');
+  });
   
   // 撮影ボタンクリック時の処理
-  captureButton.addEventListener("click", async () => {
-    const maskRect = searchCameraModalElement.querySelector('.mask-rect');
-    const photo = await imageCapture.takePhoto();
+  simpleCameraCaptureButton.addEventListener("click", async () => {
+    const maskRect = simpleCameraModalElement.querySelector('.mask-rect');
+    const svgRect = maskRect.getBoundingClientRect();
+    const photo = await simpleCameraImageCapture.takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    console.log(imageBitmap);
-    searchCameraModal.hide();
-    cameraTrack.stop();
 
-    const svgRect = maskRect.getBoundingClientRect();
-    const previewRect = cameraPreview.getBoundingClientRect();
-
-    // カメラプレビューと実際の写真の解像度の比を計算
-    const scaleWidth = imageBitmap.width / previewRect.width;
-    const scaleHeight = imageBitmap.height / previewRect.height;
-
-    // プレビュー上のmaskRectの相対位置を取得
-    const relativeX = svgRect.left - previewRect.left;
-    const relativeY = svgRect.top - previewRect.top;
+    simpleCameraModal.hide();
+    simpleCameraTrack.stop();
     
-    // 写真上での切り取り座標とサイズを計算
-    const x = relativeX * scaleWidth;
-    const y = relativeY * scaleHeight;
-    const width = svgRect.width * scaleWidth;
-    const height = svgRect.height * scaleHeight;
-    
-    // Canvasのサイズを設定
+    // プレビューと実際の写真のアスペクト比を比較
+    const previewAspectRatio = simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight;
+    const imageAspectRatio = imageBitmap.width / imageBitmap.height;
+
+    // 実際の画像の表示領域を計算
+    let displayWidth, displayHeight, offsetX, offsetY;
+    if (previewAspectRatio > imageAspectRatio) {
+        displayHeight = simpleCameraPreview.offsetHeight;
+        displayWidth = displayHeight * imageAspectRatio;
+        offsetX = (simpleCameraPreview.offsetWidth - displayWidth) / 2;
+        offsetY = 0;
+    } else {
+        displayWidth = simpleCameraPreview.offsetWidth;
+        displayHeight = displayWidth / imageAspectRatio;
+        offsetX = 0;
+        offsetY = (simpleCameraPreview.offsetHeight - displayHeight) / 2;
+    }
+
+    // プレビュー上のmaskRectの相対位置を再計算
+    const adjustedX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
+    const adjustedY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
+    const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
+    const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
+
+    // CanvasのサイズをmaskRectのサイズに合わせる
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
 
-    // imageBitmapからmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, x, y, width, height, 0, 0, canvas.width, canvas.height);
+    // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
+    ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
     
     canvas.toBlob(async (blob) => {
-      const result = await processImage(blob);
+      console.log("blob", blob);
+      // const result = await processImage(blob);
       const imageUrl = URL.createObjectURL(blob);
       console.log('image:', imageUrl);
-      searchQuery.value = result.text;
-      // 新しい 'input' イベントを作成
-      const event = new Event('input', {
-        bubbles: true, // イベントをバブリングさせる
-        cancelable: true, // イベントをキャンセル可能にする
-      });
+      // searchQuery.value = result.text;
+      // // 新しい 'input' イベントを作成
+      // const event = new Event('input', {
+      //   bubbles: true, // イベントをバブリングさせる
+      //   cancelable: true, // イベントをキャンセル可能にする
+      // });
 
-      // テキストエリア要素でイベントを発火
-      searchQuery.dispatchEvent(event);
+      // // テキストエリア要素でイベントを発火
+      // searchQuery.dispatchEvent(event);
     }, 'image/png');
   });
 
   const imageCircle = document.querySelector('.image-circle');
   const searchTrimmingImageModalElement = document.querySelector('.search-trimming-image-modal');
-  const inputImageButton = document.querySelector('.image-input-search');
-  const searchImagePreview = searchTrimmingImageModalElement.querySelector('.preview');
+  const trimmingImageModalElement = document.querySelector(".trimming-image-modal");
+  const inputImageButton = instagramModalElement.querySelector('.image-input-search');
+  const imagePreview = trimmingImageModalElement.querySelector('.preview');
 
-  const resizableRectsSe = searchTrimmingImageModalElement.querySelector('.resizable-rect');
-  const lightDarkAreasSe = searchTrimmingImageModalElement.querySelector('.light-dark-area');
+  const resizableRectsTrim = trimmingImageModalElement.querySelector('.resizable-rect');
+  const lightDarkAreasTrim = trimmingImageModalElement.querySelector('.light-dark-area');
   // const maskRect = searchCameraModalElement.querySelector(".mask-rect");
-  const trimmingImageModal = new Modal(searchTrimmingImageModalElement, {
+  const trimmingImageModal = new Modal(trimmingImageModalElement, {
     keyboard: false,
     backdrop: 'true'
   });
   
-  initResizableRect(resizableRectsSe, lightDarkAreasSe, searchImagePreview);
-
   // グローバル変数としてオリジナルの画像ファイルを保持
   let originalImageFile = null;
 
   // 画像が選択されたらプレビューに表示し、ファイルを保持
   inputImageButton.addEventListener('change', function(e) {
     const file = e.target.files[0];
-    console.log(file);
     if (file) {
-      originalImageFile = file; // 画像ファイルを保持
       const reader = new FileReader();
-      const preview = searchTrimmingImageModalElement.querySelector('.preview');
       reader.onload = function(e) {
-        preview.src = e.target.result;
+        imagePreview.src = e.target.result;
       };
       reader.readAsDataURL(file);
       
-      // 画像のロードが完了したらオーバーレイ要素を調整
-      preview.onload = function() {
-        console.log("画像ロード後のサイズ：", preview.getBoundingClientRect());
-        trimmingImageModal.show();
-        adjustOverlayElements(resizableRectsSe, lightDarkAreasSe, preview);
-      };
-      
+      instagramModal.hide();
+      trimmingImageModal.show();
+      initResizableRect(resizableRectsTrim, lightDarkAreasTrim, imagePreview);
+
+      setBackButtonListener(async () => {
+        // ここに戻るボタンが押されたときの処理を記述
+        if (trimmingImageModal._isShown == true) {
+          const preview = trimmingImageModalElement.querySelector('.preview');
+          preview.src = '';
+          inputImageButton.value = '';
+          trimmingImageModal.hide();
+          instagramModal.show();
+        }
+      }, trimmingImageModalElement, '.return-from-trimming');
     }
   });
 
   // "読み込む"ボタンのクリックイベント
-  searchTrimmingImageModalElement.querySelector('.search-write-out-image').addEventListener('click', function() {
-    const maskRect = searchTrimmingImageModalElement.querySelector('.mask-rect');
-    const preview = searchTrimmingImageModalElement.querySelector('.preview');
-
-    // オリジナルの画像ファイルを使用して画像をロード
-    const image = new Image();
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      image.src = e.target.result;
-
-      image.onload = function() {
-        // canvas要素を作成
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        const scaleWidth = image.width / preview.offsetWidth;
-        const scaleHeight = image.height / preview.offsetHeight;
-
-        // SVG内でのmaskRectの位置とサイズを取得
-        const svgRect = maskRect.getBoundingClientRect();
-        const previewRect = preview.getBoundingClientRect();
-        const relativeX = svgRect.left - previewRect.left;
-        const relativeY = svgRect.top - previewRect.top;
-
-        // 実際の座標を計算
-        const x = relativeX * scaleWidth;
-        const y = relativeY * scaleHeight;
-        const width = svgRect.width * scaleWidth;
-        const height = svgRect.height * scaleHeight;
-
-        // canvasのサイズをmaskRectのサイズに合わせる
-        canvas.width = svgRect.width;
-        canvas.height = svgRect.height;
-
-        // 切り取り範囲をキャンバスに描画
-        ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
-
-        // canvasからblobを生成してOCR処理
-        canvas.toBlob(async (blob) => {
-          const result = await processImage(blob);
-          const imageUrl = URL.createObjectURL(blob);
-          console.log('image:', imageUrl);
-          if (result && result.text) {
-            searchQuery.value = result.text;
-
-            // 新しい 'input' イベントを作成して発火
-            const event = new Event('input', {
-              bubbles: true,
-              cancelable: true,
-            });
-            searchQuery.dispatchEvent(event);
-            trimmingImageModal.hide();
-          }
-        }, 'image/png');
-      };
-    };
-    reader.readAsDataURL(originalImageFile);
-  });
+  trimmingImageModalElement.querySelector('.write-out-image').addEventListener('click', function() {
+    const previewImage = trimmingImageModalElement.querySelector('.preview');
+    const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
   
-  const returnSearchButton = searchCameraModalElement.querySelector('.return-search-button');
+    // canvas要素を作成
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
   
-  returnSearchButton.addEventListener('click', async () => {
-    if (searchCameraModal._isShown == true) 
-    {
-      searchCameraModal.hide();
-      cameraTrack.stop();
+    // プレビュー画像とコンテナのアスペクト比を計算
+    const imageAspectRatio = imagePreview.naturalWidth / imagePreview.naturalHeight;
+    const containerAspectRatio = imagePreview.offsetWidth / imagePreview.offsetHeight;
+  
+    // 実際の表示サイズとコンテナ内でのオフセットを計算
+    let renderWidth, renderHeight, offsetX, offsetY;
+    if (containerAspectRatio > imageAspectRatio) {
+      // コンテナの幅が画像の幅よりも広い場合
+      renderHeight = imagePreview.offsetHeight;
+      renderWidth = imageAspectRatio * renderHeight;
+      offsetX = (imagePreview.offsetWidth - renderWidth) / 2;
+      offsetY = 0;
+    } else {
+      // コンテナの高さが画像の高さよりも高い場合
+      renderWidth = imagePreview.offsetWidth;
+      renderHeight = renderWidth / imageAspectRatio;
+      offsetX = 0;
+      offsetY = (imagePreview.offsetHeight - renderHeight) / 2;
     }
+  
+    // SVG内でのmaskRectの位置とサイズを取得
+    const svgRect = maskRect.getBoundingClientRect();
+  
+    // 実際の座標を計算
+    const x = (svgRect.left - imagePreview.offsetLeft - offsetX) * (imagePreview.naturalWidth / renderWidth);
+    const y = (svgRect.top - imagePreview.offsetTop - offsetY) * (imagePreview.naturalHeight / renderHeight);
+    const width = svgRect.width * (imagePreview.naturalWidth / renderWidth);
+    const height = svgRect.height * (imagePreview.naturalHeight / renderHeight);
+  
+    // canvasのサイズをmaskRectのサイズに合わせる
+    canvas.width = svgRect.width;
+    canvas.height = svgRect.height;
+  
+    // 画像をロードして切り取り範囲を描画
+    const image = new Image();
+    image.src = imagePreview.src;
+
+    // 画像をトリミングして処理する部分
+    image.onload = async function() {
+      // 切り取り範囲をキャンバスに描画
+      ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+
+      // canvasからblobを生成
+      canvas.toBlob(async (blob) => {
+        // processImage関数でOCR処理
+        // const result = await processImage(blob);
+        const imageUrl = URL.createObjectURL(blob);
+        console.log('image:', imageUrl);
+        // if (result && result.text) {
+        //   searchQuery.value = result.text;
+
+        //   // 新しい 'input' イベントを作成して発火
+        //   const event = new Event('input', {
+        //     bubbles: true,
+        //     cancelable: true,
+        //   });
+        //   searchQuery.dispatchEvent(event);
+        //   trimmingImageModal.hide();
+        // }
+      }, 'image/png');
+    };
   });
 });
+
+function setBackButtonListener(listener, element, buttonSelector) {
+  var returnButton = element.querySelector(buttonSelector);
+
+  // 以前のイベントリスナーを削除
+  returnButton.replaceWith(returnButton.cloneNode(true));
+
+  // 新しいイベントリスナーを追加
+  returnButton = element.querySelector(buttonSelector);
+  returnButton.addEventListener('click', listener);
+}

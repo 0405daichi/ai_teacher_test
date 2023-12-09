@@ -11,6 +11,10 @@
     const circleContainer = document.getElementById('circles');
     const radius = 100;
     const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
+    const centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
+    // 中心の画像を取得
+    const centerPoint = document.querySelector('.center-point');
+    centerPoint.dataset.angle = 0;
   
     // 各画像に対応するクラス名とaltテキスト
     const imageDetails = <%= raw(
@@ -56,9 +60,18 @@
         setCirclePosition(circle, radius, newAngle);
         circle.dataset.angle = newAngle;
       });
+
+      const currentCenterAngle = parseFloat(centerPoint.dataset.angle);
+      const newCenterAngle = currentCenterAngle + centerRotationSpeed;
+      centerPoint.dataset.angle = newCenterAngle;
+      centerPoint.style.transform = `translate(-50%, -50%) rotate(${newCenterAngle}deg)`;
     }, 16); // 約60FPSで更新
-  
-    // 現存のコードに以下を追加
+
+    // スクロールで中心の画像を回転させる
+    window.addEventListener('wheel', function(event) {
+      const scrollDelta = -event.deltaY * 0.1; // スクロールの量に基づく回転量
+      rotateCenterPoint(scrollDelta);
+    });
 
     // ホイールで回転させる
     window.addEventListener('wheel', function(event) {
@@ -90,6 +103,7 @@
       touchVelocity = touchDelta; // タッチによる回転速度を設定
 
       updateCircles(touchDelta);
+      rotateCenterPoint(touchDelta);
     });
 
     // タッチ終了時の処理
@@ -113,6 +127,14 @@
         setCirclePosition(circle, radius, newAngle);
         circle.dataset.angle = newAngle;
       });
+    }
+
+    // 中心の画像を回転させる関数
+    function rotateCenterPoint(delta) {
+      const currentAngle = parseFloat(centerPoint.dataset.angle) || 0;
+      const newAngle = currentAngle + delta;
+      centerPoint.dataset.angle = newAngle;
+      centerPoint.style.transform = `translate(-50%, -50%) rotate(${newAngle}deg)`;
     }
   
     function setCirclePosition(circle, r, a) {
@@ -154,17 +176,6 @@
     display: flex;
     justify-content: center; /* 水平方向の中央寄せ */
     align-items: center; /* 垂直方向の中央寄せ */
-    transform: translate(-50%, -50%) rotate(0deg);
-    animation: rotateInfinite 50s linear infinite; /* 10秒で1回転、無限に繰り返す */
-  }
-
-  @keyframes rotateInfinite {
-    from {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-    to {
-      transform: translate(-50%, -50%) rotate(-360deg);
-    }
   }
 
   .center-point img {
@@ -216,6 +227,54 @@
     justify-content: end;
     height: 40px;
   }
+
+  .return-button {
+    position: absolute;
+    bottom: 50px;
+    left: 25%;
+    transform: translateX(-25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+    color: white;
+  }
+
+  .return-button:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    color: black;
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  .return-camera-from-write {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    position: relative; /* 追加 */
+    border-radius:50%;
+    border: solid 1px white; 
+    width: 50px; 
+    height: 50px;
+    color: white;
+  }
+
+  .return-camera-from-write:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    color: black;
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
 </style>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
@@ -239,6 +298,46 @@
         <div class="like-count"></div>
         <div class="bookmark"></div>
         <div class="bookmark-count"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- カメラモーダル(撮影のみ) -->
+<div class="modal fade simple-camera-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
+        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: contain; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="button-elements">
+          <div class="outer-circle" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">
+            <div class="inner-circle capture-button"></div>
+          </div>
+          <div class="return-button m-1">
+            ←
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 画像トリミングモーダル -->
+<div class="modal fade trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content" style="height: 100vh;">
+      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh;">
+        <!-- 写真プレビュー表示エリア -->
+        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <!-- ここで撮影ボタンの位置を調整 -->
+        <div class="outer-circle">
+          <div class="inner-circle write-out-image"></div>
+        </div>
+        <div class="return-from-trimming">←</div>
       </div>
     </div>
   </div>

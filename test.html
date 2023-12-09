@@ -1,0 +1,43 @@
+<div class="circle-container">
+  <div class="outer-circle">
+    <div class="inner-circle"></div>
+  </div>
+</div>
+<div>
+  ・画像を読み込んだ後、inputのvalueを空にしてない
+  ・読み込みボタンに重複イベントが追加されていている
+  ・シンプルカメラ開く時の戻るボタンのイベント管理
+</div>
+<style>
+.circle-container {
+  position: relative;
+  width: 100px; /* または必要なサイズ */
+  height: 100px; /* または必要なサイズ */
+}
+
+.outer-circle {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(245, 245, 245, 0.5); /* 淡い白色に透明度を設定 */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.inner-circle {
+  width: 80%; /* 外側の円よりもかなり小さく */
+  height: 80%; /* 外側の円よりもかなり小さく */
+  background-color: white; /* 薄い白色に透明度を設定 */
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  margin: auto; /* 中央に自動的に配置 */
+  position: relative; /* マージンを適用するために必要 */
+}
+
+.outer-circle:hover .inner-circle {
+  background-color: rgba(245, 245, 245, 0.5); /* ホバーが外れたら外側の円と同じ色に */
+}
+
+</style>

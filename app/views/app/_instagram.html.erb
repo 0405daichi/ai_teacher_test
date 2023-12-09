@@ -111,10 +111,25 @@
                   <div class="card" data-card-id="<%= card.id %>">
                     <div class="card-id" style="display:none;"><%= card.id %></div>
                     <div class="card-body">
-                      <%= card.content %> <!-- 質問の内容を表示 -->
+                        <%= card.content %> <!-- 質問の内容を表示 -->
                     </div>
-                    <div class="like">
-                        ❤️
+                    <div class="card-bottom">
+                      <div class="like">
+                        <% if !card.likes.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                        <% end %>
+                      </div>
+                      <div class="like-count"><%= card.likes.count %></div>
+                      <div class="bookmark">
+                        <% if !card.bookmarks.find_by(user: current_user) %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                        <% else %>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                        <% end %>
+                      </div>
+                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
                     </div>
                   </div>
                 <% end %>
@@ -168,42 +183,48 @@
   </div>
 </div>
 
-<div class="modal fade search-camera-modal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
-        <video class="camera-preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <div class="button-elements">
-          <button type="button" class="search-camera-capture-button" id="captureButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">撮影</button>
-          <button type="button" class="btn btn-outline-light return-search-button" style="position: absolute; bottom: 50px;  left: 25%; transform: translateX(-25%);">←</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 画像トリミングモーダル -->
-<div class="modal fade trimming-image-modal search-trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content" style="height: 100vh;">
-      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100vh; background-color: white;">
-        <!-- 写真プレビュー表示エリア -->
-        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; object-fit: contain;">
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <!-- ボタンの位置を右上に調整 -->
-        <button type="button" id="backButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
-        <!-- ここで撮影ボタンの位置を調整 -->
-        <button type="button" class="btn btn-primary search-write-out-image" style="display: block; position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);">決定</button>
-        <button type="button" id="writeButton" class="btn btn-primary" style="display: block; position: absolute; bottom: 200px; left: 25%; transform: translateX(-25%);">←</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <style>
+@media only screen and (max-width: 425px) {
+    .cards-panel-modal-body {
+        padding: 0; /* モーダルコンテンツの高さを画面高さに合わせる */
+    }
+
+    /* カードのスタイル調整 */
+    .cards .card {
+        margin: 1px; /* カードの上下の余白を設定 */
+    }
+
+    .card-body {
+        padding: 10px; /* カード内部のパディングを設定 */
+    }
+
+    /* テキストエリアとボタンのスタイル調整 */
+    .search-textarea {
+        left: 5px;
+        right: 5px;
+        margin: 10px auto; /* テキストエリアの上下の余白を設定 */
+    }
+
+    .circle {
+        width: 15vw;
+        height: 15vw;
+    }
+
+    .input-circle {
+      right: 15vw;
+      margin: 0;
+    }
+
+    .bottom-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;  /* 追加: 子要素を左寄せ */
+        width: 100%;
+    }
+}
+
+
+
 .search-results {
   margin-top: 80px;
 }
@@ -231,8 +252,8 @@
 .bottom-container {
     display: flex;
     align-items: center;
-    justify-content: center;  /* 追加: 子要素を左寄せ */
-    /* margin: 0 0 30px 0; */
+    justify-content: end;  /* 追加: 子要素を左寄せ */
+    width: 100%;
 }
 
 .bottom-circles {
@@ -243,7 +264,6 @@
     scroll-padding: 50%;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    margin-right: 10px;  /* 追加: add-btnとの間隔 */
     
     &::-webkit-scrollbar {
         display: none;
@@ -256,7 +276,7 @@
     height: 100px;
     background-color: transparent;
     border-radius: 50%;
-    margin-right: 10px;
+    margin: 0 5px;
     scroll-snap-align: top;
     transition: background-color 0.3s ease;
     cursor: pointer;
@@ -313,7 +333,7 @@
 /* デフォルトのカードスタイル */
 .cards .card {
   height: 300px;
-  width: 600px;
+  width: 100%;
   background-color: transparent; /* 既定の背景色 */
   color: white;
   transition: background-color 0.3s ease; /* 背景色の変更を滑らかに */
@@ -355,7 +375,7 @@
   position: fixed;
   bottom: 0;
   right: 0;
-  margin: 0 35px 16px 0;
+  margin: 0 20px 5px 0;
   visibility: hidden;
 }
 

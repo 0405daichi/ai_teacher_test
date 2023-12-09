@@ -94,6 +94,8 @@ export async function initResizableRect(rect, lightDarkArea, preview) {
     // プレビュー画像の範囲内でのみリサイズを許可
     newWidth = Math.max(100, Math.min(newWidth, previewRect.width - (rect.getBoundingClientRect().left - previewRect.left)));
     newHeight = Math.max(100, Math.min(newHeight, previewRect.height - (rect.getBoundingClientRect().top - previewRect.top)));
+    // newWidth = Math.max(100, Math.min(window.innerWidth - 100, newWidth));
+    // newHeight = Math.max(100, Math.min(window.innerHeight - 100, newHeight));
 
     rect.style.width = `${newWidth}px`;
     rect.style.height = `${newHeight}px`;
@@ -143,8 +145,8 @@ export async function initResizableRect(rect, lightDarkArea, preview) {
 
 // カメラプレビューの位置とサイズを取得して調整する関数
 export async function adjustOverlayElements(rect, lightDarkArea, preview) {
-  const previewRect = cameraPreview.getBoundingClientRect();
   const maskRect = lightDarkArea.querySelector('.mask-rect');
+  const previewRect = preview.getBoundingClientRect();
   // 四つ角のパスを調整
   const newWidth = previewRect.width / 2;
   const newHeight = previewRect.height / 2;
@@ -184,27 +186,5 @@ export async function adjustOverlayElements(rect, lightDarkArea, preview) {
   });
   
   // ウィンドウのリサイズ時に調整を行う
-  window.addEventListener('resize', () => adjustOverlayElements(rect, lightDarkArea, preview));
+  // window.addEventListener('resize', () => adjustOverlayElements(rect, lightDarkArea, preview));
 }
-
-function calculateDisplayedImageSize(preview) {
-  const naturalAspectRatio = preview.naturalWidth / preview.naturalHeight;
-  const containerAspectRatio = preview.offsetWidth / preview.offsetHeight;
-  let displayedWidth, displayedHeight;
-
-  if (containerAspectRatio > naturalAspectRatio) {
-    // 高さに基づいて幅を計算
-    displayedHeight = preview.offsetHeight;
-    displayedWidth = displayedHeight * naturalAspectRatio;
-  } else {
-    // 幅に基づいて高さを計算
-    displayedWidth = preview.offsetWidth;
-    displayedHeight = displayedWidth / naturalAspectRatio;
-  }
-
-  return { width: displayedWidth, height: displayedHeight };
-}
-// // 四つ角のパス要素を更新する関数
-// function updateCorners(newWidth, newHeight) {
-  
-// }
