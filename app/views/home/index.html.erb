@@ -119,7 +119,7 @@
 
       const touchY = event.touches[0].clientY;
       const touchDelta = initialTouchY - touchY;
-      touchVelocity = touchDelta * 0.1; // タッチによる回転加速度を設定
+      touchVelocity = touchDelta * 0.5; // タッチによる回転加速度を設定
 
       // 回転速度に基づいて更新
       updateCircles(touchVelocity);
