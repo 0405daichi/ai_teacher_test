@@ -1,8 +1,8 @@
 <!-- カメラモーダル -->
 <div class="modal fade cameraModal" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content" style="height: 100vh;">
-      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100vh;">
+    <div class="modal-content">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
         <!-- カメラプレビュー表示エリア -->
         <video class="preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>

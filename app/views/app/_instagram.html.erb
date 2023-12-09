@@ -190,8 +190,8 @@
     }
 
     /* カードのスタイル調整 */
-    .cards .card {
-        margin: 1px; /* カードの上下の余白を設定 */
+    .cards-panel-modal-body .cards .card {
+        height: 300px;
     }
 
     .card-body {
@@ -205,17 +205,19 @@
         margin: 10px auto; /* テキストエリアの上下の余白を設定 */
     }
 
-    .circle {
+    .bottom-container .bottom-circles .circle {
         width: 15vw;
         height: 15vw;
     }
 
-    .input-circle {
-      right: 15vw;
+    .user-search-cards .input-circle {
+      right: 8vw;
+      width: 15vw;
+      height: 15vw;
       margin: 0;
     }
 
-    .bottom-container {
+    .instagramModal .bottom-container {
         display: flex;
         align-items: center;
         justify-content: center;  /* 追加: 子要素を左寄せ */
@@ -332,8 +334,8 @@
 
 /* デフォルトのカードスタイル */
 .cards .card {
-  height: 300px;
-  width: 100%;
+  height: 500px;
+  width: 100vw;
   background-color: transparent; /* 既定の背景色 */
   color: white;
   transition: background-color 0.3s ease; /* 背景色の変更を滑らかに */
