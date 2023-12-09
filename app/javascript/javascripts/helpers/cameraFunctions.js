@@ -98,6 +98,14 @@ export async function toggleTorch(cameraPreviewElement, torchOn) {
   }
 
   const track = stream.getVideoTracks()[0];
+  const capabilities = track.getCapabilities();
+
+  // トーチ機能がサポートされているか確認
+  if (!capabilities.torch) {
+    alert('このデバイスではトーチ機能はサポートされていません。');
+    return;
+  }
+
   try {
     await track.applyConstraints({
       advanced: [{ torch: torchOn }]
