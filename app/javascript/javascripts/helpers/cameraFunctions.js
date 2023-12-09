@@ -71,7 +71,11 @@ export async function takePhoto() {
 
   const videoTrack = currentStream.getVideoTracks()[0];
   const imageCapture = new ImageCapture(videoTrack);
-  console.log("imageCapture", imageCapture.getPhotoCapabilities());
+  // カメラの機能を取得
+  const photoCapabilities = await imageCapture.getPhotoCapabilities();
+
+  // フラッシュのサポート状況を確認
+  console.log('フラッシュのサポート状況:', photoCapabilities.fillLightMode);
 
   const photoSettings = {
     fillLightMode: flashMode // 'off', 'auto', 'flash'
