@@ -104,7 +104,7 @@
 
     let initialTouchY = null;
     let touchVelocity = 0; // タッチによる回転速度
-    const friction = 0.05; // 摩擦係数
+    const friction = 0.95; // 摩擦係数
 
     // タッチ開始時の処理
     window.addEventListener('touchstart', function(event) {
@@ -138,6 +138,7 @@
     function animateDeceleration() {
       if (Math.abs(touchVelocity) > 0.1) {
         updateCircles(touchVelocity);
+        rotateCenterPoint(touchVelocity);
         touchVelocity *= friction; // 摩擦により速度を減少
         requestAnimationFrame(animateDeceleration);
       }
@@ -331,7 +332,7 @@
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
-        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: contain; display: block;" autoplay></video>
+        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
         <div class="button-elements">
