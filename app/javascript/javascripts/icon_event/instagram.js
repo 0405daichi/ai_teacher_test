@@ -25,7 +25,15 @@ document.addEventListener("turbolinks:load", function() {
     if (open == true)
     {
       const openEnd = await fadeInCirclesSequentially();
-      if (openEnd) instagramModal.show();
+      if (openEnd) 
+      {
+        instagramModal.show();
+        // Homeボタンに相当する要素を取得
+        const homeButton = instagramModalElement.querySelector('.circle1');
+
+        // Homeボタンをクリックしてアクティブ状態にする
+        homeButton.click();
+      }
     }
   });
 
@@ -205,24 +213,23 @@ document.addEventListener("turbolinks:load", function() {
   const cardsPanel = document.querySelector('.cards-panel-modal-body'); // カードパネルの要素を取得
 
   circles.forEach(circle => {
-    circle.addEventListener('click', (e) => {
-      // Get the category from the clicked circle
+    circle.addEventListener('click', () => {
+      // 全てのcircleのアクティブスタイルをリセットする
+      circles.forEach(el => el.classList.remove('active'));
+
+      // 現在のcircleにアクティブスタイルを適用する
+      circle.classList.add('active');
+
       const category = circle.dataset.category;
 
-      // Hide all cards
-      // document.querySelectorAll('.cards').forEach(el => el.classList.add('invisible'));
+      // 全てのカードを非表示にする
       document.querySelectorAll('.cards').forEach(el => el.style.display = "none");
 
-      // Show the corresponding cards
+      // 対応するカードを表示する
       const cardsToShow = document.querySelector(`.${category}-cards`);
       if (cardsToShow) {
-        // cardsToShow.classList.remove('invisible');
         cardsToShow.style.display = "block";
-        cardsPanel.scrollTo(0, 0); // カードパネルのスクロール位置をトップに戻す
-      }
-      else 
-      {
-        console.log(category);
+        cardsPanel.scrollTo(0, 0); // スクロール位置をトップに戻す
       }
     });
   });
@@ -504,7 +511,6 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   const imageCircle = document.querySelector('.image-circle');
-  const searchTrimmingImageModalElement = document.querySelector('.search-trimming-image-modal');
   const trimmingImageModalElement = document.querySelector(".trimming-image-modal");
   const inputImageButton = instagramModalElement.querySelector('.image-input-search');
   const imagePreview = trimmingImageModalElement.querySelector('.preview');
@@ -515,6 +521,10 @@ document.addEventListener("turbolinks:load", function() {
   const trimmingImageModal = new Modal(trimmingImageModalElement, {
     keyboard: false,
     backdrop: 'true'
+  });
+
+  imageCircle.addEventListener('click', function () {
+    inputImageButton.click();
   });
   
   // グローバル変数としてオリジナルの画像ファイルを保持

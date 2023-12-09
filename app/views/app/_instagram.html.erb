@@ -21,17 +21,17 @@
                   <div class="card-bottom">
                     <div class="like">
                       <% if !card.likes.find_by(user: current_user) %>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                        <%= render 'shared/svg/like' %>
                       <% else %>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                        <%= render 'shared/svg/liked' %>
                       <% end %>
                     </div>
                     <div class="like-count"><%= card.likes.count %></div>
                     <div class="bookmark">
                       <% if !card.bookmarks.find_by(user: current_user) %>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                        <%= render 'shared/svg/bookmark' %>
                       <% else %>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                        <%= render 'shared/svg/bookmarked' %>
                       <% end %>
                     </div>
                     <div class="bookmark-count"><%= card.bookmarks.count %></div>
@@ -52,17 +52,17 @@
                     <div class="card-bottom">
                       <div class="like">
                         <% if !card.likes.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/like' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/liked' %>
                         <% end %>
                       </div>
                       <div class="like-count"><%= card.likes.count %></div>
                       <div class="bookmark">
                         <% if !card.bookmarks.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/bookmark' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/bookmarked' %>
                         <% end %>
                       </div>
                       <div class="bookmark-count"><%= card.bookmarks.count %></div>
@@ -84,17 +84,17 @@
                     <div class="card-bottom">
                       <div class="like">
                         <% if !card.likes.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/like' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/liked' %>
                         <% end %>
                       </div>
                       <div class="like-count"><%= card.likes.count %></div>
                       <div class="bookmark">
                         <% if !card.bookmarks.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/bookmark' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/bookmarked' %>
                         <% end %>
                       </div>
                       <div class="bookmark-count"><%= card.bookmarks.count %></div>
@@ -116,17 +116,17 @@
                     <div class="card-bottom">
                       <div class="like">
                         <% if !card.likes.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/like' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/liked' %>
                         <% end %>
                       </div>
                       <div class="like-count"><%= card.likes.count %></div>
                       <div class="bookmark">
                         <% if !card.bookmarks.find_by(user: current_user) %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1"></path></g></svg>
+                          <%= render 'shared/svg/bookmark' %>
                         <% else %>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="-0.715 -0.715 40 40" height="40" width="40"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="0"></path></g></svg>
+                          <%= render 'shared/svg/bookmarked' %>
                         <% end %>
                       </div>
                       <div class="bookmark-count"><%= card.bookmarks.count %></div>
@@ -144,10 +144,10 @@
               <div class="search-results"></div>
 
                 <div class="circle camera-circle input-circle">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="camera-1--photos-picture-camera-photography-photo-pictures"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 20.71428571428571c0 -1.0987685714285713 -0.4366571428571428 -2.1525042857142855 -1.213442857142857 -2.929455714285714C53.93834285714285 17.00792 52.88439999999999 16.57142857142857 51.78571428571428 16.57142857142857h-8.285714285714285L37.28571428571428 8.285714285714285H20.71428571428571L14.499999999999998 16.57142857142857h-8.285714285714285c-1.0987685714285713 0 -2.1525042857142855 0.4364914285714285 -2.9294432857142856 1.2134014285714283C2.5079075714285715 18.561781428571425 2.071428571428571 19.61551714285714 2.071428571428571 20.71428571428571v24.857142857142854c0 1.098685714285714 0.43647899999999995 2.152628571428571 1.213413857142857 2.929414285714285C4.061781428571428 49.277628571428565 5.115517142857142 49.71428571428571 6.2142857142857135 49.71428571428571h45.57142857142857c1.098685714285714 0 2.152628571428571 -0.4366571428571428 2.929414285714285 -1.213442857142857S55.92857142857142 46.67011428571428 55.92857142857142 45.57142857142857V20.71428571428571Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M28.999999999999996 40.39285714285714c5.148079999999999 0 9.32142857142857 -4.173348571428571 9.32142857142857 -9.32142857142857S34.14807999999999 21.749999999999996 28.999999999999996 21.749999999999996 19.678571428571427 25.92334857142857 19.678571428571427 31.07142857142857 23.85192 40.39285714285714 28.999999999999996 40.39285714285714Z" stroke-width="2"></path></g></svg>
+                  <%= render 'shared/svg/camera' %>
                 </div>
                 <div class="circle image-circle input-circle">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
+                  <%= render 'shared/svg/image' %>
                   <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
                 </div>
 
@@ -162,19 +162,19 @@
           <div class="bottom-circles">
             <!-- こちらに円を追加します -->  
             <div class="circle1 circle option-circle" data-category="all">
-              <svg data-category="all" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.43 -1.43 60 60" height="60" width="60"><g id="home-4--home-house-roof-shelter"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M2.0407142857142855 32.65142857142857 28.569999999999997 6.122142857142856 55.099285714285706 32.65142857142857" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="m10.203571428571427 24.488571428571426 0 26.529285714285713h36.73285714285714V24.488571428571426" stroke-width="2"></path></g></svg>
+              <%= render 'shared/svg/menu/home' %>
             </div>
             <div class="circle2 circle option-circle" data-category="user">
-              <svg data-category="user" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1.43 -1.43 60 60" height="60" width="60"><g id="user-circle-single--circle-geometric-human-person-single-user"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M28.569999999999997 32.65142857142857c5.6352692428571425 0 10.203571428571427 -4.568302185714285 10.203571428571427 -10.203571428571427S34.20526924285714 12.244285714285713 28.569999999999997 12.244285714285713 18.36642857142857 16.8125879 18.36642857142857 22.44785714285714 22.934730757142855 32.65142857142857 28.569999999999997 32.65142857142857Z" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M11.14221837142857 48.568999999999996c1.8212966857142856 -2.9896464285714286 4.381046242857142 -5.4605432857142855 7.433138528571428 -7.1747432857142845 3.0520922857142856 -1.7146897714285712 6.493879371428571 -2.615216171428571 9.99456147142857 -2.615216171428571 3.5006820999999997 0 6.942469185714285 0.9005264 9.99456147142857 2.615216171428571 3.0522147285714283 1.7141999999999997 5.611678585714285 4.185096857142857 7.4332201571428556 7.1747432857142845" stroke-width="2"></path><path id="Vector_3" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M28.569999999999997 55.099285714285706c14.651920428571428 0 26.529285714285713 -11.877365285714284 26.529285714285713 -26.529285714285713C55.099285714285706 13.91828364285714 43.22192042857142 2.0407142857142855 28.569999999999997 2.0407142857142855 13.91828364285714 2.0407142857142855 2.0407142857142855 13.91828364285714 2.0407142857142855 28.569999999999997c0 14.651920428571428 11.877569357142855 26.529285714285713 26.529285714285713 26.529285714285713Z" stroke-width="2"></path></g></svg>
+              <%= render 'shared/svg/menu/user' %>
             </div>
             <div class="circle3 circle option-circle" data-category="user-liked">
-              <svg data-category="user-liked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="60" width="60"><g id="heart--reward-social-rating-media-heart-it-like-favorite-love"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M19.2962955 34.114063 4.21440615 20.45303735c-8.19670355 -8.19670355 3.8524266999999996 -23.934337999999997 15.08188935 -11.2021606 11.229379999999999 -12.7321774 23.224099 3.0601162499999996 15.081972 11.2021606L19.2962955 34.114063Z" stroke-width="1.5"></path></g></svg>
+              <%= render 'shared/svg/menu/like' %>
             </div>
             <div class="circle4 circle option-circle" data-category="user-bookmarked">
-              <svg data-category="user-bookmarked" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.715 -0.715 40 40" height="60" width="60"><g id="bookmark--bookmarks-tags-favorite"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="m30.305 37.192499999999995 -11.02 -11.02 -11.02 11.02v-33.06c0 -0.7306811 0.2902668 -1.43141535 0.8069119499999999 -1.948079785C9.58858465 1.667758535 10.2893189 1.3775 11.02 1.3775h16.53c0.730626 0 1.4314979999999997 0.290258535 1.9480604999999998 0.806920215C30.014623 2.70108465 30.305 3.4018189 30.305 4.1325v33.06Z" stroke-width="1.5"></path></g></svg>
+              <%= render 'shared/svg/menu/bookmark' %>
             </div>
             <div class="circle5 circle option-circle search-circle" data-category="user-search">
-              <svg data-category="user-search" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="magnifying-glass--glass-search-magnifying"><path id="Vector" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M24.857142857142854 47.64285714285714c12.58421857142857 0 22.785714285714285 -10.201495714285713 22.785714285714285 -22.785714285714285S37.441361428571426 2.071428571428571 24.857142857142854 2.071428571428571 2.071428571428571 12.272924285714284 2.071428571428571 24.857142857142854s10.201495714285713 22.785714285714285 22.785714285714285 22.785714285714285Z" stroke-width="2"></path><path id="Vector_2" stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 55.92857142857142 41.42857142857142 41.42857142857142" stroke-width="2"></path></g></svg>
+              <%= render 'shared/svg/menu/search' %>
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@
     }
 
     /* テキストエリアとボタンのスタイル調整 */
-    .search-textarea {
+    .user-search-cards .search-textarea {
         left: 5px;
         right: 5px;
         margin: 10px auto; /* テキストエリアの上下の余白を設定 */
@@ -230,11 +230,7 @@
 .search-results {
   margin-top: 80px;
 }
-/* .search-items {
-  position: fixed;
-  bottom: 150px;
-  right: 30px;
-} */
+
 .search-textarea {
   position: fixed;
   background-color: transparent; /* 背景を透明に */
@@ -310,6 +306,14 @@
     stroke: black; /* マウスが乗ったときは黒色 */
 }
 
+.circle.active {
+    background-color: white; /* アクティブなときの背景色 */
+    /* 必要に応じて他のスタイルを追加 */
+}
+
+.circle.active svg path {
+    stroke: black; /* アクティブなときのSVGの線の色 */
+}
 
 .add-btn {
     flex: 0 0 auto;
@@ -481,115 +485,6 @@ document.addEventListener('turbolinks:load', () => {
       searchQuery.style.height = searchQuery.scrollHeight + 'px';
       lastHeight = searchQuery.scrollHeight;
   }
-
-  // 画像から入力
-  const imageCircle = document.querySelector('.image-circle');
-  const inputImageButton = document.querySelector('.image-input-search');
-
-  imageCircle.addEventListener('click', function () {
-    inputImageButton.click();
-  });
-
-  // inputImageButton.addEventListener('change', async function(e) { // asyncを追加
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = async function(e) { // asyncを追加
-  //       const result = await processImage(file); // awaitを追加
-  //       searchQuery.value = result.text;
-  //       const event = new Event('input', {
-  //         bubbles: true, // イベントをバブリングさせる
-  //         cancelable: true, // イベントをキャンセル可能にする
-  //       });
-  //       // テキストエリア要素でイベントを発火
-  //       searchQuery.dispatchEvent(event);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // });
-
-  async function processImage(blob) { // asyncを追加
-    const formData = new FormData();
-    formData.append('image', blob, 'image.png');
-
-    try {
-      const response = await fetch('/ocr', { // awaitを追加
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        }
-      });
-      console.log("読み込み後：", response); // オブジェクトそのまま出力
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json(); // awaitを追加
-      console.log("読み込み後json：", data); // オブジェクトそのまま出力
-      return data;
-    } catch (error) {
-      console.error("画像の読み込みに失敗しました：", error);
-    }
-  }
-
-  // // カメラプレビュー要素を取得
-  // const searchCameraModalElement = document.querySelector('.search-camera-modal');
-  // const cameraPreview = searchCameraModalElement.querySelector('.camera-preview');
-  // const lightDarkArea = searchCameraModalElement.querySelector('.light-dark-area');
-  // const resizableRect = searchCameraModalElement.querySelector('.resizable-rect');
-
-  // // カメラプレビューの位置とサイズを取得して調整する関数
-  // function adjustOverlayElements() {
-  //   const previewRect = cameraPreview.getBoundingClientRect();
-  //   const maskRect = lightDarkArea.querySelector('.mask-rect');
-  //   // 四つ角のパスを調整
-  //   const newWidth = previewRect.width / 2;
-  //   const newHeight = previewRect.height / 2;
-  //   lightDarkArea.style.width = `${previewRect.width}px`;
-  //   lightDarkArea.style.height = `${previewRect.height}px`;
-  //   resizableRect.style.width = `${newWidth}px`;
-  //   resizableRect.style.height = `${newHeight}px`;
-  //   resizableRect.style.left = `${newWidth}px`;
-  //   resizableRect.style.top = `${newHeight}px`;
-  //   maskRect.setAttribute("width", newWidth);
-  //   maskRect.setAttribute("height", newHeight);
-  //   maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
-  //   updateCorners(newWidth, newHeight);
-  // }
-
-  // // 四つ角のパス要素を更新する関数
-  // function updateCorners(newWidth, newHeight) {
-  //   // pathの位置とmask-rectの位置とサイズを更新
-  //   const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
-  //   corners.forEach(corner => {
-  //     const path = resizableRect.querySelector(`.${corner}-corner`);
-
-  //     let pathD = '';
-
-  //     switch (corner) {
-  //       case 'top-left':
-  //         pathD = `M 2,22 Q 2,2 22,2`;
-  //         break;
-  //       case 'top-right':
-  //         pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
-  //         break;
-  //       case 'bottom-right':
-  //         pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
-  //         break;
-  //       case 'bottom-left':
-  //         pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
-  //         break;
-  //     }
-
-  //     path.setAttribute("d", pathD);
-  //   });
-  // }
-
-  // // イベントリスナーを追加
-  // cameraPreview.addEventListener('loadedmetadata', adjustOverlayElements);
-  // window.addEventListener('resize', adjustOverlayElements);
 });
 
 </script>
