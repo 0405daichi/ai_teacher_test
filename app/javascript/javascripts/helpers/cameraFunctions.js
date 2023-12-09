@@ -74,11 +74,17 @@ export async function takePhoto() {
     fillLightMode: flashMode // 'off', 'auto', 'flash'
   };
 
-  imageCapture.takePhoto(photoSettings).then(blob => {
-    return blob;
-  }).catch(error => {
+  try {
+    const blob = await imageCapture.takePhoto(photoSettings);
+    console.log("ここ", blob);
+    const imageBitmap = await createImageBitmap(blob);
+    console.log("ここここ", imageBitmap);
+    const originalImageUrl = URL.createObjectURL(blob);
+    console.log("ここここここ", originalImageUrl);
+    return imageBitmap;
+  } catch (error) {
     console.error('写真の撮影に失敗しました。', error);
-  });
+  }
 }
 
 // カメラを閉じる

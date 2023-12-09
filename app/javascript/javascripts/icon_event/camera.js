@@ -59,12 +59,13 @@ document.addEventListener("turbolinks:load", function() {
   // 撮影ボタンクリック時の処理
   captureButton.addEventListener("click", async () => {
     // const photo = await imageCapture.takePhoto();
-    const photo = takePhoto();
-    const imageBitmap = await createImageBitmap(photo);
+    // const photo = takePhoto();
+    // console.log(photo);
+    const imageBitmap = await takePhoto();
     
     // 元の画像をプレビューに表示
-    const originalImageUrl = URL.createObjectURL(photo);
-    console.log(originalImageUrl);
+    // const originalImageUrl = URL.createObjectURL(photo);
+    // console.log(originalImageUrl);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     cameraModal.hide();
@@ -355,12 +356,12 @@ document.addEventListener("turbolinks:load", function() {
   // 撮影ボタンクリック時の処理
   simpleCameraCaptureButton.addEventListener("click", async () => {
     // const photo = await simpleCameraImageCapture.takePhoto();
-    const photo = takePhoto();
-    const imageBitmap = await createImageBitmap(photo);
+    // const photo = takePhoto();
+    const imageBitmap = await takePhoto();
     
     // 元の画像をプレビューに表示
-    const originalImageUrl = URL.createObjectURL(photo);
-    console.log(originalImageUrl);
+    // const originalImageUrl = URL.createObjectURL(photo);
+    // console.log(originalImageUrl);
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     simpleCameraModal.hide();

@@ -457,8 +457,8 @@ document.addEventListener("turbolinks:load", function() {
     const maskRect = simpleCameraModalElement.querySelector('.mask-rect');
     const svgRect = maskRect.getBoundingClientRect();
     // const photo = await simpleCameraImageCapture.takePhoto();
-    const photo = takePhoto();
-    const imageBitmap = await createImageBitmap(photo);
+    // const photo = takePhoto();
+    const imageBitmap = await takePhoto();
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
