@@ -71,6 +71,7 @@ export async function takePhoto() {
 
   const videoTrack = currentStream.getVideoTracks()[0];
   const imageCapture = new ImageCapture(videoTrack);
+  console.log("imageCapture", imageCapture.getPhotoCapabilities());
 
   const photoSettings = {
     fillLightMode: flashMode // 'off', 'auto', 'flash'
