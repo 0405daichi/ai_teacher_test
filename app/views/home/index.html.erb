@@ -116,15 +116,17 @@
     window.addEventListener('touchmove', function(event) {
       if (isModalOpen) return; // モーダルが開いている場合は何もしない
       if (initialTouchY === null) return;
+
       const touchY = event.touches[0].clientY;
-      const touchDelta = (initialTouchY - touchY) * 0.5;
+      const touchDelta = initialTouchY - touchY;
+      touchVelocity = touchDelta * 0.1; // タッチによる回転加速度を設定
+
+      // 回転速度に基づいて更新
+      updateCircles(touchVelocity);
+      rotateCenterPoint(touchVelocity);
+
       initialTouchY = touchY;
-
-      touchVelocity = touchDelta; // タッチによる回転速度を設定
-
-      updateCircles(touchDelta);
-      rotateCenterPoint(touchDelta * 2);
-    });
+  });
 
     // タッチ終了時の処理
     window.addEventListener('touchend', function() {
