@@ -155,7 +155,7 @@
     // 中心の画像を回転させる関数
     function rotateCenterPoint(delta) {
       const currentAngle = parseFloat(centerPoint.dataset.angle) || 0;
-      const newAngle = currentAngle + -delta;
+      const newAngle = currentAngle - delta;
       centerPoint.dataset.angle = newAngle;
       centerPoint.style.transform = `translate(-50%, -50%) rotate(${newAngle}deg)`;
     }
