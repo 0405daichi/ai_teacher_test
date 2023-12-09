@@ -50,8 +50,10 @@ export async function openCamera(modalElement,cameraPreviewElement) {
       if (slash.style.display == 'none')
       {
         flashMode = 'flash';
+        console.log(flashMode);
       } else {
         flashMode = 'off';
+        console.log(flashMode);
       }
     });
     currentCameraModal = modalElement;
