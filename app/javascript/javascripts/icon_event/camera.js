@@ -1,7 +1,7 @@
 // camera.js
 
 import { Modal } from 'bootstrap';
-import { openCamera, takePhoto, closeCamera, toggleTorch, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+import { openCamera, takePhoto, closeCamera, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {

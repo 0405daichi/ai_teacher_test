@@ -7,6 +7,7 @@ let currentStream = null;
 let currentCameraModal = null;
 let maxWidth = 0;
 let maxHeight = 0;
+let flashMode = 'off';
 
 // カメラの最大解像度を取得し、ストリームを保持する
 async function initializeCamera() {
@@ -48,9 +49,9 @@ export async function openCamera(modalElement,cameraPreviewElement) {
 
       if (slash.style.display == 'none')
       {
-        toggleTorch(cameraPreviewElement, true);
+        flashMode = 'flash';
       } else {
-        toggleTorch(cameraPreviewElement, false);
+        flashMode = 'off';
       }
     });
     currentCameraModal = modalElement;
@@ -69,7 +70,11 @@ export async function takePhoto() {
   const videoTrack = currentStream.getVideoTracks()[0];
   const imageCapture = new ImageCapture(videoTrack);
 
-  imageCapture.takePhoto().then(blob => {
+  const photoSettings = {
+    fillLightMode: flashMode // 'off', 'auto', 'flash'
+  };
+
+  imageCapture.takePhoto(photoSettings).then(blob => {
     return blob;
   }).catch(error => {
     console.error('写真の撮影に失敗しました。', error);
@@ -82,36 +87,10 @@ export async function closeCamera() {
     currentStream.getTracks().forEach(track => track.stop());
     currentStream = null;
 
-    const lightButton = modalElement.querySelector('.light-button');
+    const lightButton = currentCameraModal.querySelector('.light-button');
     const slash = lightButton.querySelector('.slash');
     slash.style.display = '';
     currentCameraModal = null;
-  }
-}
-
-// トーチ（フラッシュライト）を制御する
-export async function toggleTorch(cameraPreviewElement, torchOn) {
-  const stream = cameraPreviewElement.srcObject;
-  if (!stream) {
-    console.error('カメラが起動していません。');
-    return;
-  }
-
-  const track = stream.getVideoTracks()[0];
-  const capabilities = track.getCapabilities();
-
-  // トーチ機能がサポートされているか確認
-  if (!capabilities.torch) {
-    alert('このデバイスではトーチ機能はサポートされていません。');
-    return;
-  }
-
-  try {
-    await track.applyConstraints({
-      advanced: [{ torch: torchOn }]
-    });
-  } catch (error) {
-    console.error('トーチの制御に失敗しました。', error);
   }
 }
 
