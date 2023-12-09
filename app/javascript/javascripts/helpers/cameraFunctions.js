@@ -1,34 +1,110 @@
 // cameraFunctions.js
 
-let maxWidth = 0;
-let maxHeight = 0;
 // 調べている間は「起動中」などのモーダルを表示する ※必須
 // capabilitiesは設定され得る値なのでsettings(実際に使用されている値)と違う場合があるかも知れない ※必須
 // 起動時にデバイスでサポートされている最大の解像度を調べる関数
-async function fetchMaxResolution() {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  const videoTrack = stream.getVideoTracks()[0];
-  const capabilities = videoTrack.getCapabilities();
-  
-  maxWidth = capabilities.width.max;
-  maxHeight = capabilities.height.max;
+let currentStream = null;
+let currentCameraModal = null;
+let maxWidth = 0;
+let maxHeight = 0;
 
-  videoTrack.stop();
-  // alert(`width:${maxWidth} height:${maxHeight}`);
+// カメラの最大解像度を取得し、ストリームを保持する
+async function initializeCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const videoTrack = stream.getVideoTracks()[0];
+    const capabilities = videoTrack.getCapabilities();
+  
+    maxWidth = capabilities.width.max;
+    maxHeight = capabilities.height.max;
+
+    videoTrack.stop();
+  } catch (error) {
+    console.error('カメラの初期化に失敗しました。', error);
+  }
 }
 
-fetchMaxResolution()
+// カメラの初期化
+initializeCamera();
 
-export async function createStream(cameraPreview) {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: 'environment', // 外部カメラの使用
-      width: maxWidth,
-      height: maxHeight
-    }
+// カメラを開く
+export async function openCamera(modalElement,cameraPreviewElement) {
+  try {
+    // グローバルストリームに保存
+    currentStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment', // 外部カメラの使用
+        width: maxWidth,
+        height: maxHeight
+      }
+    });
+    cameraPreviewElement.srcObject = currentStream;
+
+    // ライトボタンイベント
+    const lightButton = modalElement.querySelector('.light-button');
+    lightButton.addEventListener('click', async () => {
+      const slash = lightButton.querySelector('.slash');
+      slash.style.display = slash.style.display === 'none' ? '' : 'none';
+
+      if (slash.style.display == 'none')
+      {
+        toggleTorch(cameraPreviewElement, true);
+      } else {
+        toggleTorch(cameraPreviewElement, false);
+      }
+    });
+    currentCameraModal = modalElement;
+  } catch (error) {
+    console.error('カメラへのアクセスに失敗しました。ブラウザのカメラ設定を確認し、ページを再読み込みしてください。', error);
+  }
+}
+
+// 撮影する
+export async function takePhoto() {
+  if (!currentStream) {
+    console.error('カメラが起動していません。');
+    return;
+  }
+
+  const videoTrack = currentStream.getVideoTracks()[0];
+  const imageCapture = new ImageCapture(videoTrack);
+
+  imageCapture.takePhoto().then(blob => {
+    return blob;
+  }).catch(error => {
+    console.error('写真の撮影に失敗しました。', error);
   });
-  cameraPreview.srcObject = stream;
-  return stream;
+}
+
+// カメラを閉じる
+export async function closeCamera() {
+  if (currentStream) {
+    currentStream.getTracks().forEach(track => track.stop());
+    currentStream = null;
+
+    const lightButton = modalElement.querySelector('.light-button');
+    const slash = lightButton.querySelector('.slash');
+    slash.style.display = '';
+    currentCameraModal = null;
+  }
+}
+
+// トーチ（フラッシュライト）を制御する
+export async function toggleTorch(cameraPreviewElement, torchOn) {
+  const stream = cameraPreviewElement.srcObject;
+  if (!stream) {
+    console.error('カメラが起動していません。');
+    return;
+  }
+
+  const track = stream.getVideoTracks()[0];
+  try {
+    await track.applyConstraints({
+      advanced: [{ torch: torchOn }]
+    });
+  } catch (error) {
+    console.error('トーチの制御に失敗しました。', error);
+  }
 }
 
 export async function processImage(blob) {

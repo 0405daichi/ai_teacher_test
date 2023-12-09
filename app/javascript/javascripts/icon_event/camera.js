@@ -1,7 +1,7 @@
 // camera.js
 
 import { Modal } from 'bootstrap';
-import { createStream, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+import { openCamera, takePhoto, closeCamera, toggleTorch, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
@@ -11,7 +11,7 @@ document.addEventListener("turbolinks:load", function() {
   const cameraPreview = document.getElementById("cameraPreview");
   const maskRect = document.getElementById("maskRect");
   const captureButton = document.getElementById("captureButton");
-  const closeCamera = document.getElementById("closeCamera");
+  const closeCameraButton = document.getElementById("closeCamera");
   const trimmingImageModalElement = document.querySelector(".trimming-image-modal");
   let imageCapture;
   let stream;
@@ -30,16 +30,18 @@ document.addEventListener("turbolinks:load", function() {
       if (openEnd) cameraModal.show();
     }
     
-    stream = await createStream(cameraPreview);
+    // stream = await openCamera(cameraPreview);
+    openCamera(cameraModalElement, cameraPreview);
     // console.log("Stream object: ", stream);
     
-    cameraTrack = stream.getVideoTracks()[0];
-    imageCapture = new ImageCapture(cameraTrack);
+    // cameraTrack = stream.getVideoTracks()[0];
+    // imageCapture = new ImageCapture(cameraTrack);
 
     // カメラアプリ終了処理
-    closeCamera.addEventListener('click', async () => {
+    closeCameraButton.addEventListener('click', async () => {
       cameraModal.hide();
-      cameraTrack.stop();
+      // cameraTrack.stop();
+      closeCamera();
     });
   });
 
@@ -56,7 +58,8 @@ document.addEventListener("turbolinks:load", function() {
 
   // 撮影ボタンクリック時の処理
   captureButton.addEventListener("click", async () => {
-    const photo = await imageCapture.takePhoto();
+    // const photo = await imageCapture.takePhoto();
+    const photo = takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     
     // 元の画像をプレビューに表示
@@ -65,7 +68,8 @@ document.addEventListener("turbolinks:load", function() {
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     cameraModal.hide();
-    cameraTrack.stop();
+    // cameraTrack.stop();
+    closeCamera();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -166,7 +170,8 @@ document.addEventListener("turbolinks:load", function() {
       reader.readAsDataURL(file);
 
       cameraModal.hide();
-      cameraTrack.stop();
+      // cameraTrack.stop();
+      closeCamera();
 
 
       setBackButtonListener(async () => {
@@ -179,14 +184,16 @@ document.addEventListener("turbolinks:load", function() {
           inputButton.value = '';
           
           cameraModal.show();
-          stream = await createStream(cameraPreview);
+          // stream = await openCamera(cameraPreview);
+          openCamera(cameraModalElement, cameraPreview);
           
-          cameraTrack = stream.getVideoTracks()[0];
-          imageCapture = new ImageCapture(cameraTrack);
+          // cameraTrack = stream.getVideoTracks()[0];
+          // imageCapture = new ImageCapture(cameraTrack);
           
-          closeCamera.addEventListener('click', async () => {
+          closeCameraButton.addEventListener('click', async () => {
             cameraModal.hide();
-            cameraTrack.stop();
+            // cameraTrack.stop();
+            closeCamera();
           });
         }
       }, trimmingImageModalElement, '.return-from-trimming');
@@ -294,7 +301,8 @@ document.addEventListener("turbolinks:load", function() {
   // 入力画面起動
   writeButton.addEventListener('click', async () => {
     cameraModal.hide();
-    cameraTrack.stop();
+    // cameraTrack.stop();
+    closeCamera();
     writeQuestionModal.show();
     console.log("show write modal");
   });
@@ -304,14 +312,16 @@ document.addEventListener("turbolinks:load", function() {
     {
       writeQuestionModal.hide();
       cameraModal.show();
-      stream = await createStream(cameraPreview);
+      // stream = await openCamera(cameraPreview);
+      openCamera(cameraModalElement, cameraPreview);
       
-      cameraTrack = stream.getVideoTracks()[0];
-      imageCapture = new ImageCapture(cameraTrack);
+      // cameraTrack = stream.getVideoTracks()[0];
+      // imageCapture = new ImageCapture(cameraTrack);
 
       closeCamera.addEventListener('click', async () => {
         cameraModal.hide();
-        cameraTrack.stop();
+        // cameraTrack.stop();
+        closeCamera();
       });
     }
   });
@@ -319,15 +329,17 @@ document.addEventListener("turbolinks:load", function() {
   cameraCircle.addEventListener('click', async () => {
     writeQuestionModal.hide();
     simpleCameraModal.show();
-    simpleCameraStream = await createStream(simpleCameraPreview);    
-    simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
-    simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
+    // simpleCameraStream = await openCamera(simpleCameraPreview);    
+    openCamera(simpleCameraModalElement, simpleCameraPreview);
+    // simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
+    // simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
 
     setBackButtonListener(async () => {
       // ここに戻るボタンが押されたときの処理を記述
       if (simpleCameraModal._isShown == true) {
         simpleCameraModal.hide();
-        simpleCameraTrack.stop();
+        // simpleCameraTrack.stop();
+        closeCamera();
         writeQuestionModal.show();
       }
     }, simpleCameraModalElement, '.return-button');
@@ -342,7 +354,8 @@ document.addEventListener("turbolinks:load", function() {
   
   // 撮影ボタンクリック時の処理
   simpleCameraCaptureButton.addEventListener("click", async () => {
-    const photo = await simpleCameraImageCapture.takePhoto();
+    // const photo = await simpleCameraImageCapture.takePhoto();
+    const photo = takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     
     // 元の画像をプレビューに表示
@@ -351,7 +364,8 @@ document.addEventListener("turbolinks:load", function() {
     // preview.src = originalImageUrl;
     // カメラアプリ終了処理
     simpleCameraModal.hide();
-    simpleCameraTrack.stop();
+    // simpleCameraTrack.stop();
+    closeCamera();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");

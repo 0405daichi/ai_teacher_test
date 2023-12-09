@@ -1,7 +1,7 @@
 // instagram.js
 
 import { Modal } from 'bootstrap';
-import { createStream, processImage, initResizableRect, adjustOverlayElements } from '../helpers/cameraFunctions.js';
+import { openCamera, takePhoto, closeCamera, processImage, initResizableRect, adjustOverlayElements } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 
 document.addEventListener("turbolinks:load", function() {
@@ -436,15 +436,17 @@ document.addEventListener("turbolinks:load", function() {
   cameraCircle.addEventListener('click', async () => {
     instagramModal.hide();
     simpleCameraModal.show();
-    simpleCameraStream = await createStream(simpleCameraPreview);    
-    simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
-    simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
+    // simpleCameraStream = await openCamera(simpleCameraPreview);    
+    // simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
+    // simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
+    openCamera(simpleCameraModalElement, simpleCameraPreview);
 
     setBackButtonListener(async () => {
       // ここに戻るボタンが押されたときの処理を記述
       if (simpleCameraModal._isShown == true) {
         simpleCameraModal.hide();
-        simpleCameraTrack.stop();
+        // simpleCameraTrack.stop();
+        closeCamera();
         instagramModal.show();
       }
     }, simpleCameraModalElement, '.return-button');
@@ -454,13 +456,15 @@ document.addEventListener("turbolinks:load", function() {
   simpleCameraCaptureButton.addEventListener("click", async () => {
     const maskRect = simpleCameraModalElement.querySelector('.mask-rect');
     const svgRect = maskRect.getBoundingClientRect();
-    const photo = await simpleCameraImageCapture.takePhoto();
+    // const photo = await simpleCameraImageCapture.takePhoto();
+    const photo = takePhoto();
     const imageBitmap = await createImageBitmap(photo);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     simpleCameraModal.hide();
-    simpleCameraTrack.stop();
+    // simpleCameraTrack.stop();
+    closeCamera();
     
     // プレビューと実際の写真のアスペクト比を比較
     const previewAspectRatio = simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight;

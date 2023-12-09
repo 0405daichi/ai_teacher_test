@@ -113,12 +113,17 @@
             <div id="captureButton" class="inner-circle"></div>
           </div>
 
+          <!-- ライトボタン -->
+          <div class="light-button">
+            <%= render 'shared/svg/light' %>
+          </div>
+
           <!-- 入力ボタン -->
-          <div id="writeButton" class="write-button" style="display: block; position: absolute; bottom: 50px; left: 25%; transform: translateX(-25%);">
+          <div id="writeButton" class="write-button">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-0.05 -0.05 3 3" height="3" width="3"><g id="pencil--change-edit-modify-pencil-write-writing"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M1.0357142857142856 2.535428571428571 0.10357142857142856 2.7964285714285713l0.261 -0.9321387142857142L2.071428571428571 0.1657186357142857c0.019285 -0.01972952857142857 0.042339999999999996 -0.03540589285714285 0.06775642857142856 -0.04610834285714285 0.025437142857142856 -0.010702657142857142 0.05275928571428571 -0.016215764285714286 0.08035071428571429 -0.016215764285714286 0.027591428571428572 0 0.05491357142857142 0.0055131071428571425 0.08035071428571429 0.016215764285714286 0.02541642857142857 0.010702449999999999 0.04847142857142857 0.026378814285714283 0.06775642857142856 0.04610834285714285L2.734285714285714 0.5344327142857143c0.019409285714285716 0.019256 0.03482071428571428 0.04216807142857142 0.04534357142857143 0.06740842857142856 0.010522857142857141 0.02524242857142857 0.015929285714285712 0.05231807142857143 0.015929285714285712 0.07966299999999998 0 0.02734492857142857 -0.005406428571428572 0.05442057142857143 -0.015929285714285712 0.07966299999999998 -0.010522857142857141 0.02524242857142857 -0.025934285714285715 0.04815242857142857 -0.04534357142857143 0.06740842857142856L1.0357142857142856 2.535428571428571Z" stroke-width="0.1"></path></g></svg>
           </div>
           
-          <div id="imageInputButtonFromCamera" class="image-input-button-from-camera" style="display: block; position: absolute; bottom: 50px; left: 75%; transform: translateX(-75%);">
+          <div id="imageInputButtonFromCamera" class="image-input-button-from-camera">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
             <input type="file" id="imageInput" class="image-input" style="display: none;" accept="image/*">
           </div>
@@ -457,6 +462,45 @@ opacity: 1;
 }
 }
 
+.light-button {
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.light-button svg {
+  position: absolute; /* 絶対位置指定 */
+  top: 50%; /* 上部から50%の位置 */
+  left: 50%; /* 左から50%の位置 */
+  transform: translate(-50%, -50%); /* 中央に配置 */
+  width: 60%; /* SVGのサイズ（必要に応じて調整） */
+  height: 60%; /* SVGのサイズ（必要に応じて調整） */
+}
+
+.light-button:hover {
+  background-color: white; /* マウスが乗ったときの背景色 */
+  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+}
+
+/* 通常状態でのSVGの線の色 */
+.light-button svg path {
+  stroke: white; /* デフォルトは白色 */
+  transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+}
+
+/* マウスが乗ったときのSVGの線の色 */
+.light-button:hover svg path {
+  stroke: black; /* マウスが乗ったときは黒色 */
+}
+
 .write-button {
   width: 50px;
   height: 50px;
@@ -465,6 +509,11 @@ opacity: 1;
   transition: background-color 0.3s ease;
   cursor: pointer;
   border: none;
+  display: block;
+  position: absolute;
+  bottom: 100px;
+  left: 25%;
+  transform: translateX(-25%);
 }
 
 .write-button svg {
@@ -500,6 +549,10 @@ opacity: 1;
   transition: background-color 0.3s ease;
   cursor: pointer;
   border: none;
+  position: absolute;
+  bottom: 100px;
+  left: 75%;
+  transform: translateX(-75%);
 }
 
 .image-input-button-from-camera svg {
