@@ -41,21 +41,6 @@ export async function openCamera(modalElement,cameraPreviewElement) {
     });
     cameraPreviewElement.srcObject = currentStream;
 
-    // ライトボタンイベント
-    const lightButton = modalElement.querySelector('.light-button');
-    lightButton.addEventListener('click', async () => {
-      const slash = lightButton.querySelector('.slash');
-      slash.style.display = slash.style.display === 'none' ? '' : 'none';
-
-      if (slash.style.display == 'none')
-      {
-        flashMode = 'flash';
-        console.log(flashMode);
-      } else {
-        flashMode = 'off';
-        console.log(flashMode);
-      }
-    });
     currentCameraModal = modalElement;
   } catch (error) {
     console.error('カメラへのアクセスに失敗しました。ブラウザのカメラ設定を確認し、ページを再読み込みしてください。', error);
@@ -71,15 +56,6 @@ export async function takePhoto() {
 
   const videoTrack = currentStream.getVideoTracks()[0];
   const imageCapture = new ImageCapture(videoTrack);
-  // カメラの機能を取得
-  const photoCapabilities = await imageCapture.getPhotoCapabilities();
-
-  // フラッシュのサポート状況を確認
-  console.log('フラッシュのサポート状況:', photoCapabilities.fillLightMode);
-
-  const photoSettings = {
-    fillLightMode: flashMode // 'off', 'auto', 'flash'
-  };
 
   try {
     const blob = await imageCapture.takePhoto(photoSettings);
@@ -99,10 +75,6 @@ export async function closeCamera() {
   if (currentStream) {
     currentStream.getTracks().forEach(track => track.stop());
     currentStream = null;
-
-    const lightButton = currentCameraModal.querySelector('.light-button');
-    const slash = lightButton.querySelector('.slash');
-    slash.style.display = '';
     currentCameraModal = null;
   }
 }

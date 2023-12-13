@@ -113,10 +113,6 @@
             <div id="captureButton" class="inner-circle"></div>
           </div>
 
-          <!-- ライトボタン -->
-          <div class="light-button">
-            <%= render 'shared/svg/light' %>
-          </div>
 
           <!-- 入力ボタン -->
           <div id="writeButton" class="write-button">
@@ -317,21 +313,20 @@ document.querySelector('.circle-quarter').addEventListener('click', function() {
 .circle-quarter {
   width: 90px; /* 半分の幅で円を形成するため */
   height: 90px; /* 半分の高さで円を形成するため */
-  background-color: #999;
-  transition: background-color 0.3s ease;
+  background-color: transparent;
+  /* transition: background-color 0.3s ease; */
   border-radius: 100% 0 0 0; /* 右下の四分の一円を形成するため */
   position: absolute; /* 絶対位置 */
   bottom: 0; /* 画面の一番下に配置 */
   right: 0; /* 画面の一番右に配置 */
   z-index: 999;
+  border: solid 1px white;
+  transition: border 0.3s ease;
 }
 
 .circle-quarter:hover {
   background-color: transparent;
-}
-
-.circle-quarter:hover .gear svg path {
-  stroke: white; /* マウスが.circle-quarter上にある時にSVGの線の色を白にする */
+  border: none;
 }
 
 .gear {
@@ -343,6 +338,7 @@ document.querySelector('.circle-quarter').addEventListener('click', function() {
   bottom: 0; /* 画面の一番下に配置 */
   right: 0; /* 画面の一番右に配置 */
   margin: 0 10px 10px 0;
+  transition: transform 0.3s ease;
 }
 
 .gear-tilted {
@@ -360,11 +356,6 @@ document.querySelector('.circle-quarter').addEventListener('click', function() {
   bottom: 0;
   width: 50px;
   height: 50px;
-}
-
-/* 通常状態でのSVGの線の色 */
-.gear svg path {
-  transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
 }
 
 /* .op {
@@ -462,45 +453,6 @@ opacity: 1;
 }
 }
 
-.light-button {
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  border: none;
-  position: absolute;
-  bottom: 140px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.light-button svg {
-  position: absolute; /* 絶対位置指定 */
-  top: 50%; /* 上部から50%の位置 */
-  left: 50%; /* 左から50%の位置 */
-  transform: translate(-50%, -50%); /* 中央に配置 */
-  width: 60%; /* SVGのサイズ（必要に応じて調整） */
-  height: 60%; /* SVGのサイズ（必要に応じて調整） */
-}
-
-.light-button:hover {
-  background-color: white; /* マウスが乗ったときの背景色 */
-  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
-
-/* 通常状態でのSVGの線の色 */
-.light-button svg path {
-  stroke: white; /* デフォルトは白色 */
-  transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
-}
-
-/* マウスが乗ったときのSVGの線の色 */
-.light-button:hover svg path {
-  stroke: black; /* マウスが乗ったときは黒色 */
-}
-
 .write-button {
   width: 50px;
   height: 50px;
@@ -512,8 +464,8 @@ opacity: 1;
   display: block;
   position: absolute;
   bottom: 100px;
-  left: 25%;
-  transform: translateX(-25%);
+  left: 35%;
+  transform: translateX(-35%);
 }
 
 .write-button svg {
@@ -551,8 +503,8 @@ opacity: 1;
   border: none;
   position: absolute;
   bottom: 100px;
-  left: 75%;
-  transform: translateX(-75%);
+  left: 65%;
+  transform: translateX(-65%);
 }
 
 .image-input-button-from-camera svg {
