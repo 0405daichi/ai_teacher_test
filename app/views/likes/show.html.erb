@@ -8,7 +8,7 @@ aaaa
         質問: <span class="question-content"><% question.content %></span>
       </div>
       <div class="card-body">
-        回答: <span class="answer-content"><% question.answer.content %></span>
+        回答: <span class="answer-content"><% question.answers.find_by(answer_type: 1).content %></span>
       </div>
     </div>
   <% end %>

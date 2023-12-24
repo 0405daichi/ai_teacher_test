@@ -12,6 +12,6 @@
     </div>
   </div>
   <div class="card-body">
-    回答: <%= simple_format(question.answer.content) %>
+    回答: <%= simple_format(question.answers.find_by(answer_type: 1).content) %>
   </div>
 </div>

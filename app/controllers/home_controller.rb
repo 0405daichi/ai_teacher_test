@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
   def index
-    @all_cards = Question.all.includes(:answer)
+    @all_cards = Question.all.includes(:answers)
     if current_user
       @user_questions = current_user.questions
       @user_likes = current_user.liked_questions

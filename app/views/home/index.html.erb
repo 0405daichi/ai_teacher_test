@@ -126,7 +126,7 @@
       rotateCenterPoint(touchVelocity);
 
       initialTouchY = touchY;
-  });
+    });
 
     // タッチ終了時の処理
     window.addEventListener('touchend', function() {
@@ -170,8 +170,128 @@
       circle.style.top = `${centerY + y}px`;
       circle.style.transform = `rotate(${270-a}deg)`; 
     }
+
+    const slides = document.querySelectorAll('.custom-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    let currentIndex = 0; // 現在のスライドのインデックス
+
+    function showSlide(index) {
+      if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
+
+      // 全てのスライドを非表示にする
+      slides.forEach(slide => {
+        slide.style.opacity = "0";
+        slide.style.display = "none";
+      });
+
+      // 新しいスライドをフェードインで表示
+      const newSlide = slides[index];
+      newSlide.style.display = "block";
+      newSlide.style.opacity = "1";
+
+      // インジケーターの更新
+      indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
+      indicators[index].classList.add('active'); // 新しいインジケーターにactiveを追加
+      currentIndex = index; // インデックスの更新
+    }
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        showSlide(index); // インジケーターがクリックされたら、対応するスライドを表示
+      });
+    });
   });
 </script>
+
+<div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body answer-modal-body" id="answerModalBody" style="overflow: scroll;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="cardContentModal" class="modal fade card-content" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen" role="document">
+    <div class="modal-content" style="background-color: white;">
+      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll; background-color: white;">
+        <div class="card-content-question"></div>
+        <hr style="margin: 10% 5%;">
+        <div id="customCarousel" class="custom-carousel">
+          <div class="custom-carousel-inner">
+            <div class="custom-slide answer-1 active" style="display: block;"></div>
+            <div class="custom-slide answer-2" style="display: none;"></div>
+            <div class="custom-slide answer-3" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+        <!-- インジケーター -->
+        <div class="custom-indicators">
+          <span class="indicator active" data-slide-to="0"></span>
+          <span class="indicator" data-slide-to="1"></span>
+          <span class="indicator" data-slide-to="2"></span>
+        </div>
+      <div class="modal-footer" style="height: auto;">
+
+        <!-- その他のフッターコンテンツ -->
+        <div class="like"></div>
+        <div class="like-count"></div>
+        <div class="bookmark"></div>
+        <div class="bookmark-count"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- カメラモーダル(撮影のみ) -->
+<div class="modal fade simple-camera-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
+        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <div class="button-elements">
+          <div class="outer-circle" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">
+            <div class="inner-circle capture-button"></div>
+          </div>
+          <div class="return-button m-1">
+            ←
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 画像トリミングモーダル -->
+<div class="modal fade trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100%;">
+        <!-- 写真プレビュー表示エリア -->
+        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
+        <%= render 'shared/light_dark_area' %>
+        <%= render 'shared/resizable_rect' %>
+        <!-- ここで撮影ボタンの位置を調整 -->
+        <div class="outer-circle">
+          <div class="inner-circle write-out-image"></div>
+        </div>
+        <div class="return-from-trimming">←</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'app/camera' %>
+
+<%= render 'app/search' %>
+
+<%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %> 
+
+<%= render 'app/instagram', all_cards: @all_cards, user_questions: @user_questions, user_likes: @user_likes, user_bookmarks: @user_bookmarks %>
+
+<%= render 'app/write' %>
 
 <style>
 
@@ -299,80 +419,46 @@
     color: black;
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
   }
+
+  /* カスタムカルーセルの基本スタイリング */
+  .custom-carousel {
+    /* position: relative; */
+    overflow: hidden;
+  }
+
+  .custom-carousel-inner {
+    /* position: relative; */
+  }
+
+  /* 各スライドのスタイリング */
+  .custom-slide {
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: opacity 0.5s; /* フェード効果のためのアニメーション */
+  }
+
+  /* インジケーターのスタイリング */
+  .custom-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #888;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: width 0.3s, height 0.3s; /* アニメーションを追加 */
+  }
+
+  .indicator.active {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+  }
 </style>
-
-<div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-body answer-modal-body" id="answerModalBody" style="overflow: scroll;"></div>
-    </div>
-  </div>
-</div>
-
-<div id="cardContentModal" class="modal fade card-content" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
-    <div class="modal-content" style="background-color: white;">
-      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll; background-color: white;">
-        <div class="card-content-question"></div>
-        <hr style="margin: 10% 5%;">
-        <div class="card-content-answer"></div>
-      </div>
-      <div class="modal-footer" style="height: auto;">
-        <div class="like"></div>
-        <div class="like-count"></div>
-        <div class="bookmark"></div>
-        <div class="bookmark-count"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- カメラモーダル(撮影のみ) -->
-<div class="modal fade simple-camera-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
-        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <div class="button-elements">
-          <div class="outer-circle" style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);">
-            <div class="inner-circle capture-button"></div>
-          </div>
-          <div class="return-button m-1">
-            ←
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 画像トリミングモーダル -->
-<div class="modal fade trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
-  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-body image-modal-body" id="image-modal-body" style="position: relative; height: 100%;">
-        <!-- 写真プレビュー表示エリア -->
-        <img id="preview" class="preview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain;">
-        <%= render 'shared/light_dark_area' %>
-        <%= render 'shared/resizable_rect' %>
-        <!-- ここで撮影ボタンの位置を調整 -->
-        <div class="outer-circle">
-          <div class="inner-circle write-out-image"></div>
-        </div>
-        <div class="return-from-trimming">←</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<%= render 'app/camera' %>
-
-<%= render 'app/search' %>
-
-<%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %> 
-
-<%= render 'app/instagram', all_cards: @all_cards, user_questions: @user_questions, user_likes: @user_likes, user_bookmarks: @user_bookmarks %>
-
-<%= render 'app/write' %>

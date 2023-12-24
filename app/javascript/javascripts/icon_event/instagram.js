@@ -102,8 +102,11 @@ document.addEventListener("turbolinks:load", function() {
       .then(response => response.json())
       .then(data => {
         if (cardContentModal._isShown !== true) {
-          document.querySelector('#cardContentModal .card-content-question').textContent = data.question;
-          document.querySelector('#cardContentModal .card-content-answer').textContent = data.answer;
+          document.querySelector('#cardContentModal .card-content-question').innerHTML = convertNewlines(data.question);
+          // 各回答の内容をカルーセルのスライドに設定
+          document.querySelector('#cardContentModal .answer-1').innerHTML = convertNewlines(data.answer_1 || "No answer for type 1");
+          document.querySelector('#cardContentModal .answer-2').innerHTML = convertNewlines(data.answer_2 || "No answer for type 2");
+          document.querySelector('#cardContentModal .answer-3').innerHTML = convertNewlines(data.answer_3 || "No answer for type 3");
 
           // いいねボタンの状態を更新
           const likeButton = document.querySelector('#cardContentModal .like');
@@ -643,4 +646,8 @@ function setBackButtonListener(listener, element, buttonSelector) {
   // 新しいイベントリスナーを追加
   returnButton = element.querySelector(buttonSelector);
   returnButton.addEventListener('click', listener);
+}
+
+function convertNewlines(text) {
+  return text.replace(/\n/g, '<br>');
 }

@@ -128,16 +128,16 @@ document.addEventListener("turbolinks:load", function() {
     console.log("adjustedHeight", adjustedHeight);
 
     canvas.toBlob(async (blob) => {
-      // const result = await processImage(blob);
+      const result = await processImage(blob);
       // BlobをObject URLに変換
       const imageUrl = URL.createObjectURL(blob);
       console.log('image:', imageUrl);
       // console.log('Response:', result.text);
 
-      // const questionForm = cameraModalElement.querySelector(".question-form");
-      // const questionInputForm = questionForm.querySelector(".question-input-form");
-      // questionInputForm.value = result.text;
-      // submitFormAndShowModal(questionForm);
+      const questionForm = cameraModalElement.querySelector(".question-form");
+      const questionInputForm = questionForm.querySelector(".question-input-form");
+      questionInputForm.value = result.text;
+      submitFormAndShowModal(questionForm);
     }, 'image/png');
   });
 
@@ -556,6 +556,7 @@ function submitFormAndShowModal(formElement) {
     console.log(data.content);
 
     // 新しいモーダルの中身を設定
+    console.log("これがjavascript側での回答", data.content);
     var content = convertNewlines(data.content);
     var answerModalElement = document.getElementById('answerModal');
     var answerModal = new Modal(answerModalElement);

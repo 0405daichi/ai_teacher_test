@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :questions do
     collection do
       post :get_answer
+      post :add_new_answer
       get :search
     end
     member do

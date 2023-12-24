@@ -15,26 +15,45 @@ class QuestionsController < ApplicationController
 
   def show
     @card = Question.find(params[:id])
-    is_liked = @card.likes.exists?(user: current_user) # ユーザーがいいねしているか
-    is_bookmarked = @card.bookmarks.exists?(user: current_user) # ユーザーが保存しているか
+    is_liked = @card.likes.exists?(user: current_user)
+    is_bookmarked = @card.bookmarks.exists?(user: current_user)
+  
+    # answer_typeごとに回答を取得
+    answer_1 = @card.answers.find_by(answer_type: 1)
+    answer_2 = @card.answers.find_by(answer_type: 2)
+    answer_3 = @card.answers.find_by(answer_type: 3)
+  
     respond_to do |format|
-      format.html # 通常のHTMLレスポンス
-      format.json { render json: { question: @card.content, answer: @card.answer.content, is_liked: is_liked, is_bookmarked: is_bookmarked } } # JSONレスポンス
+      format.html
+      format.json { 
+        render json: { 
+          question: @card.content, 
+          answer_1: answer_1&.content, 
+          answer_2: answer_2&.content, 
+          answer_3: answer_3&.content, 
+          is_liked: is_liked, 
+          is_bookmarked: is_bookmarked 
+        } 
+      }
     end
   end  
   
   def get_answer
     puts "params: #{params.inspect}"
     question = params[:questionInputForm]
+    answer_type = params[:answerTypeId]
     puts "コントローラー側：#{question}"
     ai_answer = generate_ai_response(params)
-    
+    puts "これが生成したai_answer: #{ai_answer}"
+  
     @question = Question.new(content: question)
-    @question.build_answer(content: ai_answer)
-    
+  
+    # build_answerの代わりにanswers.buildを使用
+    @question.answers.build(content: ai_answer, answer_type: answer_type)
+  
     # ログインしているユーザーのIDを紐づける
     @question.user = current_user if user_signed_in?
-    
+  
     puts "@question：#{@question}"
   
     if @question.save
@@ -42,6 +61,27 @@ class QuestionsController < ApplicationController
     else
       # 保存に失敗した場合の処理を追加
       render json: { error: "Failed to save question and answer." }, status: :unprocessable_entity
+    end
+  end  
+
+  def add_new_answer
+    puts "params: #{params.inspect}"
+    question_id = params[:question_id]
+    answer_content = generate_ai_response(params)
+    answer_type = params[:answer_type]
+  
+    # 既存の質問を取得
+    @question = Question.find(question_id)
+  
+    # 新しい回答を生成
+    @answer = @question.answers.build(content: answer_content, answer_type: answer_type)
+    
+    if @answer.save
+      # 保存成功時の処理
+      render json: { content: @answer.content }
+    else
+      # 保存失敗時の処理
+      render json: { error: "Failed to save answer." }, status: :unprocessable_entity
     end
   end  
 
@@ -96,6 +136,7 @@ class QuestionsController < ApplicationController
     api_key = ENV['OPENAI_API_KEY']
     gpt_client = Gpt35Client.new(api_key)
     response = gpt_client.generate_answer(params)
+    puts "これがgenerate_ai_responseの答え: #{response}"
     response
   end
 

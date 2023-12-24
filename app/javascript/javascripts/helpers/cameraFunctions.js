@@ -58,7 +58,7 @@ export async function takePhoto() {
   const imageCapture = new ImageCapture(videoTrack);
 
   try {
-    const blob = await imageCapture.takePhoto(photoSettings);
+    const blob = await imageCapture.takePhoto();
     console.log("ここ", blob);
     const imageBitmap = await createImageBitmap(blob);
     console.log("ここここ", imageBitmap);
