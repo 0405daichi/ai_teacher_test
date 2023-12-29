@@ -7,10 +7,15 @@ class Gpt35Client
     @api_client = OpenAI::Client.new(access_token: api_key)
   end
 
-  def generate_answer(params)
-    detailOptions = analyzeOptions(params)
+  def generate_answer(params, first)
+    prompt = ""
+    if (first)
+      detailOptions = analyzeOptions(params)
 
-    prompt = returnPrompt(params["option"], detailOptions) + "¥n" + params[:questionInputForm]
+      prompt = returnPrompt(params["option"], detailOptions) + "¥n" + params[:questionInputForm]
+    else
+      prompt = re_generate_prompt(params)
+    end
 
     system_message = { role: "system", content: "You are a helpful assistant." }
     user_message = { role: "user", content: prompt }
@@ -90,5 +95,18 @@ class Gpt35Client
       {}
     end
     return detailOptions
+  end
+
+  def re_generate_prompt(params)
+    case params['answerTypeId']
+    when 1
+      return "下記の解説を改善して下さい。"
+    when 2
+      return "下記の内容を、論理的かつ段階的に考え、「小学生にもわかるように」修正してください。¥n※修正した文章のみを返して下さい。"
+    when 3
+      return  "下記の内容を、何かに例えた解説に修正して下さい。¥n※ただし、論理的かつ段階的に考えた結果、例えとして最も適している例えを用いて下さい。¥n※修正した文章のみを返して下さい。"
+    else
+      return ""
+    end
   end
 end

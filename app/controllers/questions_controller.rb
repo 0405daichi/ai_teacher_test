@@ -43,7 +43,7 @@ class QuestionsController < ApplicationController
     question = params[:questionInputForm]
     answer_type = params[:answerTypeId]
     puts "コントローラー側：#{question}"
-    ai_answer = generate_ai_response(params)
+    ai_answer = generate_ai_response(params, true)
     puts "これが生成したai_answer: #{ai_answer}"
   
     @question = Question.new(content: question)
@@ -67,21 +67,34 @@ class QuestionsController < ApplicationController
   def add_new_answer
     puts "params: #{params.inspect}"
     question_id = params[:question_id]
-    answer_content = generate_ai_response(params)
-    answer_type = params[:answer_type]
+    answer_content = generate_ai_response(params, false)
+    answer_type = params[:answerTypeId]
   
     # 既存の質問を取得
     @question = Question.find(question_id)
-  
-    # 新しい回答を生成
-    @answer = @question.answers.build(content: answer_content, answer_type: answer_type)
     
-    if @answer.save
-      # 保存成功時の処理
-      render json: { content: @answer.content }
+    # 既存の回答の中で、同じanswer_typeを持つものを検索
+    existing_answer = @question.answers.find_by(answer_type: answer_type)
+    
+    if existing_answer
+      # 既存の回答が見つかった場合、contentを更新
+      existing_answer.update(content: answer_content)
+      if existing_answer.save
+        render json: { content: existing_answer.content }
+      else
+        render json: { error: "Failed to update answer." }, status: :unprocessable_entity
+      end
     else
-      # 保存失敗時の処理
-      render json: { error: "Failed to save answer." }, status: :unprocessable_entity
+      # 新しい回答を生成
+      @answer = @question.answers.build(content: answer_content, answer_type: answer_type)
+      
+      if @answer.save
+        # 保存成功時の処理
+        render json: { content: @answer.content }
+      else
+        # 保存失敗時の処理
+        render json: { error: "Failed to save answer." }, status: :unprocessable_entity
+      end
     end
   end  
 
@@ -129,13 +142,13 @@ class QuestionsController < ApplicationController
     params.require(:message).permit(:content, :sender, :user_id)
   end  
 
-  def generate_ai_response(params)
+  def generate_ai_response(params, first)
     Rails.logger.info "アクセストークン：#{ENV['OPENAI_API_KEY']}"
     puts "アクセストークン：#{ENV['OPENAI_API_KEY']}"
     Rails.logger.info ENV.inspect
     api_key = ENV['OPENAI_API_KEY']
     gpt_client = Gpt35Client.new(api_key)
-    response = gpt_client.generate_answer(params)
+    response = gpt_client.generate_answer(params, first)
     puts "これがgenerate_ai_responseの答え: #{response}"
     response
   end
