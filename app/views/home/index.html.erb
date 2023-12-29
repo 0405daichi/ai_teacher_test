@@ -173,27 +173,8 @@
 
     const slides = document.querySelectorAll('.custom-slide');
     const indicators = document.querySelectorAll('.indicator');
+    const answerType = document.querySelector('.answer-type');
     let currentIndex = 0; // 現在のスライドのインデックス
-
-    // function showSlide(index) {
-    //   if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
-
-    //   // 全てのスライドを非表示にする
-    //   slides.forEach(slide => {
-    //     slide.style.opacity = "0";
-    //     slide.style.display = "none";
-    //   });
-
-    //   // 新しいスライドをフェードインで表示
-    //   const newSlide = slides[index];
-    //   newSlide.style.display = "block";
-    //   newSlide.style.opacity = "1";
-
-    //   // インジケーターの更新
-    //   indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
-    //   indicators[index].classList.add('active'); // 新しいインジケーターにactiveを追加
-    //   currentIndex = index; // インデックスの更新
-    // }
 
     function showSlide(index) {
       if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
@@ -206,6 +187,9 @@
       // 新しいスライドを表示
       const newSlide = slides[index];
       newSlide.classList.add('active');
+
+      // answer-type要素にvalueを設定
+      answerType.setAttribute('value', index + 1); // スライドインデックス + 1
 
       // インジケーターの更新
       indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
@@ -274,6 +258,7 @@
         </div>
         <div id="customCarousel" class="custom-carousel">
           <div class="custom-carousel-inner">
+            <div class="answer-type" style="display: none;"></div>
             <div class="custom-slide answer-1 active"></div>
             <div class="custom-slide answer-2"></div>
             <div class="custom-slide answer-3"></div>

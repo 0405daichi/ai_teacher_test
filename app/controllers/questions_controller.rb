@@ -67,11 +67,9 @@ class QuestionsController < ApplicationController
   def add_new_answer
     puts "params: #{params.inspect}"
     question_id = params[:question_id]
-    answer_content = generate_ai_response(params, false)
-    answer_type = params[:answerTypeId]
-  
-    # 既存の質問を取得
     @question = Question.find(question_id)
+    answer_type = params[:answerTypeId]
+    answer_content = generate_ai_response(params, @question, false)
     
     # 既存の回答の中で、同じanswer_typeを持つものを検索
     existing_answer = @question.answers.find_by(answer_type: answer_type)

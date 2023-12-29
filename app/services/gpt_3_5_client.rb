@@ -7,14 +7,14 @@ class Gpt35Client
     @api_client = OpenAI::Client.new(access_token: api_key)
   end
 
-  def generate_answer(params, first)
+  def generate_answer(params, question, first)
     prompt = ""
     if (first)
       detailOptions = analyzeOptions(params)
 
-      prompt = returnPrompt(params["option"], detailOptions) + "¥n" + params[:questionInputForm]
+      prompt = returnPrompt(params["option"], detailOptions) + "¥n" + question
     else
-      prompt = re_generate_prompt(params)
+      prompt = re_generate_prompt(params) + "¥n" + question
     end
 
     system_message = { role: "system", content: "You are a helpful assistant." }
