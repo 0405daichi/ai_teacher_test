@@ -2,6 +2,8 @@
   "name": "ai-homework",
   "private": true,
   "dependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-methods": "^7.23.3",
     "@popperjs/core": "^2.11.7",
@@ -18,8 +20,6 @@
   },
   "version": "0.1.0",
   "devDependencies": {
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
-    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "webpack-dev-server": "^3"
   },
   "engines": {
