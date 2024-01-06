@@ -41,9 +41,9 @@ class QuestionsController < ApplicationController
   def get_answer
     puts "params: #{params.inspect}"
     question = params[:questionInputForm]
-    answer_type = params[:answerTypeId]
+    answer_type = params[:answer_type]
     puts "コントローラー側：#{question}"
-    ai_answer = generate_ai_response(params, true)
+    ai_answer = generate_ai_response(params, question, true)
     puts "これが生成したai_answer: #{ai_answer}"
   
     @question = Question.new(content: question)
@@ -68,8 +68,8 @@ class QuestionsController < ApplicationController
     puts "params: #{params.inspect}"
     question_id = params[:question_id]
     @question = Question.find(question_id)
-    answer_type = params[:answerTypeId]
-    answer_content = generate_ai_response(params, @question, false)
+    answer_content = generate_ai_response(params, @question.content, false)
+    answer_type = params[:answer_type]
     
     # 既存の回答の中で、同じanswer_typeを持つものを検索
     existing_answer = @question.answers.find_by(answer_type: answer_type)
@@ -140,13 +140,13 @@ class QuestionsController < ApplicationController
     params.require(:message).permit(:content, :sender, :user_id)
   end  
 
-  def generate_ai_response(params, first)
+  def generate_ai_response(params, question, first)
     Rails.logger.info "アクセストークン：#{ENV['OPENAI_API_KEY']}"
     puts "アクセストークン：#{ENV['OPENAI_API_KEY']}"
     Rails.logger.info ENV.inspect
     api_key = ENV['OPENAI_API_KEY']
     gpt_client = Gpt35Client.new(api_key)
-    response = gpt_client.generate_answer(params, first)
+    response = gpt_client.generate_answer(params, question, first)
     puts "これがgenerate_ai_responseの答え: #{response}"
     response
   end

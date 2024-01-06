@@ -5,6 +5,8 @@ import * as ActiveStorage from "@rails/activestorage";
 import "channels";
 import "bootstrap";
 import "@popperjs/core";
+import marked from 'marked';
+import katex from 'katex';
 import "../stylesheets/application";
 import "../javascripts/home"
 import "../javascripts/icon_event/camera"

@@ -3,6 +3,21 @@
 import { Modal } from 'bootstrap';
 import { openCamera, takePhoto, closeCamera, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
+// ライブラリをインポート
+import marked from 'marked';
+import katex from 'katex';
+
+// KaTeXのオプションを設定
+const katexOptions = {
+  throwOnError: false, // LaTeXのパースエラーを無視する
+  errorColor: "#cc0000", // エラーの色を設定
+  delimiters: [ // 数式のデリミタを設定
+    {left: "$$", right: "$$", display: true},
+    {left: "\\[", right: "\\]", display: true},
+    {left: "$", right: "$", display: false},
+    {left: "\\(", right: "\\)", display: false}
+  ]
+};
 
 document.addEventListener("turbolinks:load", function() {
   // DOM取得
@@ -319,7 +334,7 @@ document.addEventListener("turbolinks:load", function() {
       // cameraTrack = stream.getVideoTracks()[0];
       // imageCapture = new ImageCapture(cameraTrack);
 
-      closeCamera.addEventListener('click', async () => {
+      closeCameraButton.addEventListener('click', async () => {
         cameraModal.hide();
         // cameraTrack.stop();
         closeCamera();
@@ -557,27 +572,11 @@ function submitFormAndShowModal(formElement) {
 
     // 新しいモーダルの中身を設定
     console.log("これがjavascript側での回答", data.content);
-    var content = convertNewlines(data.content);
+    var content = convertTextToHtml(data.content);
     var answerModalElement = document.getElementById('answerModal');
     var answerModal = new Modal(answerModalElement);
     var modalBody = answerModalElement.querySelector('.answer-modal-body');
-    modalBody.innerHTML = '';
-
-    var index = 0;
-    function typeWriter() {
-      if (index < content.length) {
-        // <br>マーカーの検出
-        if (content.substr(index, 4) === '<br>') {
-          modalBody.innerHTML += '<br>';
-          index += 4;
-        } else {
-          modalBody.innerHTML += content.charAt(index);
-          index++;
-        }
-        setTimeout(typeWriter, 50); // 50ミリ秒ごとに文字を追加
-      }
-    }
-    typeWriter();
+    revealText(content, 0, modalBody);
 
     // 新しいモーダルを表示
     answerModal.show();
@@ -601,4 +600,21 @@ function setBackButtonListener(listener, element, buttonSelector) {
   // 新しいイベントリスナーを追加
   returnButton = element.querySelector(buttonSelector);
   returnButton.addEventListener('click', listener);
+}
+
+function revealText(text, index, element) {
+  element.innerHTML = '';
+  if (index < text.length) {
+    // 次の文字を追加
+    element.innerHTML += text[index];
+    // 次の文字へ
+    setTimeout(() => revealText(text, index + 1, element), 30); // 100ミリ秒ごとに次の文字を表示
+  }
+}
+
+function convertTextToHtml(text) {
+  // MarkdownをHTMLに変換
+  let html = marked.parse(text);
+
+  return html
 }

@@ -2,6 +2,21 @@
 
 import { Modal } from 'bootstrap';
 import { createStream, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+// ライブラリをインポート
+import marked from 'marked';
+import katex from 'katex';
+
+// KaTeXのオプションを設定
+const katexOptions = {
+  throwOnError: false, // LaTeXのパースエラーを無視する
+  errorColor: "#cc0000", // エラーの色を設定
+  delimiters: [ // 数式のデリミタを設定
+    {left: "$$", right: "$$", display: true},
+    {left: "\\[", right: "\\]", display: true},
+    {left: "$", right: "$", display: false},
+    {left: "\\(", right: "\\)", display: false}
+  ]
+};
 
 document.addEventListener("turbolinks:load", function() {
   
@@ -21,7 +36,7 @@ function submitFormAndShowModal(formElement) {
     console.log(data.content);
 
     // 新しいモーダルの中身を設定
-    var content = convertNewlines(data.content);
+    var content = convertTextToHtml(data.content);
     var answerModalElement = document.getElementById('answerModal');
     var answerModal = new Modal(answerModalElement);
     var modalBody = answerModalElement.querySelector('.answer-modal-body');
@@ -65,4 +80,17 @@ function setBackButtonListener(listener, element, buttonSelector) {
   // 新しいイベントリスナーを追加
   returnButton = element.querySelector(buttonSelector);
   returnButton.addEventListener('click', listener);
+}
+
+function convertTextToHtml(text) {
+  // MarkdownをHTMLに変換
+  let html = marked.parse(text);
+
+  // LaTeX表現を探して、KaTeXでHTMLに変換
+  html = html.replace(/\\\((.*?)\\\)/g, (match, formula) => {
+    return katex.renderToString(formula, katexOptions);
+  });
+
+  // 改行を<br>に置き換え
+  return html.replace(/\n/g, '<br>');
 }

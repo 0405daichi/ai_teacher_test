@@ -9,12 +9,19 @@ class Gpt35Client
 
   def generate_answer(params, question, first)
     prompt = ""
+    conditions = "¥n# 条件
+    ¥n・回答は必ず日本語
+    ¥n・回答のフォーマットはMarkdownで統一¥n
+    ¥n・LaTeX表現は使用しない¥n"
+    partition = "¥n--------------------¥n"
+    puts "これが元々の質問だよ#{question}"
+    # 素の回答があるか無いかで場合わけし、ある場合は、他の種類の回答を修正もしくは追加（どちらも質問から生成する）（解説を渡して修正はしていない）
     if (first)
       detailOptions = analyzeOptions(params)
 
-      prompt = returnPrompt(params["option"], detailOptions) + "¥n" + question
+      prompt = returnPrompt(params["option"], detailOptions) + conditions + partition + question
     else
-      prompt = re_generate_prompt(params) + "¥n" + question
+      prompt = re_generate_prompt(params) + conditions + partition + question
     end
 
     system_message = { role: "system", content: "You are a helpful assistant." }
@@ -48,9 +55,9 @@ class Gpt35Client
     case option
     when '質問'
       if detailOptions["answerType"] == 'onlyAnswer'
-        return "質問に対する回答のみを返してください。"
+        return "質問に対する解答のみを返してください。¥n※解答に対する解説は必要ありません。簡潔に解答のみを返して下さい。"
       elsif detailOptions["answerType"] == 'withExplain'
-        return "質問に対する回答とその分かりやすい回答を返してください。"
+        return "質問に対する解答とその分かりやすい回答を返してください。"
       end
     when '直訳・翻訳'
       if detailOptions["fromLanguage"] == 'English'
@@ -98,13 +105,13 @@ class Gpt35Client
   end
 
   def re_generate_prompt(params)
-    case params['answerTypeId']
+    case params['answer_type']
     when 1
-      return "下記の解説を改善して下さい。"
+      return "下記の質問に対するわかりやすい解説を、「論理的かつ段階的に」考えて下さい。"
     when 2
-      return "下記の内容を、論理的かつ段階的に考え、「小学生にもわかるように」修正してください。¥n※修正した文章のみを返して下さい。"
+      return "下記にの質問に対する解説を、「小学生にもわかるような内容で」考えて下さい。"
     when 3
-      return  "下記の内容を、何かに例えた解説に修正して下さい。¥n※ただし、論理的かつ段階的に考えた結果、例えとして最も適している例えを用いて下さい。¥n※修正した文章のみを返して下さい。"
+      return "下記にの質問に対する解説を、「別の概念に例えて」考えて下さい。¥n例えば、スポーツや食べ物、人の行動などです。¥n※ただし、論理的かつ段階的に考えた結果、例えとして最も適している概念を例えとして用いて下さい。"
     else
       return ""
     end

@@ -3,6 +3,22 @@
 import { Modal } from 'bootstrap';
 import { openCamera, takePhoto, closeCamera, processImage, initResizableRect, adjustOverlayElements } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
+// ライブラリをインポート
+import marked from 'marked';
+import katex from 'katex';
+
+
+// KaTeXのオプションを設定
+const katexOptions = {
+  throwOnError: false, // LaTeXのパースエラーを無視する
+  errorColor: "#cc0000", // エラーの色を設定
+  delimiters: [ // 数式のデリミタを設定
+    {left: "$$", right: "$$", display: true},
+    {left: "\\[", right: "\\]", display: true},
+    {left: "$", right: "$", display: false},
+    {left: "\\(", right: "\\)", display: false}
+  ]
+};
 
 document.addEventListener("turbolinks:load", function() {
   const instagramApp = document.querySelector('.instagram-icon');
@@ -102,7 +118,7 @@ document.addEventListener("turbolinks:load", function() {
       .then(response => response.json())
       .then(data => {
         if (cardContentModal._isShown !== true) {
-          document.querySelector('#cardContentModal .card-content-question').innerHTML = convertNewlines(data.question);
+          document.querySelector('#cardContentModal .card-content-question').innerHTML = convertTextToHtml(data.question);
 
           // 各回答の内容を確認し、カルーセルのスライドに設定
           const answers = [
@@ -123,9 +139,39 @@ document.addEventListener("turbolinks:load", function() {
               `;
               const customButton = document.querySelector(`#cardContentModal .custom-button`);
               customButton.classList.add('active');
+
+              // 新しく追加されたボタンにイベントリスナーを設定
+              const button = answerElement.querySelector('.custom-button');
+              const cardContentModalElement = document.querySelector('.card-content');
+              const answerTypeElement = cardContentModalElement.querySelector('.answer-type');
+              button.addEventListener('click', () => {
+                // パラメータ設定
+                const questionId = currentCardId;
+                const answerType = answerTypeElement.getAttribute('value');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                // 非同期リクエストを送信
+                fetch(`/questions/add_new_answer`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // ヘッダーにコンテントタイプを設定
+                    'X-Requested-With': 'XMLHttpRequest', // AJAXリクエストを示す
+                    'X-CSRF-Token': csrfToken // CSRFトークンをヘッダーに追加
+                  },
+                  body: `question_id=${questionId}&answer_type=${answerType}` // リクエストボディにパラメータを設定
+                })
+                .then(response => response.json())
+                .then(data => {
+                  // 取得した回答を1文字ずつ表示
+                  const text = convertTextToHtml(data.content);
+                  revealText(text, 0, answerElement);
+                })
+                .catch(error => console.error('Error:', error));
+              });              
             } else {
+              var te = convertTextToHtml(answer.content);
               // 回答がある場合、その内容を表示
-              answerElement.innerHTML = convertNewlines(answer.content);
+              console.log("これパースできてる？？", te);
+              answerElement.innerHTML = convertTextToHtml(answer.content);
             }
           });
 
@@ -671,4 +717,22 @@ function setBackButtonListener(listener, element, buttonSelector) {
 
 function convertNewlines(text) {
   return text.replace(/\n/g, '<br>');
+}
+
+function revealText(text, index, element) {
+  element.innerHTML = '';
+  if (index < text.length) {
+    // 次の文字を追加
+    element.innerHTML += text[index];
+    // 次の文字へ
+    setTimeout(() => revealText(text, index + 1, element), 30); // 100ミリ秒ごとに次の文字を表示
+  }
+}
+
+function convertTextToHtml(text) {
+  // MarkdownをHTMLに変換
+  let html = marked.parse(text);
+
+  // 改行を<br>に置き換え
+  return html;
 }

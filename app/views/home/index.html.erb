@@ -171,9 +171,10 @@
       circle.style.transform = `rotate(${270-a}deg)`; 
     }
 
+    const cardContentModalElement = document.querySelector('.card-content');
     const slides = document.querySelectorAll('.custom-slide');
     const indicators = document.querySelectorAll('.indicator');
-    const answerType = document.querySelector('.answer-type');
+    const answerType = cardContentModalElement.querySelector('.answer-type');
     let currentIndex = 0; // 現在のスライドのインデックス
 
     function showSlide(index) {
@@ -238,7 +239,7 @@
 </script>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen" role="document">
     <div class="modal-content">
       <div class="modal-body answer-modal-body" id="answerModalBody" style="overflow: scroll;"></div>
     </div>

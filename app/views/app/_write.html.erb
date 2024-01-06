@@ -27,7 +27,7 @@
         <hr style="margin: 30px 30px;">
 <div class="option-panel" style="margin-top: 5px;">
           <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
-          <%= f.hidden_field :answerTypeId, class: "answer-type-id", value: 1 %>
+          <%= f.hidden_field :answer_type, class: "answer-type-id", value: 1 %>
           <div class="option-carousel">
             <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
               <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
