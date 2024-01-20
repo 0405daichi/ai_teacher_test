@@ -1,242 +1,15 @@
 <!-- app/views/your_view.html.erb -->
-
 <div id="overlay" class="overlay home"></div>
 <div class="center-point"><%= image_tag 'logo-kids.png' %></div>
 <div id="circles"></div>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // モーダルの開閉状態を追跡する変数
-    let isModalOpen = false;
-
-    // 全てのモーダル要素を取得
-    const modals = document.querySelectorAll('.modal');
-
-    // 各モーダルのイベントを監視
-    modals.forEach(modal => {
-        modal.addEventListener('shown.bs.modal', function() {
-            isModalOpen = true; // モーダルが開かれたらフラグをtrueに設定
-        });
-        modal.addEventListener('hidden.bs.modal', function() {
-            isModalOpen = false; // モーダルが閉じられたらフラグをfalseに設定
-        });
-    });
-    
-    const numCircles = 5;
-    const circleContainer = document.getElementById('circles');
-    const radius = 100;
-    const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
-    const centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
-    // 中心の画像を取得
-    const centerPoint = document.querySelector('.center-point');
-    centerPoint.dataset.angle = 0;
-  
-    // 各画像に対応するクラス名とaltテキスト
-    const imageDetails = <%= raw(
-      [
-        {className: 'user-icon s-icon', path: asset_path('single-neutral.png'), alt: 'user'},
-        
-        {className: 'camera-icon s-icon', path: asset_path('camera-settings-focus.png'), alt: 'camera', id: 'cameraApp1'},
-        {className: 'instagram-icon small-icon', path: asset_path('search-1.png'), alt: 'instagram'},
-        {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
-        
-        {className: 'ad-icon small-icon', path: asset_path('shopping-advertising-duration-countdown.png'), alt: 'ad'},
-      ].to_json
-    ) %>;
-  
-    for (let i = 0; i < numCircles; i++) {
-      const angle = (i * 360) / numCircles;
-      const circle = document.createElement('div');
-      circle.className = 'rotating-circle';
-      circle.dataset.angle = angle;
-      setCirclePosition(circle, radius, angle);
-  
-      const img = document.createElement('img');
-  
-      // 画像の詳細を取得
-      const details = imageDetails[i];
-      
-      // 画像のパスを動的に設定
-      img.src = details.path;
-      
-      img.alt = details.alt;
-      img.className = details.className;
-      if(details.id) img.id = details.id;
-  
-      circle.appendChild(img);
-      circleContainer.appendChild(circle);
-    }
-  
-    // 自動で回転させる
-    setInterval(() => {
-      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
-        const currentAngle = parseFloat(circle.dataset.angle);
-        const newAngle = currentAngle + rotationSpeed;
-        setCirclePosition(circle, radius, newAngle);
-        circle.dataset.angle = newAngle;
-      });
-
-      const currentCenterAngle = parseFloat(centerPoint.dataset.angle);
-      const newCenterAngle = currentCenterAngle + centerRotationSpeed;
-      centerPoint.dataset.angle = newCenterAngle;
-      centerPoint.style.transform = `translate(-50%, -50%) rotate(${newCenterAngle}deg)`;
-    }, 16); // 約60FPSで更新
-
-    // スクロールで中心の画像を回転させる
-    window.addEventListener('wheel', function(event) {
-      if (isModalOpen) return; // モーダルが開いている場合は何もしない
-      const scrollDelta = event.deltaY * 0.1; // スクロールの量に基づく回転量
-      rotateCenterPoint(scrollDelta);
-    });
-
-    // ホイールで回転させる
-    window.addEventListener('wheel', function(event) {
-      if (isModalOpen) return; // モーダルが開いている場合は何もしない
-      const scrollDelta = event.deltaY * 0.1;  // スクロールの方向と量
-      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
-        const currentAngle = parseFloat(circle.dataset.angle);
-        const newAngle = currentAngle + scrollDelta;
-        setCirclePosition(circle, radius, newAngle);
-        circle.dataset.angle = newAngle;
-      });
-    });
-
-    let initialTouchY = null;
-    let touchVelocity = 0; // タッチによる回転速度
-    const friction = 0.95; // 摩擦係数
-
-    // タッチ開始時の処理
-    window.addEventListener('touchstart', function(event) {
-      if (isModalOpen) return; // モーダルが開いている場合は何もしない
-      initialTouchY = event.touches[0].clientY;
-    });
-
-    // タッチ中の処理
-    window.addEventListener('touchmove', function(event) {
-      if (isModalOpen) return; // モーダルが開いている場合は何もしない
-      if (initialTouchY === null) return;
-
-      const touchY = event.touches[0].clientY;
-      const touchDelta = initialTouchY - touchY;
-      touchVelocity = touchDelta * 0.1; // タッチによる回転加速度を設定
-
-      // 回転速度に基づいて更新
-      updateCircles(touchVelocity);
-      rotateCenterPoint(touchVelocity);
-
-      initialTouchY = touchY;
-    });
-
-    // タッチ終了時の処理
-    window.addEventListener('touchend', function() {
-      if (isModalOpen) return; // モーダルが開いている場合は何もしない
-      initialTouchY = null;
-      animateDeceleration(); // 減速アニメーションを開始
-    });
-
-    function animateDeceleration() {
-      if (Math.abs(touchVelocity) > 0.1) {
-        updateCircles(touchVelocity);
-        rotateCenterPoint(touchVelocity);
-        touchVelocity *= friction; // 摩擦により速度を減少
-        requestAnimationFrame(animateDeceleration);
-      }
-    }
-
-    function updateCircles(delta) {
-      Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
-        const currentAngle = parseFloat(circle.dataset.angle);
-        const newAngle = currentAngle + delta;
-        setCirclePosition(circle, radius, newAngle);
-        circle.dataset.angle = newAngle;
-      });
-    }
-
-    // 中心の画像を回転させる関数
-    function rotateCenterPoint(delta) {
-      const currentAngle = parseFloat(centerPoint.dataset.angle) || 0;
-      const newAngle = currentAngle - delta;
-      centerPoint.dataset.angle = newAngle;
-      centerPoint.style.transform = `translate(-50%, -50%) rotate(${newAngle}deg)`;
-    }
-  
-    function setCirclePosition(circle, r, a) {
-      const x = r * Math.cos(a * Math.PI / 180);
-      const y = r * Math.sin(a * Math.PI / 180);
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      circle.style.left = `${centerX + x}px`;
-      circle.style.top = `${centerY + y}px`;
-      circle.style.transform = `rotate(${270-a}deg)`; 
-    }
-
-    const cardContentModalElement = document.querySelector('.card-content');
-    const slides = document.querySelectorAll('.custom-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    const answerType = cardContentModalElement.querySelector('.answer-type');
-    let currentIndex = 0; // 現在のスライドのインデックス
-
-    function showSlide(index) {
-      if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
-
-      // 全てのスライドを非表示にする
-      slides.forEach(slide => {
-        slide.classList.remove('active');
-      });
-
-      // 新しいスライドを表示
-      const newSlide = slides[index];
-      newSlide.classList.add('active');
-
-      // answer-type要素にvalueを設定
-      answerType.setAttribute('value', index + 1); // スライドインデックス + 1
-
-      // インジケーターの更新
-      indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
-      indicators[index].classList.add('active'); // 新しいインジケーターにactiveを追加
-      currentIndex = index; // インデックスの更新
-    }
-
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        showSlide(index); // インジケーターがクリックされたら、対応するスライドを表示
-      });
-    });
-
-    const whatsGenerateDiv = document.querySelector('.whats-generate-content');
-    // インデックスごとに異なるテキストを格納する配列
-    const texts = ["わかりやすく", "もっとわかりやすく", "例え話"];
-
-    function showTextForIndex(index) {
-      // 既存のテキストをクリア
-      whatsGenerateDiv.textContent = '';
-      // インジケーターのインデックスに対応するテキストを取得
-      const text = texts[index];
-      // テキストを1文字ずつ表示する関数を呼び出し
-      revealText(text, 0, whatsGenerateDiv);
-    }
-
-    function revealText(text, index, element) {
-      if (index < text.length) {
-        // 次の文字を追加
-        element.textContent += text[index];
-        // 次の文字へ
-        setTimeout(() => revealText(text, index + 1, element), 100); // 100ミリ秒ごとに次の文字を表示
-      }
-    }
-
-    // デフォルトのテキストを表示
-    showTextForIndex(currentIndex);
-
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        currentIndex = index; // インデックスの更新
-        showTextForIndex(currentIndex);
-      });
-    });
-  });
-</script>
+<!-- 画像パスをデータ属性として設定 -->
+<div id="image-details" style="display: none;">
+  <div data-path="<%= asset_path('single-neutral.png') %>" data-alt="user" data-class="user-icon s-icon"></div>
+  <div data-path="<%= asset_path('camera-settings-focus.png') %>" data-alt="camera" data-class="camera-icon s-icon" data-id="cameraApp1"></div>
+  <div data-path="<%= asset_path('search-1.png') %>" data-alt="instagram" data-class="instagram-icon small-icon"></div>
+  <div data-path="<%= asset_path('shopping-advertising-duration-countdown.png') %>" data-alt="ad" data-class="ad-icon small-icon"></div>
+  <div data-path="<%= asset_path('shopping-advertising-duration-countdown.png') %>" data-alt="ad" data-class="ad-icon small-icon"></div>
+</div>
 
 <div id="answerModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen" role="document">
@@ -245,24 +18,27 @@
     </div>
   </div>
 </div>
-
 <div id="cardContentModal" class="modal fade card-content" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen" role="document">
     <div class="modal-content" style="background-color: white;">
-      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll; background-color: white;">
-        <div class="whats-question">
-          <div class="whats-question-content">質問</div>
+      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll;">
+        <div class="question-section">
+          <div class="whats-question">
+            <div class="whats-question-content">質問</div>
+          </div>
+          <div class="card-content-question"></div>
         </div>
-        <div class="card-content-question"></div>
-        <div class="whats-generate">
-          <div class="whats-generate-content"></div>
-        </div>
-        <div id="customCarousel" class="custom-carousel">
-          <div class="custom-carousel-inner">
-            <div class="answer-type" style="display: none;"></div>
-            <div class="custom-slide answer-1 active"></div>
-            <div class="custom-slide answer-2"></div>
-            <div class="custom-slide answer-3"></div>
+        <div class="answers-section">
+          <div class="whats-generate">
+            <div class="whats-generate-content"></div>
+          </div>
+          <div id="customCarousel" class="custom-carousel">
+            <div class="custom-carousel-inner">
+              <div class="answer-type" style="display: none;"></div>
+              <div class="custom-slide answer-1 active"></div>
+              <div class="custom-slide answer-2"></div>
+              <div class="custom-slide answer-3"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -275,30 +51,35 @@
         </div>
       </div>
       <div class="modal-footer" style="height: auto;">
-        <div class="generate-div">
-          <div class="re-generate-answer-button">
-            <%= render 'shared/svg/reload' %>
+        <div class="edit-card-buttons">
+          <div class="edit" style="display: none;">
+            編集
           </div>
         </div>
-        
-        <div class="evaluation-div">
-          <!-- その他のフッターコンテンツ -->
-          <div class="like"></div>
-          <div class="like-count"></div>
-          <div class="bookmark"></div>
-          <div class="bookmark-count"></div>
+        <div class="footer-right">
+          <div class="generate-div">
+            <div class="re-generate-answer-button">
+              <%= render 'shared/svg/reload' %>
+            </div>
+          </div>
+          <div class="evaluation-div">
+            <!-- その他のフッターコンテンツ -->
+            <div class="like"></div>
+            <div class="like-count"></div>
+            <div class="bookmark"></div>
+            <div class="bookmark-count"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <!-- カメラモーダル(撮影のみ) -->
 <div class="modal fade simple-camera-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
-        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+        <video class="preview" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; object-fit: contain; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
         <div class="button-elements">
@@ -313,7 +94,6 @@
     </div>
   </div>
 </div>
-
 <!-- 画像トリミングモーダル -->
 <div class="modal fade trimming-image-modal" id="trimmingImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="overflow: hidden;">
   <div class="modal-dialog modal-fullscreen modal-xl" role="document">
@@ -332,20 +112,12 @@
     </div>
   </div>
 </div>
-
 <%= render 'app/camera' %>
-
 <%= render 'app/search' %>
-
-<%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %> 
-
+<%= render 'app/folder', user_questions: @user_questions, liked_questions: @user_likes, saved_questions: @user_bookmarks %>
 <%= render 'app/instagram', all_cards: @all_cards, user_questions: @user_questions, user_likes: @user_likes, user_bookmarks: @user_bookmarks %>
-
 <%= render 'app/write' %>
-
 <style>
-
-
   .home {
     display: none;
     position: fixed;
@@ -370,6 +142,7 @@
     display: flex;
     justify-content: center; /* 水平方向の中央寄せ */
     align-items: center; /* 垂直方向の中央寄せ */
+    background-color: #F3F6FF;
   }
 
   .center-point img {
@@ -390,13 +163,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #F3F6FF;
   }
 
   .rotating-circle img {
-    width: 70%; 
+    width: 70%;
     height: auto;
     display: block;
-    margin: auto; 
+    margin: auto;
   }
 
   .fade-out {
@@ -405,21 +179,14 @@
   }
 
   #cardContentModal {
-      z-index: 1100 !important; 
-  }
-
-  .card-content-question {
-    margin: 30px 10px 100px 10px;
-  }
-
-  .card-content-answer {
-    margin: 0 10px 30px 10px;
+      z-index: 1100 !important;
   }
 
   .card-content .modal-footer {
     display: flex;
     justify-content: space-between;
     height: 40px;
+    background-color: #F3F6FF;
   }
 
   .card-content .modal-footer .generate-div {
@@ -439,7 +206,7 @@
     justify-content: center;
     align-items: center;
     flex: 0 0 auto;
-    
+
     width: 50px;
     height: 50px;
     background-color: transparent;
@@ -456,7 +223,7 @@
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
   }
 
-  .return-camera-from-write {
+  /* .return-camera-from-write {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -466,8 +233,8 @@
     cursor: pointer;
     position: relative; /* 追加 */
     border-radius:50%;
-    border: solid 1px white; 
-    width: 50px; 
+    border: solid 1px white;
+    width: 50px;
     height: 50px;
     color: white;
   }
@@ -476,11 +243,11 @@
     background-color: white; /* マウスが乗ったときの背景色 */
     color: black;
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-  }
+  } */
 
   /* カスタムカルーセルの基本スタイリング */
   .custom-carousel {
-    /* position: relative; */
+    position: relative;
     overflow: hidden;
   }
 
@@ -489,6 +256,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     display: none; /* 最初は非表示 */
     transition: opacity 0.5s; /* 必要に応じてフェード効果を追加 */
   }
@@ -499,6 +267,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    height: 100%;
   }
 
   /* インジケーターのスタイリング */
@@ -530,6 +299,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #F3F6FF;
   }
 
   .whats-question {
@@ -538,8 +308,8 @@
     align-items: center;
     border-radius: 10px;
     padding: 5px;
-    border: 0.1px solid;
     margin: 5%;
+    background-color: #FFFCF3;
   }
 
   .whats-generate {
@@ -548,7 +318,6 @@
     align-items: center;
     border-radius: 10px;
     padding: 5px;
-    border: 0.1px solid;
     margin: 5%;
   }
 
@@ -559,5 +328,58 @@
     transform: translate(-50%, -50%); /* 中央に配置 */
     width: 60%; /* SVGのサイズ（必要に応じて調整） */
     height: 60%; /* SVGのサイズ（必要に応じて調整） */
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 10px;
+  }
+
+  .edit-card-buttons {
+    display: flex;
+    gap: 20px;
+  }
+
+  .card-modal-body {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    background-color: #F3F6FF;
+  }
+
+  .question-section {
+    flex: 1; /* 質問セクションの幅を1の割合で設定 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .whats-question {
+    flex: 1;
+  }
+
+  .card-content-question {
+    flex: 9;
+    margin: 0 5%;
+  }
+
+  .answers-section {
+    flex: 2; /* 回答セクションの幅を2の割合で設定 */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .whats-generate {
+    flex: 1;
+    background-color: #FFFCF3;
+  }
+
+  .custom-carousel {
+    flex: 30;
+    height: 100%;
+    margin: 0 5%;
+  }
+
+  .custom-carousel-inner {
+    height: 100%;
   }
 </style>

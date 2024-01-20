@@ -1,0 +1,255 @@
+<div class="card-content-page">
+  <div class="card-content">
+    <%= form_with(model: @question, url: question_path(@question), method: :patch, class: "edit-form") do |form| %>
+      <% if flash[:success] %>
+        <div class="alert alert-success" style="margin: 1%">
+          <%= flash[:success] %>
+        </div>
+      <% end %>
+      <% if flash[:error] %>
+        <div class="alert alert-danger" style="margin: 1%">
+          <%= flash[:error] %>
+        </div>
+      <% end %>
+      <div class="card-body card-modal-body" style="overflow: scroll; background-color: white;">
+        <div class="question-section">
+          <div class
+="whats-question">
+            <div class="whats-question-content">質問</div>
+          </div>
+          <div class="card-content-question">
+            <%= form.text_area :question, value: @question.content, class: "form-control" %>
+          </div>
+        </div>
+        <div class="answers-section">
+          <div class="whats-generate">
+            <div class="whats-generate-content">回答</div>
+          </div>
+          <div id="customCarousel" class="custom-carousel">
+            <div class="custom-carousel-inner">
+              <div class="answer-type" style="display: none;"></div>
+              <!-- 各回答のテキストエリア -->
+              <% 3.times do |index| %>
+                <div id="answer<%= index + 1 %>" class="custom-slide answer<%= index + 1 %><%= ' active' if index == 0 %>">
+                  <% answer = @question.answers[index] %>
+                  <% if answer %>
+                    <%= form.text_area "answer_type_#{answer.answer_type}", value: answer.content, class: "form-control" %>
+                  <% else %>
+                    <%= form.text_area "answer_type_#{index + 1}", value: '', class: "form-control" %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- アンカーリンクで各回答にジャンプ -->
+      <div class="custom-indicators-edit">
+        <span class="indicator-edit active" data-slide-to="0"></span>
+        <span class="indicator-edit" data-slide-to="1"></span>
+        <span class="indicator-edit" data-slide-to="2"></span>
+      </div>
+      <div class="page-footer" style="height: auto;">
+        <div class="edit-card-buttons">
+          <%= form.submit "保存", class: "update btn btn-outline-dark" %>
+          <div class="return-card btn btn-outline-dark">
+            <%= link_to "戻る", root_path %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<style>
+  .card-content-page {
+    height: 100%;
+
+    .card-content {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .edit-form {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* カスタムカルーセルの基本スタイリング */
+    .custom-carousel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 各スライドのスタイリング */
+    .custom-slide {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none; /* 最初は非表示 */
+      transition: opacity 0.5s; /* 必要に応じてフェード効果を追加 */
+    }
+
+    .custom-slide.active {
+      display: block; /* アクティブなスライドのみ表示 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .change-answer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .whats-question {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      padding: 5px;
+      border: 0.1px solid;
+      margin: 5%;
+    }
+
+    .whats-generate {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      padding: 5px;
+      border: 0.1px solid;
+      margin: 5%;
+    }
+
+    .custom-button .active svg {
+      position: absolute; /* 絶対位置指定 */
+      top: 50%; /* 上部から50%の位置 */
+      left: 50%; /* 左から50%の位置 */
+      transform: translate(-50%, -50%); /* 中央に配置 */
+      width: 60%; /* SVGのサイズ（必要に応じて調整） */
+      height: 60%; /* SVGのサイズ（必要に応じて調整） */
+    }
+
+    .card-modal-body {
+      flex: 15;
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+    }
+
+    .question-section {
+      flex: 1; /* 質問セクションの幅を1の割合で設定 */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .whats-question {
+      flex: 1;
+    }
+
+    .card-content-question {
+      flex: 9;
+    }
+
+    .answers-section {
+      flex: 2; /* 回答セクションの幅を2の割合で設定 */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .whats-generate {
+      flex: 1;
+    }
+
+    .custom-carousel {
+      flex: 30;
+      height: 100%;
+    }
+
+    .custom-carousel-inner {
+      height: 100%;
+    }
+
+    .edit-card-buttons {
+      display: flex;
+      gap: 20px;
+      margin-left: 1%;
+    }
+
+    .custom-indicators-edit {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .indicator-edit {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #888;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: width 0.3s, height 0.3s; /* アニメーションを追加 */
+    }
+
+    .indicator-edit.active {
+      width: 8px;
+      height: 8px;
+      background-color: #000;
+    }
+
+    .form-control {
+      height: 100% !important;
+      resize: none;
+    }
+
+    .page-footer {
+      flex: 1;
+      height: auto;
+    }
+  }
+</style>
+<script>
+  const cardContentPageElement = document.querySelector('.card-content-page');
+  const slides = cardContentPageElement.querySelectorAll('.custom-slide');
+  const indicators = cardContentPageElement.querySelectorAll('.indicator-edit');
+  const answerType = cardContentPageElement.querySelector('.answer-type');
+  let currentIndex = 0; // 現在のスライドのインデックス
+
+  function showSlide(index) {
+    if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
+
+    // 全てのスライドを非表示にする
+    slides.forEach(slide => {
+      slide.classList.remove('active');
+    });
+
+    // 新しいスライドを表示
+    const newSlide = slides[index];
+    newSlide.classList.add('active');
+
+    // answer-type要素にvalueを設定
+    answerType.setAttribute('value', index + 1); // スライドインデックス + 1
+
+    // インジケーターの更新
+    indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
+    indicators[index].classList.add('active'); // 新しいインジケーターにactiveを追加
+    currentIndex = index; // インデックスの更新
+  }
+
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      showSlide(index); // インジケーターがクリックされたら、対応するスライドを表示
+    });
+  });
+</script>

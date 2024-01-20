@@ -15,9 +15,13 @@
               <% all_cards.each do |card| %>
                 <div class="card" data-card-id="<%= card.id %>">
                   <div class="card-id" style="display:none;"><%= card.id %></div>
-                  <div class="card-body">
-                      <%= card.content %>
-                  </div>
+                    <div class="card-body">
+                      <% if card.image.attached? %>
+                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
+                      <% else %>
+                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
+                      <% end %>
+                    </div>
                   <div class="card-bottom">
                     <div class="like">
                       <% if !card.likes.find_by(user: current_user) %>
@@ -47,7 +51,11 @@
                   <div class="card" data-card-id="<%= card.id %>">
                     <div class="card-id" style="display:none;"><%= card.id %></div>
                     <div class="card-body">
-                        <%= card.content %>
+                      <% if card.image.attached? %>
+                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
+                      <% else %>
+                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
+                      <% end %>
                     </div>
                     <div class="card-bottom">
                       <div class="like">
@@ -79,7 +87,11 @@
                   <div class="card" data-card-id="<%= card.id %>">
                     <div class="card-id" style="display:none;"><%= card.id %></div>
                     <div class="card-body">
-                        <%= card.content %> <!-- 質問の内容を表示 -->
+                      <% if card.image.attached? %>
+                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
+                      <% else %>
+                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
+                      <% end %>
                     </div>
                     <div class="card-bottom">
                       <div class="like">
@@ -111,7 +123,11 @@
                   <div class="card" data-card-id="<%= card.id %>">
                     <div class="card-id" style="display:none;"><%= card.id %></div>
                     <div class="card-body">
-                        <%= card.content %> <!-- 質問の内容を表示 -->
+                      <% if card.image.attached? %>
+                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
+                      <% else %>
+                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
+                      <% end %>
                     </div>
                     <div class="card-bottom">
                       <div class="like">
@@ -291,7 +307,7 @@
 }
 
 .circle:hover {
-    background-color: white; /* マウスが乗ったときの背景色 */
+    background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
 }
 
@@ -307,7 +323,7 @@
 }
 
 .circle.active {
-    background-color: white; /* アクティブなときの背景色 */
+    background-color: #FFFCF3; /* アクティブなときの背景色 */
     /* 必要に応じて他のスタイルを追加 */
 }
 
@@ -350,7 +366,7 @@
 /* カードにホバー（PC）またはタッチ（スマホ）したときのスタイル */ 
 .cards .card:hover, 
 .cards .card:active {
-    background-color: white; /* 背景を透明に */
+    background-color: #F3F6FF; /* 背景を透明に */
     color: black;
 }
 

@@ -29,15 +29,32 @@ async function initializeCamera() {
 initializeCamera();
 
 // カメラを開く
-export async function openCamera(modalElement,cameraPreviewElement) {
+export async function openCamera(modalElement, cameraPreviewElement) {
   try {
+    // ビデオトラックの初期設定
+    let videoConstraints = {
+      facingMode: 'environment', // 外部カメラの使用
+      width: maxWidth,
+      height: maxHeight
+    };
+
+    // 一時的なストリームを取得してカメラの能力を確認
+    const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const videoTrack = tempStream.getVideoTracks()[0];
+    const capabilities = videoTrack.getCapabilities();
+
+    // オートフォーカスに対応しているか確認
+    if ('focusMode' in capabilities) {
+      // 連続オートフォーカスモードを追加
+      videoConstraints.focusMode = 'continuous';
+    }
+
+    // 一時的なストリームを停止
+    tempStream.getTracks().forEach(track => track.stop());
+
     // グローバルストリームに保存
     currentStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: 'environment', // 外部カメラの使用
-        width: maxWidth,
-        height: maxHeight
-      }
+      video: videoConstraints
     });
     cameraPreviewElement.srcObject = currentStream;
 

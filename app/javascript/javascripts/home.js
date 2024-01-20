@@ -7,6 +7,230 @@ import drawCanvas from './helpers/drawCanvas';
 import isInCharacterRect from './helpers/isInCharacterRect';
 
 document.addEventListener('turbolinks:load', () => {
+  // モーダルの開閉状態を追跡する変数
+  let isModalOpen = false;
+
+  // 全てのモーダル要素を取得
+  const modals = document.querySelectorAll('.modal');
+
+  // 各モーダルのイベントを監視
+  modals.forEach(modal => {
+      modal.addEventListener('shown.bs.modal', function() {
+          isModalOpen = true; // モーダルが開かれたらフラグをtrueに設定
+      });
+      modal.addEventListener('hidden.bs.modal', function() {
+          isModalOpen = false; // モーダルが閉じられたらフラグをfalseに設定
+      });
+  });
+  
+  const numCircles = 5;
+  const circleContainer = document.getElementById('circles');
+  const radius = 100;
+  const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
+  const centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
+  // 中心の画像を取得
+  const centerPoint = document.querySelector('.center-point');
+  centerPoint.dataset.angle = 0;
+
+  const imageDetailsContainer = document.getElementById('image-details');
+  const imageDetailsElements = imageDetailsContainer.children;
+  const imageDetails = Array.from(imageDetailsElements).map(element => ({
+    path: element.getAttribute('data-path'),
+    alt: element.getAttribute('data-alt'),
+    className: element.getAttribute('data-class'),
+    id: element.getAttribute('data-id') || null
+  }));
+
+  for (let i = 0; i < numCircles; i++) {
+    const angle = (i * 360) / numCircles;
+    const circle = document.createElement('div');
+    circle.className = 'rotating-circle';
+    circle.dataset.angle = angle;
+    setCirclePosition(circle, radius, angle);
+
+    const img = document.createElement('img');
+
+    // 画像の詳細を取得
+    const details = imageDetails[i % imageDetails.length];
+
+    // 画像のパスを動的に設定
+    img.src = details.path;
+    img.alt = details.alt;
+    img.className = details.className;
+    if (details.id) img.id = details.id;
+
+    circle.appendChild(img);
+    circleContainer.appendChild(circle);
+  }
+
+
+  // 自動で回転させる
+  setInterval(() => {
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle, j) => {
+      const currentAngle = parseFloat(circle.dataset.angle);
+      const newAngle = currentAngle + rotationSpeed;
+      setCirclePosition(circle, radius, newAngle);
+      circle.dataset.angle = newAngle;
+    });
+
+    const currentCenterAngle = parseFloat(centerPoint.dataset.angle);
+    const newCenterAngle = currentCenterAngle + centerRotationSpeed;
+    centerPoint.dataset.angle = newCenterAngle;
+    centerPoint.style.transform = `translate(-50%, -50%) rotate(${newCenterAngle}deg)`;
+  }, 16); // 約60FPSで更新
+
+  // スクロールで中心の画像を回転させる
+  window.addEventListener('wheel', function(event) {
+    if (isModalOpen) return; // モーダルが開いている場合は何もしない
+    const scrollDelta = event.deltaY * 0.1; // スクロールの量に基づく回転量
+    rotateCenterPoint(scrollDelta);
+  });
+
+  // ホイールで回転させる
+  window.addEventListener('wheel', function(event) {
+    if (isModalOpen) return; // モーダルが開いている場合は何もしない
+    const scrollDelta = event.deltaY * 0.1;  // スクロールの方向と量
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
+      const currentAngle = parseFloat(circle.dataset.angle);
+      const newAngle = currentAngle + scrollDelta;
+      setCirclePosition(circle, radius, newAngle);
+      circle.dataset.angle = newAngle;
+    });
+  });
+
+  let initialTouchY = null;
+  let touchVelocity = 0; // タッチによる回転速度
+  const friction = 0.95; // 摩擦係数
+
+  // タッチ開始時の処理
+  window.addEventListener('touchstart', function(event) {
+    if (isModalOpen) return; // モーダルが開いている場合は何もしない
+    initialTouchY = event.touches[0].clientY;
+  });
+
+  // タッチ中の処理
+  window.addEventListener('touchmove', function(event) {
+    if (isModalOpen) return; // モーダルが開いている場合は何もしない
+    if (initialTouchY === null) return;
+
+    const touchY = event.touches[0].clientY;
+    const touchDelta = initialTouchY - touchY;
+    touchVelocity = touchDelta * 0.1; // タッチによる回転加速度を設定
+
+    // 回転速度に基づいて更新
+    updateCircles(touchVelocity);
+    rotateCenterPoint(touchVelocity);
+
+    initialTouchY = touchY;
+  });
+
+  // タッチ終了時の処理
+  window.addEventListener('touchend', function() {
+    if (isModalOpen) return; // モーダルが開いている場合は何もしない
+    initialTouchY = null;
+    animateDeceleration(); // 減速アニメーションを開始
+  });
+
+  function animateDeceleration() {
+    if (Math.abs(touchVelocity) > 0.1) {
+      updateCircles(touchVelocity);
+      rotateCenterPoint(touchVelocity);
+      touchVelocity *= friction; // 摩擦により速度を減少
+      requestAnimationFrame(animateDeceleration);
+    }
+  }
+
+  function updateCircles(delta) {
+    Array.from(document.querySelectorAll('.rotating-circle')).forEach((circle) => {
+      const currentAngle = parseFloat(circle.dataset.angle);
+      const newAngle = currentAngle + delta;
+      setCirclePosition(circle, radius, newAngle);
+      circle.dataset.angle = newAngle;
+    });
+  }
+
+  // 中心の画像を回転させる関数
+  function rotateCenterPoint(delta) {
+    const currentAngle = parseFloat(centerPoint.dataset.angle) || 0;
+    const newAngle = currentAngle - delta;
+    centerPoint.dataset.angle = newAngle;
+    centerPoint.style.transform = `translate(-50%, -50%) rotate(${newAngle}deg)`;
+  }
+
+  function setCirclePosition(circle, r, a) {
+    const x = r * Math.cos(a * Math.PI / 180);
+    const y = r * Math.sin(a * Math.PI / 180);
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    circle.style.left = `${centerX + x}px`;
+    circle.style.top = `${centerY + y}px`;
+    circle.style.transform = `rotate(${270-a}deg)`; 
+  }
+
+  const cardContentModalElement = document.querySelector('.card-content');
+  const slides = document.querySelectorAll('.custom-slide');
+  const indicators = document.querySelectorAll('.indicator');
+  const answerType = cardContentModalElement.querySelector('.answer-type');
+  let currentIndex = 0; // 現在のスライドのインデックス
+
+  function showSlide(index) {
+    if (index < 0 || index >= slides.length) return; // 範囲外なら何もしない
+
+    // 全てのスライドを非表示にする
+    slides.forEach(slide => {
+      slide.classList.remove('active');
+    });
+
+    // 新しいスライドを表示
+    const newSlide = slides[index];
+    newSlide.classList.add('active');
+
+    // answer-type要素にvalueを設定
+    answerType.setAttribute('value', index + 1); // スライドインデックス + 1
+
+    // インジケーターの更新
+    indicators[currentIndex].classList.remove('active'); // 現在のインジケーターからactiveを削除
+    indicators[index].classList.add('active'); // 新しいインジケーターにactiveを追加
+    currentIndex = index; // インデックスの更新
+  }
+
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      showSlide(index); // インジケーターがクリックされたら、対応するスライドを表示
+    });
+  });
+
+  const whatsGenerateDiv = document.querySelector('.whats-generate-content');
+  // インデックスごとに異なるテキストを格納する配列
+  const texts = ["わかりやすく", "もっとわかりやすく", "例え話"];
+
+  function showTextForIndex(index) {
+    // 既存のテキストをクリア
+    whatsGenerateDiv.textContent = '';
+    // インジケーターのインデックスに対応するテキストを取得
+    const text = texts[index];
+    // テキストを1文字ずつ表示する関数を呼び出し
+    revealText(text, 0, whatsGenerateDiv);
+  }
+
+  function revealText(text, index, element) {
+    if (index < text.length) {
+      // 次の文字を追加
+      element.textContent += text[index];
+      // 次の文字へ
+      setTimeout(() => revealText(text, index + 1, element), 100); // 100ミリ秒ごとに次の文字を表示
+    }
+  }
+
+  // デフォルトのテキストを表示
+  showTextForIndex(currentIndex);
+
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', () => {
+      currentIndex = index; // インデックスの更新
+      showTextForIndex(currentIndex);
+    });
+  });
   // const canvas = document.querySelector('.homeCanvas');
   // const modalElement = document.getElementById('questionOrSearch');
   // const myModal = new Modal(modalElement, {

@@ -17,6 +17,8 @@ Rails.application.routes.draw do
       delete 'unlike', to: 'likes#destroy', as: 'unlike' # いいねの取り消しのルート
       post 'save', to: 'saved_questions#create', as: 'save' # 質問の保存のルート
       delete 'unsave', to: 'saved_questions#destroy', as: 'unsave' # 保存の取り消しのルート
+      get 'edit', to: 'questions#edit', as: 'edit'
+      patch 'update', to: 'questions#update'
     end
   end
 
