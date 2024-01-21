@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-body camera-modal-body" id="camera-modal-body" style="position: relative; height: 100%;">
         <!-- カメラプレビュー表示エリア -->
-        <video class="preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain; display: block;" autoplay></video>
+        <video class="preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
         <%= render 'shared/light_dark_area' %>
         <%= render 'shared/resizable_rect' %>
         <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form", method: :post do |f| %>

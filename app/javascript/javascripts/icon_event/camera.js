@@ -143,24 +143,24 @@ document.addEventListener("turbolinks:load", function() {
     console.log("adjustedHeight", adjustedHeight);
 
     canvas.toBlob(async (blob) => {
-      const result = await processImage(blob);
+      // const result = await processImage(blob);
       // BlobをObject URLに変換
       const imageUrl = URL.createObjectURL(blob);
       console.log('image:', imageUrl);
       // console.log('Response:', result.text);
 
-      const questionForm = cameraModalElement.querySelector(".question-form");
-      const questionInputForm = questionForm.querySelector(".question-input-form");
-      questionInputForm.value = result.text;
+      // const questionForm = cameraModalElement.querySelector(".question-form");
+      // const questionInputForm = questionForm.querySelector(".question-input-form");
+      // questionInputForm.value = result.text;
 
-      // 隠しinput要素を取得
-      const imageInput = questionForm.querySelector('.hidden-question-image');
+      // // 隠しinput要素を取得
+      // const imageInput = questionForm.querySelector('.hidden-question-image');
 
-      // DataTransferオブジェクトを使用してファイルリストを作成
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-      imageInput.files = dataTransfer.files;
-      submitFormAndShowModal(questionForm);
+      // // DataTransferオブジェクトを使用してファイルリストを作成
+      // const dataTransfer = new DataTransfer();
+      // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+      // imageInput.files = dataTransfer.files;
+      // submitFormAndShowModal(questionForm);
     }, 'image/png');
   });
 
@@ -274,7 +274,7 @@ document.addEventListener("turbolinks:load", function() {
 
           // canvasからblobを生成してOCR処理
           canvas.toBlob(async (blob) => {
-            const result = await processImage(blob);
+            // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
             if (result && result.text) {
@@ -282,21 +282,21 @@ document.addEventListener("turbolinks:load", function() {
               // BlobをObject URLに変換
               const imageUrl = URL.createObjectURL(blob);
               console.log('image:', imageUrl);
-              console.log('Response:', result.text);
+              // console.log('Response:', result.text);
 
-              const questionForm = cameraModalElement.querySelector(".question-form");
-              const questionInputForm = questionForm.querySelector(".question-input-form");
-              questionInputForm.value = result.text;
+              // const questionForm = cameraModalElement.querySelector(".question-form");
+              // const questionInputForm = questionForm.querySelector(".question-input-form");
+              // questionInputForm.value = result.text;
 
-              // 隠しinput要素を取得
-              const imageInput = questionForm.querySelector('.hidden-question-image');
+              // // 隠しinput要素を取得
+              // const imageInput = questionForm.querySelector('.hidden-question-image');
 
-              // DataTransferオブジェクトを使用してファイルリストを作成
-              const dataTransfer = new DataTransfer();
-              dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-              imageInput.files = dataTransfer.files;
-              submitFormAndShowModal(questionForm);
-              trimmingImageModal.hide();
+              // // DataTransferオブジェクトを使用してファイルリストを作成
+              // const dataTransfer = new DataTransfer();
+              // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+              // imageInput.files = dataTransfer.files;
+              // submitFormAndShowModal(questionForm);
+              // trimmingImageModal.hide();
             }
           }, 'image/png');
         };
@@ -689,20 +689,20 @@ document.addEventListener("turbolinks:load", function() {
           // canvasからblobを生成
           canvas.toBlob(async (blob) => {
             // processImage関数でOCR処理
-            const result = await processImage(blob);
+            // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
-            if (result && result.text) {
-              writeQuery.value = result.text;
+            // if (result && result.text) {
+            //   writeQuery.value = result.text;
 
-              // 新しい 'input' イベントを作成して発火
-              const event = new Event('input', {
-                bubbles: true,
-                cancelable: true,
-              });
-              writeQuery.dispatchEvent(event);
-              trimmingImageModal.hide();
-            }
+            //   // 新しい 'input' イベントを作成して発火
+            //   const event = new Event('input', {
+            //     bubbles: true,
+            //     cancelable: true,
+            //   });
+            //   writeQuery.dispatchEvent(event);
+            //   trimmingImageModal.hide();
+            // }
           }, 'image/png');
         };
       }, trimmingImageModalElement, '.write-out-image');
