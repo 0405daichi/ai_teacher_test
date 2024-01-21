@@ -92,55 +92,98 @@ document.addEventListener("turbolinks:load", function() {
     const maskRect = cameraModalElement.querySelector('.mask-rect');
     const svgRect = maskRect.getBoundingClientRect();
 
-    // プレビューと実際の写真のアスペクト比を比較
-    const previewAspectRatio = cameraPreview.offsetWidth / cameraPreview.offsetHeight;
-    const imageAspectRatio = imageBitmap.width / imageBitmap.height;
+    // // プレビューと実際の写真のアスペクト比を比較
+    // const previewAspectRatio = cameraPreview.offsetWidth / cameraPreview.offsetHeight;
+    // const imageAspectRatio = imageBitmap.width / imageBitmap.height;
 
-    // 実際の画像の表示領域を計算
-    let displayWidth, displayHeight, offsetX, offsetY;
-    if (previewAspectRatio > imageAspectRatio) {
-        displayHeight = cameraPreview.offsetHeight;
-        displayWidth = displayHeight * imageAspectRatio;
-        offsetX = (cameraPreview.offsetWidth - displayWidth) / 2;
-        offsetY = 0;
+    // // 実際の画像の表示領域を計算
+    // let displayWidth, displayHeight, offsetX, offsetY;
+    // if (previewAspectRatio > imageAspectRatio) {
+    //     displayHeight = cameraPreview.offsetHeight;
+    //     displayWidth = displayHeight * imageAspectRatio;
+    //     offsetX = (cameraPreview.offsetWidth - displayWidth) / 2;
+    //     offsetY = 0;
+    // } else {
+    //     displayWidth = cameraPreview.offsetWidth;
+    //     displayHeight = displayWidth / imageAspectRatio;
+    //     offsetX = 0;
+    //     offsetY = (cameraPreview.offsetHeight - displayHeight) / 2;
+    // }
+
+    // // プレビュー上のmaskRectの相対位置を再計算
+    // const adjustedX = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
+    // const adjustedY = (svgRect.top - cameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
+    // const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
+    // const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
+
+    // // CanvasのサイズをmaskRectのサイズに合わせる
+    // canvas.width = svgRect.width;
+    // canvas.height = svgRect.height;
+
+    // // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
+    // ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
+
+    let scale;
+    // プレビュー画面と実際の画像のアスペクト比を比較し、スケールを決定
+    if (imageBitmap.width / imageBitmap.height > cameraPreview.offsetWidth / cameraPreview.offsetHeight) {
+      // 画像の幅がプレビュー領域に合わせて拡大される
+      scale = imageBitmap.width / cameraPreview.offsetWidth;
     } else {
-        displayWidth = cameraPreview.offsetWidth;
-        displayHeight = displayWidth / imageAspectRatio;
-        offsetX = 0;
-        offsetY = (cameraPreview.offsetHeight - displayHeight) / 2;
+      // 画像の高さがプレビュー領域に合わせて拡大される
+      scale = imageBitmap.height / cameraPreview.offsetHeight;
     }
 
-    // プレビュー上のmaskRectの相対位置を再計算
-    const adjustedX = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
-    const adjustedY = (svgRect.top - cameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
-    const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
-    const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
+    // プレビュー上のmaskRectの実際の画像上での相対位置を計算
+    const realX = (svgRect.left - cameraPreview.offsetLeft) * scale;
+    const realY = (svgRect.top - cameraPreview.offsetTop) * scale;
+    const realWidth = svgRect.width * scale;
+    const realHeight = svgRect.height * scale;
 
     // CanvasのサイズをmaskRectのサイズに合わせる
     canvas.width = svgRect.width;
     canvas.height = svgRect.height;
 
-    // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
-    ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
+    // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
+    ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
 
-    console.log("imageBitmap.offsetWidth", imageBitmap.offsetWidth);
-    console.log("imageBitmap.offsetHeight", imageBitmap.offsetHeight);
-    console.log("imageBitmap.naturalWidth", imageBitmap.naturalWidth);
-    console.log("imageBitmap.naturalHeight", imageBitmap.naturalHeight);
-    console.log("imageBitmap.width", imageBitmap.width);
-    console.log("imageBitmap.height", imageBitmap.height);
-    console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
-    console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
-    console.log("cameraPreview.naturalWidth", cameraPreview.naturalWidth);
-    console.log("cameraPreview.naturalHeight", cameraPreview.naturalHeight);
-    console.log("cameraPreview.width", cameraPreview.width);
-    console.log("cameraPreview.height", cameraPreview.height);
-    console.log("imageAspectRatio", imageAspectRatio);
-    console.log("previewAspectRatio", previewAspectRatio);
-    console.log("adjustedX", adjustedX);
-    console.log("adjustedY", adjustedY);
-    console.log("adjustedWidth", adjustedWidth);
-    console.log("adjustedHeight", adjustedHeight);
+
+    // console.log("imageBitmap.width", imageBitmap.width);
+    // console.log("imageBitmap.height", imageBitmap.height);
+    // console.log("simpleCameraPreview.offsetWidth", simpleCameraPreview.offsetWidth);
+    // console.log("simpleCameraPreview.offsetHeight", simpleCameraPreview.offsetHeight);
+    // console.log("imageBitmap.width", imageBitmap.width);
+    // console.log("imageBitmap.height", imageBitmap.height);
+    // console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
+    // console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
+    // console.log("cameraPreview.naturalWidth", cameraPreview.naturalWidth);
+    // console.log("cameraPreview.naturalHeight", cameraPreview.naturalHeight);
+    // console.log("cameraPreview.width", cameraPreview.width);
+    // console.log("cameraPreview.height", cameraPreview.height);
+    // console.log("imageAspectRatio", imageAspectRatio);
+    // console.log("previewAspectRatio", previewAspectRatio);
+    // console.log("adjustedX", adjustedX);
+    // console.log("adjustedY", adjustedY);
+    // console.log("adjustedWidth", adjustedWidth);
+    // console.log("adjustedHeight", adjustedHeight);
+    
+    // console.log("imageBitmap.offsetWidth", imageBitmap.offsetWidth);
+    // console.log("imageBitmap.offsetHeight", imageBitmap.offsetHeight);
+    // console.log("imageBitmap.naturalWidth", imageBitmap.naturalWidth);
+    // console.log("imageBitmap.naturalHeight", imageBitmap.naturalHeight);
+    // console.log("imageBitmap.width", imageBitmap.width);
+    // console.log("imageBitmap.height", imageBitmap.height);
+    // console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
+    // console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
+    // console.log("cameraPreview.naturalWidth", cameraPreview.naturalWidth);
+    // console.log("cameraPreview.naturalHeight", cameraPreview.naturalHeight);
+    // console.log("cameraPreview.width", cameraPreview.width);
+    // console.log("cameraPreview.height", cameraPreview.height);
+    // console.log("imageAspectRatio", imageAspectRatio);
+    // console.log("previewAspectRatio", previewAspectRatio);
+    // console.log("adjustedX", adjustedX);
+    // console.log("adjustedY", adjustedY);
+    // console.log("adjustedWidth", adjustedWidth);
+    // console.log("adjustedHeight", adjustedHeight);
 
     canvas.toBlob(async (blob) => {
       // const result = await processImage(blob);
