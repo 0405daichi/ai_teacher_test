@@ -123,19 +123,23 @@ document.addEventListener("turbolinks:load", function() {
     // // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
     // ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
 
-    let scale;
-    // プレビュー画面と実際の画像のアスペクト比を比較し、スケールを決定
+    let scale, offsetX, offsetY;
+    // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
     if (imageBitmap.width / imageBitmap.height > cameraPreview.offsetWidth / cameraPreview.offsetHeight) {
-      // 画像の幅がプレビュー領域に合わせて拡大される
-      scale = imageBitmap.width / cameraPreview.offsetWidth;
-    } else {
-      // 画像の高さがプレビュー領域に合わせて拡大される
+      // 画像は高さを基準にプレビュー領域を覆う
       scale = imageBitmap.height / cameraPreview.offsetHeight;
+      offsetX = (cameraPreview.offsetWidth - (imageBitmap.width / scale)) / 2;
+      offsetY = 0;
+    } else {
+      // 画像は幅を基準にプレビュー領域を覆う
+      scale = imageBitmap.width / cameraPreview.offsetWidth;
+      offsetX = 0;
+      offsetY = (cameraPreview.offsetHeight - (imageBitmap.height / scale)) / 2;
     }
 
     // プレビュー上のmaskRectの実際の画像上での相対位置を計算
-    const realX = (svgRect.left - cameraPreview.offsetLeft) * scale;
-    const realY = (svgRect.top - cameraPreview.offsetTop) * scale;
+    const realX = (svgRect.left - cameraPreview.offsetLeft - offsetX) * scale;
+    const realY = (svgRect.top - cameraPreview.offsetTop - offsetY) * scale;
     const realWidth = svgRect.width * scale;
     const realHeight = svgRect.height * scale;
 
@@ -144,6 +148,8 @@ document.addEventListener("turbolinks:load", function() {
     canvas.height = svgRect.height;
 
     // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
+    // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
+    // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
     ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
 
 
