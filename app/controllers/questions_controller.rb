@@ -99,6 +99,7 @@ class QuestionsController < ApplicationController
   # アプリ立ち上げ時、カメラ起動時、撮影時、回答作成時のアニメーションやアンケート機能
   # 目安箱
   # モーダル切り替え時などの選択内容初期化処理
+  # ユーザー詳細画面
   
   def get_answer
     puts "params: #{params.inspect}"

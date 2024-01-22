@@ -5,19 +5,28 @@
 // 起動時にデバイスでサポートされている最大の解像度を調べる関数
 let currentStream = null;
 let currentCameraModal = null;
-let maxWidth = 0;
-let maxHeight = 0;
-let flashMode = 'off';
+
+// カメラの設定を保持するオブジェクト
+const cameraSettings = {
+  isInitialized: false,
+  maxWidth: null,
+  maxHeight: null
+};
 
 // カメラの最大解像度を取得し、ストリームを保持する
 async function initializeCamera() {
+  if (cameraSettings.isInitialized) {
+    return; // すでに初期化されている場合は何もしない
+  }
+
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const videoTrack = stream.getVideoTracks()[0];
     const capabilities = videoTrack.getCapabilities();
   
-    maxWidth = capabilities.width.max;
-    maxHeight = capabilities.height.max;
+    cameraSettings.maxWidth = capabilities.width.max;
+    cameraSettings.maxHeight = capabilities.height.max;
+    cameraSettings.isInitialized = true;
 
     videoTrack.stop();
   } catch (error) {
@@ -28,41 +37,44 @@ async function initializeCamera() {
 // カメラの初期化
 initializeCamera();
 
+
 // カメラを開く
 export async function openCamera(modalElement, cameraPreviewElement) {
+  // カメラの初期化が完了していない場合はユーザーに確認し、リロードを促す
+  if (!cameraSettings.isInitialized) {
+    const reload = confirm('カメラが初期化されていません。アプリを再起動しますか？');
+    if (reload) {
+      window.location.reload();
+    }
+    return;
+  }
+
   try {
     // ビデオトラックの初期設定
     let videoConstraints = {
       facingMode: 'environment', // 外部カメラの使用
-      width: maxWidth,
-      height: maxHeight
+      width: cameraSettings.maxWidth,
+      height: cameraSettings.maxHeight
     };
 
-    // 一時的なストリームを取得してカメラの能力を確認
-    const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const videoTrack = tempStream.getVideoTracks()[0];
-    const capabilities = videoTrack.getCapabilities();
-
-    // オートフォーカスに対応しているか確認
-    if ('focusMode' in capabilities) {
-      // 連続オートフォーカスモードを追加
-      videoConstraints.focusMode = 'continuous';
-    }
-
-    // 一時的なストリームを停止
-    tempStream.getTracks().forEach(track => track.stop());
-
     // グローバルストリームに保存
-    currentStream = await navigator.mediaDevices.getUserMedia({
+    const currentStream = await navigator.mediaDevices.getUserMedia({
       video: videoConstraints
     });
     cameraPreviewElement.srcObject = currentStream;
 
+    // モーダル要素をグローバル変数に保存（この部分はコード全体の文脈に応じて適宜修正してください）
     currentCameraModal = modalElement;
   } catch (error) {
-    console.error('カメラへのアクセスに失敗しました。ブラウザのカメラ設定を確認し、ページを再読み込みしてください。', error);
+    console.error('カメラへのアクセスに失敗しました。', error);
+    // エラーが発生した場合もユーザーにリロードを促す
+    const reload = confirm('カメラへのアクセスに失敗しました。アプリを再起動しますか？');
+    if (reload) {
+      window.location.reload();
+    }
   }
 }
+
 
 // 撮影する
 export async function takePhoto() {
