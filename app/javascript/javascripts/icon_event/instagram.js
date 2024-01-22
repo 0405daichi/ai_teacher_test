@@ -527,36 +527,34 @@ document.addEventListener("turbolinks:load", function() {
       // simpleCameraTrack.stop();
       closeCamera();
       
-      // プレビューと実際の写真のアスペクト比を比較
-      const previewAspectRatio = simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight;
-      const imageAspectRatio = imageBitmap.width / imageBitmap.height;
-
-      // 実際の画像の表示領域を計算
-      let displayWidth, displayHeight, offsetX, offsetY;
-      if (previewAspectRatio > imageAspectRatio) {
-          displayHeight = simpleCameraPreview.offsetHeight;
-          displayWidth = displayHeight * imageAspectRatio;
-          offsetX = (simpleCameraPreview.offsetWidth - displayWidth) / 2;
-          offsetY = 0;
+      let scale, offsetX, offsetY;
+      // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
+      if (imageBitmap.width / imageBitmap.height > simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight) {
+        // 画像は高さを基準にプレビュー領域を覆う
+        scale = imageBitmap.height / simpleCameraPreview.offsetHeight;
+        offsetX = (simpleCameraPreview.offsetWidth - (imageBitmap.width / scale)) / 2;
+        offsetY = 0;
       } else {
-          displayWidth = simpleCameraPreview.offsetWidth;
-          displayHeight = displayWidth / imageAspectRatio;
-          offsetX = 0;
-          offsetY = (simpleCameraPreview.offsetHeight - displayHeight) / 2;
+        // 画像は幅を基準にプレビュー領域を覆う
+        scale = imageBitmap.width / simpleCameraPreview.offsetWidth;
+        offsetX = 0;
+        offsetY = (simpleCameraPreview.offsetHeight - (imageBitmap.height / scale)) / 2;
       }
 
-      // プレビュー上のmaskRectの相対位置を再計算
-      const adjustedX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
-      const adjustedY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
-      const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
-      const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
+      // プレビュー上のmaskRectの実際の画像上での相対位置を計算
+      const realX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * scale;
+      const realY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * scale;
+      const realWidth = svgRect.width * scale;
+      const realHeight = svgRect.height * scale;
 
       // CanvasのサイズをmaskRectのサイズに合わせる
       canvas.width = svgRect.width;
       canvas.height = svgRect.height;
 
-      // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
-      ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
+      // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
+      // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
+      // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
+      ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
       
       canvas.toBlob(async (blob) => {
         console.log("blob", blob);

@@ -92,37 +92,6 @@ document.addEventListener("turbolinks:load", function() {
     const maskRect = cameraModalElement.querySelector('.mask-rect');
     const svgRect = maskRect.getBoundingClientRect();
 
-    // // プレビューと実際の写真のアスペクト比を比較
-    // const previewAspectRatio = cameraPreview.offsetWidth / cameraPreview.offsetHeight;
-    // const imageAspectRatio = imageBitmap.width / imageBitmap.height;
-
-    // // 実際の画像の表示領域を計算
-    // let displayWidth, displayHeight, offsetX, offsetY;
-    // if (previewAspectRatio > imageAspectRatio) {
-    //     displayHeight = cameraPreview.offsetHeight;
-    //     displayWidth = displayHeight * imageAspectRatio;
-    //     offsetX = (cameraPreview.offsetWidth - displayWidth) / 2;
-    //     offsetY = 0;
-    // } else {
-    //     displayWidth = cameraPreview.offsetWidth;
-    //     displayHeight = displayWidth / imageAspectRatio;
-    //     offsetX = 0;
-    //     offsetY = (cameraPreview.offsetHeight - displayHeight) / 2;
-    // }
-
-    // // プレビュー上のmaskRectの相対位置を再計算
-    // const adjustedX = (svgRect.left - cameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
-    // const adjustedY = (svgRect.top - cameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
-    // const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
-    // const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
-
-    // // CanvasのサイズをmaskRectのサイズに合わせる
-    // canvas.width = svgRect.width;
-    // canvas.height = svgRect.height;
-
-    // // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
-    // ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
-
     let scale, offsetX, offsetY;
     // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
     if (imageBitmap.width / imageBitmap.height > cameraPreview.offsetWidth / cameraPreview.offsetHeight) {
@@ -151,45 +120,6 @@ document.addEventListener("turbolinks:load", function() {
     // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
     // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
     ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
-
-
-    // console.log("imageBitmap.width", imageBitmap.width);
-    // console.log("imageBitmap.height", imageBitmap.height);
-    // console.log("simpleCameraPreview.offsetWidth", simpleCameraPreview.offsetWidth);
-    // console.log("simpleCameraPreview.offsetHeight", simpleCameraPreview.offsetHeight);
-    // console.log("imageBitmap.width", imageBitmap.width);
-    // console.log("imageBitmap.height", imageBitmap.height);
-    // console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
-    // console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
-    // console.log("cameraPreview.naturalWidth", cameraPreview.naturalWidth);
-    // console.log("cameraPreview.naturalHeight", cameraPreview.naturalHeight);
-    // console.log("cameraPreview.width", cameraPreview.width);
-    // console.log("cameraPreview.height", cameraPreview.height);
-    // console.log("imageAspectRatio", imageAspectRatio);
-    // console.log("previewAspectRatio", previewAspectRatio);
-    // console.log("adjustedX", adjustedX);
-    // console.log("adjustedY", adjustedY);
-    // console.log("adjustedWidth", adjustedWidth);
-    // console.log("adjustedHeight", adjustedHeight);
-    
-    // console.log("imageBitmap.offsetWidth", imageBitmap.offsetWidth);
-    // console.log("imageBitmap.offsetHeight", imageBitmap.offsetHeight);
-    // console.log("imageBitmap.naturalWidth", imageBitmap.naturalWidth);
-    // console.log("imageBitmap.naturalHeight", imageBitmap.naturalHeight);
-    // console.log("imageBitmap.width", imageBitmap.width);
-    // console.log("imageBitmap.height", imageBitmap.height);
-    // console.log("cameraPreview.offsetWidth", cameraPreview.offsetWidth);
-    // console.log("cameraPreview.offsetHeight", cameraPreview.offsetHeight);
-    // console.log("cameraPreview.naturalWidth", cameraPreview.naturalWidth);
-    // console.log("cameraPreview.naturalHeight", cameraPreview.naturalHeight);
-    // console.log("cameraPreview.width", cameraPreview.width);
-    // console.log("cameraPreview.height", cameraPreview.height);
-    // console.log("imageAspectRatio", imageAspectRatio);
-    // console.log("previewAspectRatio", previewAspectRatio);
-    // console.log("adjustedX", adjustedX);
-    // console.log("adjustedY", adjustedY);
-    // console.log("adjustedWidth", adjustedWidth);
-    // console.log("adjustedHeight", adjustedHeight);
 
     canvas.toBlob(async (blob) => {
       // const result = await processImage(blob);
@@ -274,6 +204,7 @@ document.addEventListener("turbolinks:load", function() {
       setWriteOutButtonListener(async () => {
         const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
         const preview = trimmingImageModalElement.querySelector('.preview');
+        const svgRect = maskRect.getBoundingClientRect();
 
         // canvas要素を作成
         const canvas = document.createElement('canvas');
@@ -300,7 +231,6 @@ document.addEventListener("turbolinks:load", function() {
         }
       
         // SVG内でのmaskRectの位置とサイズを取得
-        const svgRect = maskRect.getBoundingClientRect();
       
         // 実際の座標を計算
         const x = (svgRect.left - preview.offsetLeft - offsetX) * (preview.naturalWidth / renderWidth);
@@ -326,27 +256,27 @@ document.addEventListener("turbolinks:load", function() {
             // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
-            if (result && result.text) {
-              const result = await processImage(blob);
-              // BlobをObject URLに変換
-              const imageUrl = URL.createObjectURL(blob);
-              console.log('image:', imageUrl);
-              // console.log('Response:', result.text);
+            // if (result && result.text) {
+            //   const result = await processImage(blob);
+            //   // BlobをObject URLに変換
+            //   const imageUrl = URL.createObjectURL(blob);
+            //   console.log('image:', imageUrl);
+            //   // console.log('Response:', result.text);
 
-              // const questionForm = cameraModalElement.querySelector(".question-form");
-              // const questionInputForm = questionForm.querySelector(".question-input-form");
-              // questionInputForm.value = result.text;
+            //   const questionForm = cameraModalElement.querySelector(".question-form");
+            //   const questionInputForm = questionForm.querySelector(".question-input-form");
+            //   questionInputForm.value = result.text;
 
-              // // 隠しinput要素を取得
-              // const imageInput = questionForm.querySelector('.hidden-question-image');
+            //   // 隠しinput要素を取得
+            //   const imageInput = questionForm.querySelector('.hidden-question-image');
 
-              // // DataTransferオブジェクトを使用してファイルリストを作成
-              // const dataTransfer = new DataTransfer();
-              // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-              // imageInput.files = dataTransfer.files;
-              // submitFormAndShowModal(questionForm);
-              // trimmingImageModal.hide();
-            }
+            //   // DataTransferオブジェクトを使用してファイルリストを作成
+            //   const dataTransfer = new DataTransfer();
+            //   dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+            //   imageInput.files = dataTransfer.files;
+            //   submitFormAndShowModal(questionForm);
+            //   trimmingImageModal.hide();
+            // }
           }, 'image/png');
         };
       }, trimmingImageModalElement, '.write-out-image');
@@ -354,79 +284,6 @@ document.addEventListener("turbolinks:load", function() {
       trimmingImageModal.show();
     }
   });
-
-  // "読み込む"ボタンのクリックイベント
-  // writeOutImageButton.addEventListener('click', function() {
-  //   const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
-  //   const preview = trimmingImageModalElement.querySelector('.preview');
-
-  //   // canvas要素を作成
-  //   const canvas = document.createElement('canvas');
-  //   const ctx = canvas.getContext('2d');
-  
-  //   // プレビュー画像とコンテナのアスペクト比を計算
-  //   const imageAspectRatio = preview.naturalWidth / preview.naturalHeight;
-  //   const containerAspectRatio = preview.offsetWidth / preview.offsetHeight;
-  
-  //   // 実際の表示サイズとコンテナ内でのオフセットを計算
-  //   let renderWidth, renderHeight, offsetX, offsetY;
-  //   if (containerAspectRatio > imageAspectRatio) {
-  //     // コンテナの幅が画像の幅よりも広い場合
-  //     renderHeight = preview.offsetHeight;
-  //     renderWidth = imageAspectRatio * renderHeight;
-  //     offsetX = (preview.offsetWidth - renderWidth) / 2;
-  //     offsetY = 0;
-  //   } else {
-  //     // コンテナの高さが画像の高さよりも高い場合
-  //     renderWidth = preview.offsetWidth;
-  //     renderHeight = renderWidth / imageAspectRatio;
-  //     offsetX = 0;
-  //     offsetY = (preview.offsetHeight - renderHeight) / 2;
-  //   }
-  
-  //   // SVG内でのmaskRectの位置とサイズを取得
-  //   const svgRect = maskRect.getBoundingClientRect();
-  
-  //   // 実際の座標を計算
-  //   const x = (svgRect.left - preview.offsetLeft - offsetX) * (preview.naturalWidth / renderWidth);
-  //   const y = (svgRect.top - preview.offsetTop - offsetY) * (preview.naturalHeight / renderHeight);
-  //   const width = svgRect.width * (preview.naturalWidth / renderWidth);
-  //   const height = svgRect.height * (preview.naturalHeight / renderHeight);
-  
-  //   // canvasのサイズをmaskRectのサイズに合わせる
-  //   canvas.width = svgRect.width;
-  //   canvas.height = svgRect.height;
-
-  //   // 画像をロードして切り取り範囲を描画
-  //   const image = new Image();
-  //   image.src = preview.src;
-
-  //   // 画像をトリミングして処理する部分
-  //   image.onload = function() {
-  //     // 切り取り範囲をキャンバスに描画
-  //     ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
-
-  //     // canvasからblobを生成してOCR処理
-  //     canvas.toBlob(async (blob) => {
-  //       const result = await processImage(blob);
-  //       const imageUrl = URL.createObjectURL(blob);
-  //       console.log('image:', imageUrl);
-  //       if (result && result.text) {
-  //         const result = await processImage(blob);
-  //         // BlobをObject URLに変換
-  //         const imageUrl = URL.createObjectURL(blob);
-  //         console.log('image:', imageUrl);
-  //         console.log('Response:', result.text);
-
-  //         const questionForm = cameraModalElement.querySelector(".question-form");
-  //         const questionInputForm = questionForm.querySelector(".question-input-form");
-  //         questionInputForm.value = result.text;
-  //         submitFormAndShowModal(questionForm);
-  //         trimmingImageModal.hide();
-  //       }
-  //     }, 'image/png');
-  //   };
-  // });
 
   // 入力画面
   // DOM取得
@@ -523,36 +380,34 @@ document.addEventListener("turbolinks:load", function() {
       const ctx = canvas.getContext("2d");
       const svgRect = maskRect.getBoundingClientRect();
       
-      // プレビューと実際の写真のアスペクト比を比較
-      const previewAspectRatio = simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight;
-      const imageAspectRatio = imageBitmap.width / imageBitmap.height;
-
-      // 実際の画像の表示領域を計算
-      let displayWidth, displayHeight, offsetX, offsetY;
-      if (previewAspectRatio > imageAspectRatio) {
-          displayHeight = simpleCameraPreview.offsetHeight;
-          displayWidth = displayHeight * imageAspectRatio;
-          offsetX = (simpleCameraPreview.offsetWidth - displayWidth) / 2;
-          offsetY = 0;
+      let scale, offsetX, offsetY;
+      // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
+      if (imageBitmap.width / imageBitmap.height > simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight) {
+        // 画像は高さを基準にプレビュー領域を覆う
+        scale = imageBitmap.height / simpleCameraPreview.offsetHeight;
+        offsetX = (simpleCameraPreview.offsetWidth - (imageBitmap.width / scale)) / 2;
+        offsetY = 0;
       } else {
-          displayWidth = simpleCameraPreview.offsetWidth;
-          displayHeight = displayWidth / imageAspectRatio;
-          offsetX = 0;
-          offsetY = (simpleCameraPreview.offsetHeight - displayHeight) / 2;
+        // 画像は幅を基準にプレビュー領域を覆う
+        scale = imageBitmap.width / simpleCameraPreview.offsetWidth;
+        offsetX = 0;
+        offsetY = (simpleCameraPreview.offsetHeight - (imageBitmap.height / scale)) / 2;
       }
 
-      // プレビュー上のmaskRectの相対位置を再計算
-      const adjustedX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
-      const adjustedY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
-      const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
-      const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
+      // プレビュー上のmaskRectの実際の画像上での相対位置を計算
+      const realX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * scale;
+      const realY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * scale;
+      const realWidth = svgRect.width * scale;
+      const realHeight = svgRect.height * scale;
 
       // CanvasのサイズをmaskRectのサイズに合わせる
       canvas.width = svgRect.width;
       canvas.height = svgRect.height;
 
-      // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
-      ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
+      // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
+      // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
+      // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
+      ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
       
       canvas.toBlob(async (blob) => {
         console.log("blob", blob);
@@ -571,73 +426,6 @@ document.addEventListener("turbolinks:load", function() {
       }, 'image/png');
     }, simpleCameraModalElement, '.capture-button');
   });
-  
-  // 撮影ボタンクリック時の処理
-  // simpleCameraCaptureButton.addEventListener("click", async () => {
-  //   // const photo = await simpleCameraImageCapture.takePhoto();
-  //   // const photo = takePhoto();
-  //   const imageBitmap = await takePhoto();
-    
-  //   // 元の画像をプレビューに表示
-  //   // const originalImageUrl = URL.createObjectURL(photo);
-  //   // console.log(originalImageUrl);
-  //   // preview.src = originalImageUrl;
-  //   // カメラアプリ終了処理
-  //   simpleCameraModal.hide();
-  //   // simpleCameraTrack.stop();
-  //   closeCamera();
-
-  //   const canvas = document.createElement("canvas");
-  //   const ctx = canvas.getContext("2d");
-  //   const svgRect = maskRect.getBoundingClientRect();
-    
-  //   // プレビューと実際の写真のアスペクト比を比較
-  //   const previewAspectRatio = simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight;
-  //   const imageAspectRatio = imageBitmap.width / imageBitmap.height;
-
-  //   // 実際の画像の表示領域を計算
-  //   let displayWidth, displayHeight, offsetX, offsetY;
-  //   if (previewAspectRatio > imageAspectRatio) {
-  //       displayHeight = simpleCameraPreview.offsetHeight;
-  //       displayWidth = displayHeight * imageAspectRatio;
-  //       offsetX = (simpleCameraPreview.offsetWidth - displayWidth) / 2;
-  //       offsetY = 0;
-  //   } else {
-  //       displayWidth = simpleCameraPreview.offsetWidth;
-  //       displayHeight = displayWidth / imageAspectRatio;
-  //       offsetX = 0;
-  //       offsetY = (simpleCameraPreview.offsetHeight - displayHeight) / 2;
-  //   }
-
-  //   // プレビュー上のmaskRectの相対位置を再計算
-  //   const adjustedX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * (imageBitmap.width / displayWidth);
-  //   const adjustedY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * (imageBitmap.height / displayHeight);
-  //   const adjustedWidth = svgRect.width * (imageBitmap.width / displayWidth);
-  //   const adjustedHeight = svgRect.height * (imageBitmap.height / displayHeight);
-
-  //   // CanvasのサイズをmaskRectのサイズに合わせる
-  //   canvas.width = svgRect.width;
-  //   canvas.height = svgRect.height;
-
-  //   // imageBitmapから調整したmaskRectの範囲だけを切り出して描画
-  //   ctx.drawImage(imageBitmap, adjustedX, adjustedY, adjustedWidth, adjustedHeight, 0, 0, svgRect.width, svgRect.height);
-    
-  //   canvas.toBlob(async (blob) => {
-  //     console.log("blob", blob);
-  //     // const result = await processImage(blob);
-  //     const imageUrl = URL.createObjectURL(blob);
-  //     console.log('image:', imageUrl);
-  //     // writeQuery.value = result.text;
-  //     // // 新しい 'input' イベントを作成
-  //     // const event = new Event('input', {
-  //     //   bubbles: true, // イベントをバブリングさせる
-  //     //   cancelable: true, // イベントをキャンセル可能にする
-  //     // });
-
-  //     // // テキストエリア要素でイベントを発火
-  //     // writeQuery.dispatchEvent(event);
-  //   }, 'image/png');
-  // });
 
   writeSubmitButton.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -757,78 +545,6 @@ document.addEventListener("turbolinks:load", function() {
       }, trimmingImageModalElement, '.write-out-image');
     }
   });
-
-  // "読み込む"ボタンのクリックイベント
-//   trimmingImageModalElement.querySelector('.write-out-image').addEventListener('click', function() {
-//     const previewImage = trimmingImageModalElement.querySelector('.preview');
-//     const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
-  
-//     // canvas要素を作成
-//     const canvas = document.createElement('canvas');
-//     const ctx = canvas.getContext('2d');
-  
-//     // プレビュー画像とコンテナのアスペクト比を計算
-//     const imageAspectRatio = imagePreview.naturalWidth / imagePreview.naturalHeight;
-//     const containerAspectRatio = imagePreview.offsetWidth / imagePreview.offsetHeight;
-  
-//     // 実際の表示サイズとコンテナ内でのオフセットを計算
-//     let renderWidth, renderHeight, offsetX, offsetY;
-//     if (containerAspectRatio > imageAspectRatio) {
-//       // コンテナの幅が画像の幅よりも広い場合
-//       renderHeight = imagePreview.offsetHeight;
-//       renderWidth = imageAspectRatio * renderHeight;
-//       offsetX = (imagePreview.offsetWidth - renderWidth) / 2;
-//       offsetY = 0;
-//     } else {
-//       // コンテナの高さが画像の高さよりも高い場合
-//       renderWidth = imagePreview.offsetWidth;
-//       renderHeight = renderWidth / imageAspectRatio;
-//       offsetX = 0;
-//       offsetY = (imagePreview.offsetHeight - renderHeight) / 2;
-//     }
-  
-//     // SVG内でのmaskRectの位置とサイズを取得
-//     const svgRect = maskRect.getBoundingClientRect();
-  
-//     // 実際の座標を計算
-//     const x = (svgRect.left - imagePreview.offsetLeft - offsetX) * (imagePreview.naturalWidth / renderWidth);
-//     const y = (svgRect.top - imagePreview.offsetTop - offsetY) * (imagePreview.naturalHeight / renderHeight);
-//     const width = svgRect.width * (imagePreview.naturalWidth / renderWidth);
-//     const height = svgRect.height * (imagePreview.naturalHeight / renderHeight);
-  
-//     // canvasのサイズをmaskRectのサイズに合わせる
-//     canvas.width = svgRect.width;
-//     canvas.height = svgRect.height;
-  
-//     // 画像をロードして切り取り範囲を描画
-//     const image = new Image();
-//     image.src = imagePreview.src;
-
-//     // 画像をトリミングして処理する部分
-//     image.onload = async function() {
-//       // 切り取り範囲をキャンバスに描画
-//       ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
-
-//       // canvasからblobを生成
-//       canvas.toBlob(async (blob) => {
-//         // processImage関数でOCR処理
-//         // const result = await processImage(blob);
-//         const imageUrl = URL.createObjectURL(blob);
-//         console.log('image:', imageUrl);
-//         // if (result && result.text) {
-//         //   writeQuery.value = result.text;
-
-//         //   // 新しい 'input' イベントを作成して発火
-//         //   const event = new Event('input', {
-//         //     bubbles: true,
-//         //     cancelable: true,
-//         //   });
-//         //   writeQuery.dispatchEvent(event);
-//         //   trimmingImageModal.hide();
-//         // }
-//       }, 'image/png');
-//     };
-//   });
 });
 
 
