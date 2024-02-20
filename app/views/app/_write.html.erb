@@ -5,328 +5,356 @@
       <div class="modal-header">
         <button type="button" id="closeWrite" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
         <%= form_with url: "/questions/get_answer", local: true, id: "questionForm", class: "question-form-from-write", method: :post do |f| %>
-        <!-- ボタン・入力内容 -->
-      </div>
-      <div class="modal-body">
-        <div class="textarea-div">
-          <%= f.text_area :questionInputForm,
+          <!-- ボタン・入力内容 -->
+        </div>
+        <div class="modal-body">
+          <div class="textarea-div">
+            <%= f.text_area :questionInputForm,
                             class: "form-control mr-2 border-0 question-input-form",
                             id: "questionInputForm",
                             placeholder: "問題や質問を入力してください。",
                             style: "resize: none; z-index: 10000; position: fixed; max-height: 90%; max-width: 90%; background-color: #FFFCF3; border: solid 1px #E8E8E8;" %>
-        </div>
-        <div class="question-input-items">
-          <div class="question-circle camera-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="camera-1--photos-picture-camera-photography-photo-pictures"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 20.71428571428571c0 -1.0987685714285713 -0.4366571428571428 -2.1525042857142855 -1.213442857142857 -2.929455714285714C53.93834285714285 17.00792 52.88439999999999 16.57142857142857 51.78571428571428 16.57142857142857h-8.285714285714285L37.28571428571428 8.285714285714285H20.71428571428571L14.499999999999998 16.57142857142857h-8.285714285714285c-1.0987685714285713 0 -2.1525042857142855 0.4364914285714285 -2.9294432857142856 1.2134014285714283C2.5079075714285715 18.561781428571425 2.071428571428571 19.61551714285714 2.071428571428571 20.71428571428571v24.857142857142854c0 1.098685714285714 0.43647899999999995 2.152628571428571 1.213413857142857 2.929414285714285C4.061781428571428 49.277628571428565 5.115517142857142 49.71428571428571 6.2142857142857135 49.71428571428571h45.57142857142857c1.098685714285714 0 2.152628571428571 -0.4366571428571428 2.929414285714285 -1.213442857142857S55.92857142857142 46.67011428571428 55.92857142857142 45.57142857142857V20.71428571428571Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M28.999999999999996 40.39285714285714c5.148079999999999 0 9.32142857142857 -4.173348571428571 9.32142857142857 -9.32142857142857S34.14807999999999 21.749999999999996 28.999999999999996 21.749999999999996 19.678571428571427 25.92334857142857 19.678571428571427 31.07142857142857 23.85192 40.39285714285714 28.999999999999996 40.39285714285714Z" stroke-width="2"></path></g></svg>
           </div>
-          <div class="question-circle image-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
-            <input type="file" id="imageInputSearch" class="image-input-write" style="display: none;" accept="image/*">
-          </div>
-        </div>
-        <hr style="margin: 30px 30px;">
-<div class="option-panel" style="margin-top: 5px;">
-          <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
-          <%= f.hidden_field :answer_type, class: "answer-type-id", value: 1 %>
-          <div class="option-carousel">
-            <% ['質問', '直訳・翻訳', '口語訳', '現代語訳', '要約', '添削'].each_with_index do |option, index| %>
-              <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
-                <%= option %>
-              </div>
-            <% end %>
-          </div>
-
-          <!-- 水平な直線とマージンを追加 -->
-          <hr style="margin: 30px 30px;">
-          
-          <!-- 各オプション用の詳細要素 -->
-          <div class="all-option-elements">
-            <!-- 質問オプション用のコード -->
-            <div class="how-to-answer">
-              <div class="container">
-                <% ['答えだけ教えて', '解説を付けて教えて'].each_with_index do |option, index| %>
-                  <div class="answerOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
-                      <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : "withExplain" %>
-                      <%= option %>
-                  </div>
-                <% end %>   
-              </div>
+          <div class="question-input-items">
+            <div class="question-circle camera-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="camera-1--photos-picture-camera-photography-photo-pictures"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M55.92857142857142 20.71428571428571c0 -1.0987685714285713 -0.4366571428571428 -2.1525042857142855 -1.213442857142857 -2.929455714285714C53.93834285714285 17.00792 52.88439999999999 16.57142857142857 51.78571428571428 16.57142857142857h-8.285714285714285L37.28571428571428 8.285714285714285H20.71428571428571L14.499999999999998 16.57142857142857h-8.285714285714285c-1.0987685714285713 0 -2.1525042857142855 0.4364914285714285 -2.9294432857142856 1.2134014285714283C2.5079075714285715 18.561781428571425 2.071428571428571 19.61551714285714 2.071428571428571 20.71428571428571v24.857142857142854c0 1.098685714285714 0.43647899999999995 2.152628571428571 1.213413857142857 2.929414285714285C4.061781428571428 49.277628571428565 5.115517142857142 49.71428571428571 6.2142857142857135 49.71428571428571h45.57142857142857c1.098685714285714 0 2.152628571428571 -0.4366571428571428 2.929414285714285 -1.213442857142857S55.92857142857142 46.67011428571428 55.92857142857142 45.57142857142857V20.71428571428571Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M28.999999999999996 40.39285714285714c5.148079999999999 0 9.32142857142857 -4.173348571428571 9.32142857142857 -9.32142857142857S34.14807999999999 21.749999999999996 28.999999999999996 21.749999999999996 19.678571428571427 25.92334857142857 19.678571428571427 31.07142857142857 23.85192 40.39285714285714 28.999999999999996 40.39285714285714Z" stroke-width="2"></path></g></svg>
             </div>
-            <!-- 直訳・翻訳オプション用のコード -->
-            <div class="translate">
-              <div class="selectLanguage">
-                <div class="container">
-                  <div>
-                    <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
-                  </div>
-                  <div>
-                    <button type="button" id="switchLanguage" class="btn btn-outline-light">→</button>
-                  </div>
-                  <div>
-                    <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
-                  </div>
-                </div>
-              </div>
-              <div class="how-to-translate">
-                <div class="container">
-                  <% ['翻訳', '直訳'].each_with_index do |option, index| %>
-                  <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
-                      <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
-                      <%= option %>
-                  </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            <!-- 要約オプション用のコード -->
-            <div class="wrap-up-options">
-              <div class="container">
-                <div class="wrap-up-option">
-                  <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
-                </div>
-                <div class="wrap-up-option">
-                  <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
-                  <span id="character-count-text"></span>
-                  <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count"} %>
-                  <span id="word-count-text"></span>
-                </div>
-                <div class="wrap-up-option">
-                  <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
-                </div>
-              </div>
+            <div class="question-circle image-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-1 -1 60 60" height="60" width="60"><g id="landscape-2--photos-photo-landscape-picture-photography-camera-pictures-image"><path id="Vector" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m6.2142857142857135 55.92857142857142 45.57142857142857 0c2.2880999999999996 0 4.142857142857142 -1.8547571428571425 4.142857142857142 -4.142857142857142l0 -45.57142857142857c0 -2.288037857142857 -1.8547571428571425 -4.142857142857142 -4.142857142857142 -4.142857142857142l-45.57142857142857 0c-2.288037857142857 0 -4.142857142857142 1.8548192857142853 -4.142857142857142 4.142857142857142l0 45.57142857142857c0 2.2880999999999996 1.8548192857142853 4.142857142857142 4.142857142857142 4.142857142857142Z" stroke-width="2"></path><path id="Vector_2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m7.249999999999999 55.92857142857142 30.242857142857137 -28.503022857142856c0.3721942857142857 -0.31000999999999995 0.8412899999999999 -0.47978428571428566 1.3257142857142856 -0.47978428571428566 0.48438285714285706 0 0.9534785714285713 0.1697742857142857 1.3256728571428569 0.47978428571428566l15.78432714285714 11.309999999999999" stroke-width="2"></path><path id="Vector_3" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.64285714285714 24.857142857142854C22.074924285714282 24.857142857142854 24.857142857142854 22.074924285714282 24.857142857142854 18.64285714285714S22.074924285714282 12.428571428571427 18.64285714285714 12.428571428571427 12.428571428571427 15.210789999999998 12.428571428571427 18.64285714285714 15.210789999999998 24.857142857142854 18.64285714285714 24.857142857142854Z" stroke-width="2"></path></g></svg>
+              <input type="file" id="imageInputSearch" class="image-input-write" style="display: none;" accept="image/*">
             </div>
           </div>
-</div>
-        
-      </div>
-      <div class="modal-footer">
-        <div class="write-bottom-buttons d-flex justify-content-end">
-          <div class="return-camera-from-write write-to-camera m-1">
-            ←
-          </div>
-          <div class="write-submit m-1">
-            <%= render 'shared/svg/submit' %>
+          <hr style="margin: 5% 5%; background-color: #E8E8E8; opacity: 1; height: 2;">
+          <div class="option-panel">
+            <%= f.file_field :image, class: 'hidden', class: 'hidden-question-image', style: 'display: none;' %>
+              <%= f.hidden_field :option, class: "selected-option", value: "質問" %>
+              <%= f.hidden_field :answer_type, class: "answer-type-id", value: 1 %>
+              <div class="option-carousel">
+                <% ['質問', '直訳・翻訳', '現代語訳・口語訳', '要約', '添削'].each_with_index do |option, index| %>
+                  <div class="option <%= index.zero? ? 'active' : '' %>" data-option="<%= option %>">
+                    <%= option %>
+                  </div>
+                <% end %>
+              </div>
+              <!-- 水平な直線とマージンを追加 -->
+              <hr style="margin: 5% 5%; background-color: #E8E8E8; opacity: 1; height: 2;">
+              <!-- 各オプション用の詳細要素 -->
+              <div class="all-option-elements">
+                <!-- 質問オプション用のコード -->
+                <div class="how-to-answer">
+                  <div class="container">
+                    <% ['答えのみ', '解説付き', 'ヒント'].each_with_index do |option, index| %>
+                      <div class="answerOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>" data-value="<%= index %>">
+                        <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : index == 1 ? "withExplain" : "hint", id: "answer_type_#{index}" %>
+                        <%= option %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+                <!-- 直訳・翻訳オプション用のコード -->
+                <div class="translate">
+                  <div class="selectLanguage">
+                    <div class="container">
+                      <div>
+                        <%= f.select :fromLanguage, ['English', 'Japanese'], { selected: 'English' }, class: "form-select" %>
+                      </div>
+                      <div>
+                        <button type="button" id="switchLanguage" class="switch-language">→</button>
+                      </div>
+                      <div>
+                        <%= f.select :toLanguage, ['English', 'Japanese'], { selected: 'Japanese' }, class: "form-select" %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="how-to-translate">
+                    <div class="container">
+                      <% ['翻訳', '直訳'].each_with_index do |option, index| %>
+                        <div class="translateOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                          <%= f.hidden_field :translationType, value: index.zero? ? "translated" : "literal" %>
+                          <%= option %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <!-- 口語訳・現代語訳オプション用のコード -->
+                <div class="ancient-translation-options" style="display: none;">
+                  <div class="container">
+                    <% ['現代語訳', '口語訳'].each_with_index do |option, index| %>
+                      <div class="translate-ancient-option my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>">
+                        <%= f.hidden_field :ancient_type, value: index.zero? ? "modern" : "colloquial" %>
+                        <%= option %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="form-group">
+                    <%= f.radio_button :option_select, 'no_image', class: 'no-image-option', checked: true %>
+                    <%= f.label :option_select_no_image, '詳細を指定' %>
+                  </div>
+                  <div class="form-group">
+                    <%= f.radio_button :option_select, 'other', class: 'other-option' %>
+                    <%= f.label :option_select_other, '写真だけ' %>
+                  </div>
+                  <div class="no_image_options">
+                    <div class="form-group">
+                      <%= f.label :work_name, '作品名' %>
+                      <%= f.text_field :work_name, class: 'form-control' %>
+                    </div>
+                    <div class="form-group">
+                      <%= f.label :text_type, '種類' %>
+                      <%= f.select :text_type, ['古文', '漢文'], {}, class: 'form-select' %>
+                    </div>
+                    <div class="no_image_button">
+                      <button class="button btn btn-secondary">この内容で回答を得る</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- 要約オプション用のコード -->
+                <div class="wrap-up-options">
+                  <div class="container">
+                    <div class="wrap-up-option">
+                      <%= f.select :delimiter, ['日本語', '英語'], { selected: '日本語' }, class: "form-select" %>
+                    </div>
+                    <div class="wrap-up-option">
+                      <%= f.select :character_count, (100..800).step(100).to_a, { selected: 400 }, { class: "form-select", id: "character-count" } %>
+                      <span id="character-count-text">（文字数）</span>
+                      <%= f.select :word_count, (50..450).step(50).to_a, { selected: 250 }, { class: "form-select", id: "word-count", style: "display: none" } %>
+                      <span id="word-count-text" style="display: none;">（単語数）</span>
+                    </div>
+                    <div class="wrap-up-option">
+                      <%= f.select :comparison, ['以上', '以下', '程度'], { selected: '以下' }, { class: "form-select", id: "comparison" } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
-      </div>
-        <% end %>
+        <div class="modal-footer">
+          <div class="write-bottom-buttons d-flex justify-content-end">
+            <div class="return-camera-from-write write-to-camera m-1">
+              ←
+            </div>
+            <div class="write-submit m-1">
+              <%= render 'shared/svg/submit' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
+<%# <script>
+  const writeModalElement = document.querySelector(".write-question-modal");
+  console.log(writeModalElement);
+  const textarea = writeModalElement.querySelector('.question-input-form');
+  console.log(textarea);
+  const firstHeight = textarea.scrollHeight;
+  let lastHeight = firstHeight; // 初期値をfirstHeightに設定
 
-            <script>
-              const writeModalElement = document.querySelector(".write-question-modal");
-              console.log(writeModalElement);
-              const textarea = writeModalElement.querySelector('.question-input-form');
-              console.log(textarea);
-              const firstHeight = textarea.scrollHeight;
-              let lastHeight = firstHeight; // 初期値をfirstHeightに設定
+  // textareaの高さを調整する関数
+  function adjustHeight() {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+      lastHeight = textarea.scrollHeight;
+  }
 
-              // textareaの高さを調整する関数
-              function adjustHeight() {
-                  textarea.style.height = 'auto';
-                  textarea.style.height = textarea.scrollHeight + 'px';
-                  lastHeight = textarea.scrollHeight;
-              }
+  // inputイベント時の高さ調整
+  textarea.addEventListener('input', adjustHeight);
 
-              // inputイベント時の高さ調整
-              textarea.addEventListener('input', adjustHeight);
+  // 初期ロード時の高さ調整
+  adjustHeight();
 
-              // 初期ロード時の高さ調整
-              adjustHeight();
+  // textarea以外の部分がクリックされた時の挙動
+  document.body.addEventListener('click', function(e) {
+      if (!e.target.closest('#questionInputForm') || e.target.closest('#questionInputForm') == null) {
+        textarea.style.height = 'auto';
+        textarea.style.height = firstHeight + 'px';
+      }
+  });
 
-              // textarea以外の部分がクリックされた時の挙動
-              document.body.addEventListener('click', function(e) {
-                  if (!e.target.closest('#questionInputForm') || e.target.closest('#questionInputForm') == null) {
-                    textarea.style.height = 'auto';
-                    textarea.style.height = firstHeight + 'px';
-                  }
-              });
+  // textareaにフォーカスが当たった時の挙動
+  textarea.addEventListener('focus', function() {
+    if (textarea.value === "") { // 入力内容が空の場合
+      textarea.style.height = 'auto';
+      textarea.style.height = firstHeight + 'px'; // 初期の高さに設定
+    } else {
+      textarea.style.height = 'auto';
+      textarea.style.height = lastHeight + 'px';
+    }
+  });
 
-              // textareaにフォーカスが当たった時の挙動
-              textarea.addEventListener('focus', function() {
-                if (textarea.value === "") { // 入力内容が空の場合
-                  textarea.style.height = 'auto';
-                  textarea.style.height = firstHeight + 'px'; // 初期の高さに設定
-                } else {
-                  textarea.style.height = 'auto';
-                  textarea.style.height = lastHeight + 'px';
-                }
-              });
-
-              // textareaのclickイベントでbodyのclickイベントをキャンセル
-              textarea.addEventListener('click', function(e) {
-                  e.stopPropagation();
-              });
-            </script>
-
+  // textareaのclickイベントでbodyのclickイベントをキャンセル
+  textarea.addEventListener('click', function(e) {
+      e.stopPropagation();
+  });
+</script> %>
 <style>
-.question-input-items {
-  display: flex;
-  justify-content: end;
-  margin-top: 45px;
-}
+  .question-input-items {
+    display: flex;
+    justify-content: end;
+    margin-top: 45px;
+  }
 
-.question-input-items .question-circle {
+  .question-input-items .question-circle {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      background-color: #FFFCF3;
+      border-radius: 50%;
+      margin-right: 10px;
+      scroll-snap-align: top;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      position: relative; /* 追加 */
+      border: solid 1px #E8E8E8;
+  }
+
+  .question-input-items .question-circle svg {
+      position: absolute; /* 絶対位置指定 */
+      top: 50%; /* 上部から50%の位置 */
+      left: 50%; /* 左から50%の位置 */
+      transform: translate(-50%, -50%); /* 中央に配置 */
+      width: 60%; /* SVGのサイズ（必要に応じて調整） */
+      height: 60%; /* SVGのサイズ（必要に応じて調整） */
+  }
+
+  .question-input-items .question-circle:hover {
+      background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
+      transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  /* 通常状態でのSVGの線の色 */
+  .question-input-items .question-circle svg path {
+      stroke: black; /* デフォルトは白色 */
+      transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+  }
+
+  .write-submit {
     flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background-color: #FFFCF3;
     border-radius: 50%;
-    margin-right: 10px;
-    scroll-snap-align: top;
     transition: background-color 0.3s ease;
     cursor: pointer;
     position: relative; /* 追加 */
     border: solid 1px #E8E8E8;
-}
+  }
 
-.question-input-items .question-circle svg {
+  .write-submit svg {
     position: absolute; /* 絶対位置指定 */
     top: 50%; /* 上部から50%の位置 */
     left: 50%; /* 左から50%の位置 */
     transform: translate(-50%, -50%); /* 中央に配置 */
     width: 60%; /* SVGのサイズ（必要に応じて調整） */
     height: 60%; /* SVGのサイズ（必要に応じて調整） */
-}
+  }
 
-.question-input-items .question-circle:hover {
+  .write-submit:hover {
     background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
+  }
 
-/* 通常状態でのSVGの線の色 */
-.question-input-items .question-circle svg path {
+  /* 通常状態でのSVGの線の色 */
+  .write-submit svg path {
     stroke: black; /* デフォルトは白色 */
     transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
-}
-
-.write-submit {
-  flex: 0 0 auto;
-  width: 50px;
-  height: 50px;
-  background-color: #FFFCF3;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  position: relative; /* 追加 */
-  border: solid 1px #E8E8E8;
-}
-
-.write-submit svg {
-  position: absolute; /* 絶対位置指定 */
-  top: 50%; /* 上部から50%の位置 */
-  left: 50%; /* 左から50%の位置 */
-  transform: translate(-50%, -50%); /* 中央に配置 */
-  width: 60%; /* SVGのサイズ（必要に応じて調整） */
-  height: 60%; /* SVGのサイズ（必要に応じて調整） */
-}
-
-.write-submit:hover {
-  background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
-  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
-
-/* 通常状態でのSVGの線の色 */
-.write-submit svg path {
-  stroke: black; /* デフォルトは白色 */
-  transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
-}
-
-.write-to-camera {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 0 0 auto;
-  background-color: #FFFCF3;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  position: relative; /* 追加 */
-  border-radius:50%;
-  border: solid 1px #E8E8E8;
-  width: 50px; 
-  height: 50px;
-  color: black;
-}
-
-.write-to-camera:hover {
-  background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
-  color: black;
-  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
-
-.return-write-button {
-  position: absolute;
-  bottom: 50px;
-  left: 25%;
-  transform: translateX(-25%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 0 0 auto;
-  
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  border: none;
-  color: white;
-}
-
-.return-write-button:hover {
-  background-color: white; /* マウスが乗ったときの背景色 */
-  color: black;
-  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
-
-.write-camera-image {
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.write-camera-image svg {
-  position: absolute; /* 絶対位置指定 */
-  top: 50%; /* 上部から50%の位置 */
-  left: 50%; /* 左から50%の位置 */
-  transform: translate(-50%, -50%); /* 中央に配置 */
-  width: 60%; /* SVGのサイズ（必要に応じて調整） */
-  height: 60%; /* SVGのサイズ（必要に応じて調整） */
-}
-
-.write-camera-image:hover {
-  background-color: white; /* マウスが乗ったときの背景色 */
-  transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
-}
-
-/* 通常状態でのSVGの線の色 */
-.write-camera-image svg path {
-  stroke: white; /* デフォルトは白色 */
-  transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
-}
-
-/* マウスが乗ったときのSVGの線の色 */
-.write-camera-image:hover svg path {
-  stroke: black; /* マウスが乗ったときは黒色 */
-}
-
-.write-question-modal {
-  .modal-header {
-    background-color: #F3F6FF;
   }
 
-  .modal-body {
-    background-color: #F3F6FF;
+  .write-to-camera {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    background-color: #FFFCF3;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    position: relative; /* 追加 */
+    border-radius:50%;
+    border: solid 1px #E8E8E8;
+    width: 50px;
+    height: 50px;
+    color: black;
   }
 
-  .modal-footer {
-    background-color: #F3F6FF;
+  .write-to-camera:hover {
+    background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
+    color: black;
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
   }
-}
+
+  .return-write-button {
+    position: absolute;
+    bottom: 50px;
+    left: 25%;
+    transform: translateX(-25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+    color: white;
+  }
+
+  .return-write-button:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    color: black;
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  .write-camera-image {
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+
+  .write-camera-image svg {
+    position: absolute; /* 絶対位置指定 */
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+    width: 60%; /* SVGのサイズ（必要に応じて調整） */
+    height: 60%; /* SVGのサイズ（必要に応じて調整） */
+  }
+
+  .write-camera-image:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  /* 通常状態でのSVGの線の色 */
+  .write-camera-image svg path {
+    stroke: white; /* デフォルトは白色 */
+    transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+  }
+
+  /* マウスが乗ったときのSVGの線の色 */
+  .write-camera-image:hover svg path {
+    stroke: black; /* マウスが乗ったときは黒色 */
+  }
+
+  .write-question-modal {
+    .modal-header {
+      background-color: #F3F6FF;
+    }
+
+    .modal-body {
+      background-color: #F3F6FF;
+    }
+
+    .modal-footer {
+      background-color: #F3F6FF;
+    }
+  }
 </style>

@@ -1,0 +1,19 @@
+<!-- app/views/app/_card.html.erb -->
+<div class="card card-<%= card.id %>" data-card-id="<%= card.id %>">
+  <div class="card-id" style="display:none;"><%= card.id %></div>
+  <div class="card-body">
+    <% if card.image.attached? %>
+      <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
+    <% else %>
+      <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
+    <% end %>
+  </div>
+  <div class="card-bottom">
+    <div class="like like-<%= card.id%>" id="like-<%= card.id%>" style="display: flex;">
+      <%= render "likes/like", card: card %>
+    </div>
+    <div class="bookmark bookmark-<%= card.id%>" id="bookmark-<%= card.id%>" style="display: flex;">
+      <%= render "bookmarks/bookmark", card: card %>
+    </div>
+  </div>
+</div>

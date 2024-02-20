@@ -1,0 +1,11 @@
+// app/views/survey_responses/create_feedback.js.erb
+// フィードバックフォームを非表示にします。
+$(".user-modal .feedback-form").hide();
+// 感謝のメッセージを表示します。
+$(".user-modal #thank_you_message").show();
+
+// 5秒後に感謝のメッセージを非表示にします。
+setTimeout(function() {
+  $(".user-modal #thank_you_message").hide();
+}, 5000); // 5000ミリ秒 = 5秒
+

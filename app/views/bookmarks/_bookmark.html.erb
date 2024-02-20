@@ -1,0 +1,10 @@
+<% if !card.bookmarks.find_by(user: current_user) %>
+  <%= link_to bookmark_question_path(card), method: :post, remote: true do %>
+    <%= render 'shared/svg/bookmark' %>
+  <% end %>
+<% else %>
+  <%= link_to unbookmark_question_path(card), method: :delete, remote: true do %>
+    <%= render 'shared/svg/bookmarked' %>
+  <% end %>
+<% end %>
+<div class="bookmark-count"><%= card.bookmarks.count %></div>

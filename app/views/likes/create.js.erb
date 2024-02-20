@@ -1,0 +1,6 @@
+// app/views/likes/create.js.erb
+
+$(".like-<%= @question.id %>").each(function() {
+  $(this).html("<%= j(render 'likes/like', card: @question) %>");
+});
+$("#user-liked-cards").prepend("<%= j(render 'shared/card', card: @question) %>");

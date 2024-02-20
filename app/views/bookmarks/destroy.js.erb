@@ -1,0 +1,4 @@
+$(".bookmark-<%= @question.id%>").each(function() {
+  $(this).html("<%= j(render 'bookmarks/bookmark', card: @question) %>");
+});
+$("#user-bookmarked-cards .card-<%= @question.id %>").remove();

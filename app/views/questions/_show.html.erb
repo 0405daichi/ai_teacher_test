@@ -1,0 +1,257 @@
+<div id="cardContentModal" class="modal fade card-content  card-content-<%= card.id %>" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen" role="document">
+    <div class="modal-content" style="background-color: white;">
+      <div class="current-card-id" style="display: none;"></div>
+      <button type="button" class="btn-close card-content-close" aria-label="Close" style="position: absolute; top: 10px; right: 10px; z-index: 2000;"></button>
+      <div class="modal-body card-modal-body" id="cardModalBody" style="overflow: scroll;">
+        <div class="question-section">
+          <div class="whats-question">
+            <div class="whats-question-content">質問</div>
+          </div>
+          <div class="card-content-question">
+            <% if card.image.attached? %>
+              <%= image_tag card.image, style: "width: 100%; height: auto; margin-bottom: 30px" %> <!-- 画像があればここで表示 -->
+            <% end %>
+            <%= card.content %>
+          </div>
+        </div>
+        <div class="answers-section">
+          <div class="whats-generate">
+            <div class="whats-generate-content"></div>
+          </div>
+          <div id="customCarousel" class="custom-carousel">
+            <div class="custom-carousel-inner">
+              <div class="answer-type" style="display: none;"></div>
+              <div class="custom-slide answer-1 active">
+                <% if card.answers.exists?(answer_type: 1) %>
+                  <%= markdown(card.answers.find_by(answer_type: 1).content) %>
+                <% else %>
+                  <p>わかりやすい回答を作成しましょう</p>
+                  <div class="custom-button">
+                    <%= render 'shared/svg/submit' %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="custom-slide answer-2">
+                <% if card.answers.exists?(answer_type: 2) %>
+                  <%= card.answers.find_by(answer_type: 2).content %>
+                <% else %>
+                  <p>小学生にもわかるような回答を作成しましょう</p>
+                  <div class="custom-button">
+                    <%= render 'shared/svg/submit' %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="custom-slide answer-3">
+                <% if card.answers.exists?(answer_type: 3) %>
+                  <%= card.answers.find_by(answer_type: 3).content %>
+                <% else %>
+                  <p>回答を例え話で作成しましょう</p>
+                  <div class="custom-button">
+                    <%= render 'shared/svg/submit' %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="change-answer">
+        <!-- インジケーター -->
+        <div class="custom-indicators">
+          <span class="indicator active" data-slide-to="0"></span>
+          <span class="indicator" data-slide-to="1"></span>
+          <span class="indicator" data-slide-to="2"></span>
+        </div>
+      </div>
+      <div class="modal-footer" style="height: auto;">
+        <div class="footer-left">
+          <div class="generate-div">
+            <div class="re-generate-answer-button">
+              <%= render 'shared/svg/reload' %>
+            </div>
+          </div>
+          <% if current_user.can_edit? && card.user == current_user %>
+            <div class="edit-card-buttons">
+              <%= link_to edit_question_path(card), method: :get, remote: true do %>
+              <div class="edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ai ai-Edit"><path d="M16.474 5.408l2.118 2.117m-.756-3.982L12.109 9.27a2.118 2.118 0 0 0-.58 1.082L11 13l2.648-.53c.41-.082.786-.283 1.082-.579l5.727-5.727a1.853 1.853 0 1 0-2.621-2.621z"/><path d="M19 15v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3"/></svg>
+              </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="footer-right">
+          <div class="evaluation-div">
+            <div class="like like-<%= card.id%>" id="like-<%= card.id%>" style="display: flex;">
+              <%= render "likes/like", card: card %>
+            </div>
+            <div class="bookmark bookmark-<%= card.id%>" id="bookmark-<%= card.id%>" style="display: flex;">
+              <%= render "bookmarks/bookmark", card: card %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#cardContentModal {
+  z-index: 1100 !important;
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    height: 40px;
+    background-color: #F3F6FF;
+  }
+
+  .modal-footer .generate-div {
+    display: flex;
+  }
+
+  .modal-footer .evaluation-div {
+    display: flex;
+  }
+
+  /* カスタムカルーセルの基本スタイリング */
+  .custom-carousel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 各スライドのスタイリング */
+  .custom-slide {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* 最初は非表示 */
+    transition: opacity 0.5s; /* 必要に応じてフェード効果を追加 */
+  }
+
+  .custom-slide.active {
+    display: block; /* アクティブなスライドのみ表示 */
+    height: 100%;
+  }
+
+  /* インジケーターのスタイリング */
+  .custom-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #888;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: width 0.3s, height 0.3s; /* アニメーションを追加 */
+  }
+
+  .indicator.active {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+  }
+
+  .change-answer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F3F6FF;
+  }
+
+  .whats-question {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5%;
+    background-color: #FFFCF3;
+  }
+
+  .whats-generate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5%;
+  }
+
+  .custom-button .active svg {
+    position: absolute; /* 絶対位置指定 */
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+    width: 60%; /* SVGのサイズ（必要に応じて調整） */
+    height: 60%; /* SVGのサイズ（必要に応じて調整） */
+  }
+
+  .footer-left {
+    display: flex;
+    gap: 10px;
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 10px;
+  }
+
+  .edit-card-buttons {
+    display: flex;
+    gap: 20px;
+  }
+
+  .card-modal-body {
+    /* display: flex; */
+    height: 100%;
+    /* flex-direction: column; */
+    background-color: #F3F6FF;
+  }
+
+  .question-section {
+    /* flex: 1; 質問セクションの幅を1の割合で設定 */
+    /* display: flex;
+    flex-direction: column; */
+  }
+
+  .whats-question {
+    /* flex: 1; */
+  }
+
+  .card-content-question {
+    /* flex: 9; */
+    margin: 0 5%;
+  }
+
+  .answers-section {
+    /* flex: 2; 回答セクションの幅を2の割合で設定 */
+    /* display: flex;
+    flex-direction: column; */
+  }
+
+  .whats-generate {
+    /* flex: 1; */
+    background-color: #FFFCF3;
+  }
+
+  .custom-carousel {
+    /* flex: 30; */
+    height: 100%;
+    margin: 0 5%;
+  }
+
+  .custom-carousel-inner {
+    height: 100%;
+  }
+}
+</style>

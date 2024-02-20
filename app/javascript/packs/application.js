@@ -10,11 +10,18 @@ import katex from 'katex';
 import "../stylesheets/application";
 import "../javascripts/home"
 import "../javascripts/icon_event/camera"
+import "../javascripts/helpers/optionHandleFunction"
+import "../javascripts/helpers/formSubmitFunction"
 import "../javascripts/helpers/cameraFunctions"
+import "../javascripts/helpers/common_functions"
 import "../javascripts/helpers/openApp"
 import "../javascripts/icon_event/instagram"
+import "../javascripts/icon_event/user"
 
 Rails.start();
 Turbolinks.start();
 ActiveStorage.start();
 
+
+require("trix")
+require("@rails/actiontext")

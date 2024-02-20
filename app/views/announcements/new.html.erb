@@ -1,0 +1,111 @@
+<div class="new-announcement">
+  <%= form_with model: @announcement, local: true, html: { class: 'form-with' } do |f| %>
+    <div class="field announcement-title">
+      <%= f.label :title, "タイトル" %>
+      <%= f.text_area :title %>
+    </div>
+    <div class="field announcement-content">
+      <%= f.label :content, "内容" %>
+      <%= f.text_area :content %>
+    </div>
+    <div class="actions announcement-submit">
+      <%= f.submit "作成" %>
+    </div>
+  <% end %>
+</div>
+<style>
+  .new-announcement {
+    position: relative;
+    height: 100%;
+
+    /* フォーム全体のスタイル */
+    .form-with {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .announcement-title {
+      width: 100%;
+      flex: 2;
+      margin-top: 10%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .announcement-title label {
+      flex: 1;
+    }
+
+    .announcement-title textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 16px;
+      resize: none;
+      flex: 9;
+    }
+
+    .announcement-content {
+      width: 100%;
+      flex: 7;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .announcement-content textarea {
+      flex: 1;
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 16px;
+      resize: none;
+    }
+
+    .announcement-submit {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      justify-content: end;
+      align-items: center;
+    }
+
+    /* 各フィールドのスタイル */
+    .field {
+    }
+
+    /* ラベルのスタイル */
+    .field label {
+      display: block;
+      font-weight: bold;
+    }
+
+    /* ボタンのスタイル */
+    .actions {
+      text-align: right;
+    }
+
+    .actions input[type="submit"] {
+      padding: 10px 20px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .actions input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+  }
+</style>

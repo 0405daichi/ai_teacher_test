@@ -1,2 +1,16 @@
 // app/views/questions/search.js.erb
-//document.querySelector('.search-results').innerHTML = '<%= j render partial: "shared/search_results", locals: { results: @results } %>';
+// 検索結果を表示する前に、'検索結果がありません'のメッセージをクリアする
+$("#user-search-cards .search-results").empty();
+$("#no-results-message").hide(); // メッセージを隠す
+
+<% if @results.any? %>
+  <% @results.each do |(question, _similarity)| %>
+    $("#user-search-cards .search-results").append("<%= j(render 'shared/card', card: question) %>");
+    $("#user-search-cards .search-results .card-<%= question.id %>").on('click', function() {
+      fetchCardDetails(<%= question.id %>);
+    });
+  <% end %>
+<% else %>
+  // 検索結果がない場合のみ、'検索結果がありません'のメッセージを表示する
+  $("#no-results-message").show();
+<% end %>

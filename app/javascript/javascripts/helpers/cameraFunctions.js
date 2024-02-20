@@ -15,7 +15,8 @@ const cameraSettings = {
 
 // カメラの最大解像度を取得し、ストリームを保持する
 async function initializeCamera() {
-  if (cameraSettings.isInitialized) {
+  if (sessionStorage.getItem('isCameraInitialized') === 'true') {
+    console.log("すでに初期化されています。");
     return; // すでに初期化されている場合は何もしない
   }
 
@@ -56,9 +57,9 @@ export async function openCamera(modalElement, cameraPreviewElement) {
       width: cameraSettings.maxWidth,
       height: cameraSettings.maxHeight
     };
-
+    
     // グローバルストリームに保存
-    const currentStream = await navigator.mediaDevices.getUserMedia({
+    currentStream = await navigator.mediaDevices.getUserMedia({
       video: videoConstraints
     });
     cameraPreviewElement.srcObject = currentStream;

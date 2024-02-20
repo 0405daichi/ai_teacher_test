@@ -8,11 +8,13 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <script src="https://accounts.google.com/gsi/client"></script>
   </head>
 
-  <body id="main-body">
+  <body id="main-body" class="<%= user_signed_in? ? 'user-logged-in' : 'user-logged-out' %>">
     <%= yield %>
   </body>
 </html>

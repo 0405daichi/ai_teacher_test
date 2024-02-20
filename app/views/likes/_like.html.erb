@@ -1,0 +1,10 @@
+<% if !card.likes.find_by(user: current_user) %>
+  <%= link_to like_question_path(card), method: :post, remote: true do %>
+    <%= render 'shared/svg/like' %>
+  <% end %>
+<% else %>
+  <%= link_to unlike_question_path(card), method: :delete, remote: true do %>
+    <%= render 'shared/svg/liked' %>
+  <% end %>
+<% end %>
+<div class="like-count"><%= card.likes.count %></div>

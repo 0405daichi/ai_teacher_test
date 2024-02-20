@@ -17,6 +17,11 @@ gem 'devise'
 gem 'ruby-openai'
 gem 'pry', group: :development
 gem 'google-cloud-vision'
+gem 'nokogiri', '~> 1.16.0'
+gem 'tiktoken_ruby'
+gem 'redcarpet'
+gem 'omniauth-google-oauth2'
+gem "omniauth-rails_csrf_protection"
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'

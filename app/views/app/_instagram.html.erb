@@ -13,34 +13,7 @@
             <!-- 全てのカード -->
             <div class="cards all-cards" id="all-cards" style="display: block;">
               <% all_cards.each do |card| %>
-                <div class="card" data-card-id="<%= card.id %>">
-                  <div class="card-id" style="display:none;"><%= card.id %></div>
-                    <div class="card-body">
-                      <% if card.image.attached? %>
-                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
-                      <% else %>
-                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
-                      <% end %>
-                    </div>
-                  <div class="card-bottom">
-                    <div class="like">
-                      <% if !card.likes.find_by(user: current_user) %>
-                        <%= render 'shared/svg/like' %>
-                      <% else %>
-                        <%= render 'shared/svg/liked' %>
-                      <% end %>
-                    </div>
-                    <div class="like-count"><%= card.likes.count %></div>
-                    <div class="bookmark">
-                      <% if !card.bookmarks.find_by(user: current_user) %>
-                        <%= render 'shared/svg/bookmark' %>
-                      <% else %>
-                        <%= render 'shared/svg/bookmarked' %>
-                      <% end %>
-                    </div>
-                    <div class="bookmark-count"><%= card.bookmarks.count %></div>
-                  </div>
-                </div>
+                <%= render "shared/card", card: card %>
               <% end %>
             </div>
 
@@ -48,34 +21,7 @@
             <% unless user_questions.empty? %>
               <div class="cards user-cards" id="user-cards">
                 <% user_questions.each do |card| %>
-                  <div class="card" data-card-id="<%= card.id %>">
-                    <div class="card-id" style="display:none;"><%= card.id %></div>
-                    <div class="card-body">
-                      <% if card.image.attached? %>
-                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
-                      <% else %>
-                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
-                      <% end %>
-                    </div>
-                    <div class="card-bottom">
-                      <div class="like">
-                        <% if !card.likes.find_by(user: current_user) %>
-                          <%= render 'shared/svg/like' %>
-                        <% else %>
-                          <%= render 'shared/svg/liked' %>
-                        <% end %>
-                      </div>
-                      <div class="like-count"><%= card.likes.count %></div>
-                      <div class="bookmark">
-                        <% if !card.bookmarks.find_by(user: current_user) %>
-                          <%= render 'shared/svg/bookmark' %>
-                        <% else %>
-                          <%= render 'shared/svg/bookmarked' %>
-                        <% end %>
-                      </div>
-                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
-                    </div>
-                  </div>
+                  <%= render "shared/card", card: card %>
                 <% end %>
               </div>
             <% end %>
@@ -84,34 +30,7 @@
             <% unless user_likes.empty? %>
               <div class="cards user-liked-cards" id="user-liked-cards">
                 <% user_likes.each do |card| %>
-                  <div class="card" data-card-id="<%= card.id %>">
-                    <div class="card-id" style="display:none;"><%= card.id %></div>
-                    <div class="card-body">
-                      <% if card.image.attached? %>
-                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
-                      <% else %>
-                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
-                      <% end %>
-                    </div>
-                    <div class="card-bottom">
-                      <div class="like">
-                        <% if !card.likes.find_by(user: current_user) %>
-                          <%= render 'shared/svg/like' %>
-                        <% else %>
-                          <%= render 'shared/svg/liked' %>
-                        <% end %>
-                      </div>
-                      <div class="like-count"><%= card.likes.count %></div>
-                      <div class="bookmark">
-                        <% if !card.bookmarks.find_by(user: current_user) %>
-                          <%= render 'shared/svg/bookmark' %>
-                        <% else %>
-                          <%= render 'shared/svg/bookmarked' %>
-                        <% end %>
-                      </div>
-                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
-                    </div>
-                  </div>
+                  <%= render "shared/card", card: card %>
                 <% end %>
               </div>
             <% end %>
@@ -120,34 +39,7 @@
             <% unless user_bookmarks.empty? %>
               <div class="cards user-bookmarked-cards" id="user-bookmarked-cards">
                 <% user_bookmarks.each do |card| %>
-                  <div class="card" data-card-id="<%= card.id %>">
-                    <div class="card-id" style="display:none;"><%= card.id %></div>
-                    <div class="card-body">
-                      <% if card.image.attached? %>
-                        <%= image_tag card.image, style: "width: 100%; height: auto;" %> <!-- 画像があればここで表示 -->
-                      <% else %>
-                        <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
-                      <% end %>
-                    </div>
-                    <div class="card-bottom">
-                      <div class="like">
-                        <% if !card.likes.find_by(user: current_user) %>
-                          <%= render 'shared/svg/like' %>
-                        <% else %>
-                          <%= render 'shared/svg/liked' %>
-                        <% end %>
-                      </div>
-                      <div class="like-count"><%= card.likes.count %></div>
-                      <div class="bookmark">
-                        <% if !card.bookmarks.find_by(user: current_user) %>
-                          <%= render 'shared/svg/bookmark' %>
-                        <% else %>
-                          <%= render 'shared/svg/bookmarked' %>
-                        <% end %>
-                      </div>
-                      <div class="bookmark-count"><%= card.bookmarks.count %></div>
-                    </div>
-                  </div>
+                  <%= render "shared/card", card: card %>
                 <% end %>
               </div>
             <% end %>
@@ -158,7 +50,9 @@
                 <%= form.text_area :query, id: 'searchQuery', placeholder: '質問を入力して下さい。', class: 'search-textarea' %>
               <% end %>
               <div class="search-results"></div>
+              <div id="no-results-message" style="color: white; display: none;">検索結果がありません。</div>
 
+              <div class="input-circle-container">
                 <div class="circle camera-circle input-circle">
                   <%= render 'shared/svg/camera' %>
                 </div>
@@ -166,7 +60,7 @@
                   <%= render 'shared/svg/image' %>
                   <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
                 </div>
-
+              </div>
             </div>
           </div>
         <% else %>
@@ -175,24 +69,26 @@
       </div>
       <div class="modal-footer">
         <div class="bottom-container">
-          <div class="bottom-circles">
-            <!-- こちらに円を追加します -->  
-            <div class="circle1 circle option-circle" data-category="all">
-              <%= render 'shared/svg/menu/home' %>
+          <% if user_signed_in? %>
+            <div class="bottom-circles">
+              <!-- こちらに円を追加します -->  
+              <div class="circle1 circle option-circle" data-category="all">
+                <%= render 'shared/svg/menu/home' %>
+              </div>
+              <div class="circle2 circle option-circle" data-category="user">
+                <%= render 'shared/svg/menu/user' %>
+              </div>
+              <div class="circle3 circle option-circle" data-category="user-liked">
+                <%= render 'shared/svg/menu/like' %>
+              </div>
+              <div class="circle4 circle option-circle" data-category="user-bookmarked">
+                <%= render 'shared/svg/menu/bookmark' %>
+              </div>
+              <div class="circle5 circle option-circle search-circle" data-category="user-search">
+                <%= render 'shared/svg/menu/search' %>
+              </div>
             </div>
-            <div class="circle2 circle option-circle" data-category="user">
-              <%= render 'shared/svg/menu/user' %>
-            </div>
-            <div class="circle3 circle option-circle" data-category="user-liked">
-              <%= render 'shared/svg/menu/like' %>
-            </div>
-            <div class="circle4 circle option-circle" data-category="user-bookmarked">
-              <%= render 'shared/svg/menu/bookmark' %>
-            </div>
-            <div class="circle5 circle option-circle search-circle" data-category="user-search">
-              <%= render 'shared/svg/menu/search' %>
-            </div>
-          </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -226,11 +122,15 @@
         height: 15vw;
     }
 
+    .user-search-cards .input-circle-container {
+      margin: 0 5% 0 0;
+    }
+
     .user-search-cards .input-circle {
-      right: 8vw;
+      /* right: 8vw; */
       width: 15vw;
       height: 15vw;
-      margin: 0;
+      margin: 0 0 10px 0;
     }
 
     .instagramModal .bottom-container {
@@ -251,7 +151,6 @@
   position: fixed;
   background-color: transparent; /* 背景を透明に */
   border: 1px solid white; /* 境界線を削除 */
-  outline: none; /* フォーカス時のアウトラインを削除 */
   box-shadow: none; /* 影を削除 */
   border-radius: 10px;
   resize: none;
@@ -306,6 +205,10 @@
     height: 60%; /* SVGのサイズ（必要に応じて調整） */
 }
 
+.circle svg circle {
+    stroke: white; /* アクティブなときのSVGの線の色 */
+}
+
 .circle:hover {
     background-color: #FFFCF3; /* マウスが乗ったときの背景色 */
     transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
@@ -322,12 +225,20 @@
     stroke: black; /* マウスが乗ったときは黒色 */
 }
 
+.circle:hover svg circle {
+    stroke: black; /* アクティブなときのSVGの線の色 */
+}
+
 .circle.active {
-    background-color: #FFFCF3; /* アクティブなときの背景色 */
-    /* 必要に応じて他のスタイルを追加 */
+  background-color: #FFFCF3; /* アクティブなときの背景色 */
+  /* 必要に応じて他のスタイルを追加 */
 }
 
 .circle.active svg path {
+    stroke: black; /* アクティブなときのSVGの線の色 */
+}
+
+.circle.active svg circle {
     stroke: black; /* アクティブなときのSVGの線の色 */
 }
 
@@ -393,114 +304,49 @@
   position: absolute;
 }
 
-.input-circle {
+.input-circle-container {
   position: fixed;
   bottom: 0;
   right: 0;
-  margin: 0 20px 5px 0;
+  margin: 0 18px 25px 0;
   visibility: hidden;
 }
 
-@keyframes moveUpAndRotateImage {
+.input-circle-container .camera-circle {
+  
+}
+
+/* 親のdiv要素のためのアニメーション */
+@keyframes moveUp {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0);
     visibility: hidden;
     opacity: 0;
   }
   100% {
-    transform: translateY(-115px) rotate(360deg); /* 位置と回転を設定 */
+    transform: translateY(-100px);
     visibility: visible;
     opacity: 1;
   }
 }
 
-/* カメラアイコンのための別のキーフレームアニメーション */
-@keyframes moveUpAndRotateCamera {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    visibility: hidden;
-    opacity: 0;
+/* 子要素のアニメーション */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
   }
-  100% {
-    transform: translateY(-220px) rotate(360deg);
-    visibility: visible;
-    opacity: 1;
+  to {
+    transform: rotate(360deg);
   }
 }
 
-/* アニメーションがトリガーされたときの赤い円の状態 */
-.image-circle.move-up {
-  animation: moveUpAndRotateImage 0.5s forwards; /* アニメーションの適用 */
+/* 親要素のアニメーション適用 */
+.input-circle-container.move-up {
+  animation: moveUp 0.5s forwards;
 }
 
-.camera-circle.move-up {
-  animation: moveUpAndRotateCamera 0.5s forwards;
+/* 子要素の回転アニメーション適用 */
+.input-circle-container .input-circle {
+  animation: rotate 0.5s forwards;
 }
 </style>
-
-<script>
-document.addEventListener('turbolinks:load', () => {
-  const optionCircles = document.querySelectorAll('.option-circle');
-  const circle5 = document.querySelector('.search-circle');
-  const inputCircle = document.querySelectorAll('.input-circle');
-
-    console.log(circle5)
-  circle5.addEventListener('click', () => {
-    console.log("OK")
-    inputCircle.forEach(circle => {
-      circle.classList.add('move-up');
-    });
-  });
-
-  optionCircles.forEach(circle => {
-    circle.addEventListener('click', () => {
-      if (circle5.style.visibility == 'visible' && circle !== circle5)
-      {
-        circle5.classList.remove('move-up');
-      }
-    });
-  });
-
-  const searchQuery = document.querySelector('.search-textarea');
-  const firstHeight = '52';
-  let lastHeight = firstHeight; // 初期値をfirstHeightに設定
-
-  // inputイベント時の高さ調整
-  searchQuery.addEventListener('input', adjustHeight);
-
-  // 初期ロード時の高さ調整
-  adjustHeight();
-
-  // textarea以外の部分がクリックされた時の挙動
-  document.body.addEventListener('click', function(e) {
-      if (!e.target.closest('#searchQuery') || e.target.closest('#searchQuery') == null) {
-        // searchQuery.style.height = 'auto';
-        searchQuery.style.height = firstHeight + 'px';
-      }
-  });
-
-  // textareaにフォーカスが当たった時の挙動
-  searchQuery.addEventListener('focus', function() {
-    if (searchQuery.value === "") { // 入力内容が空の場合
-      // searchQuery.style.height = 'auto';
-      searchQuery.style.height = firstHeight + 'px'; // 初期の高さに設定
-    } else {
-      // searchQuery.style.height = 'auto';
-      searchQuery.style.height = lastHeight + 'px';
-    }
-  });
-
-  // textareaのclickイベントでbodyのclickイベントをキャンセル
-  searchQuery.addEventListener('click', function(e) {
-      e.stopPropagation();
-  });
-
-  // textareaの高さを調整する関数
-  function adjustHeight() {
-      // searchQuery.style.height = 'auto';
-      searchQuery.style.height = searchQuery.scrollHeight + 'px';
-      lastHeight = searchQuery.scrollHeight;
-  }
-});
-
-</script>

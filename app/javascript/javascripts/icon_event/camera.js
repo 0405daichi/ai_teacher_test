@@ -3,400 +3,300 @@
 import { Modal } from 'bootstrap';
 import { openCamera, takePhoto, closeCamera, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
+import { handleOption, resetFormToDefault } from '../helpers/optionHandleFunction.js';
+import { submitFormAndShowModal } from '../helpers/formSubmitFunction.js';
 // ライブラリをインポート
 import marked from 'marked';
-import katex from 'katex';
-
-// KaTeXのオプションを設定
-const katexOptions = {
-  throwOnError: false, // LaTeXのパースエラーを無視する
-  errorColor: "#cc0000", // エラーの色を設定
-  delimiters: [ // 数式のデリミタを設定
-    {left: "$$", right: "$$", display: true},
-    {left: "\\[", right: "\\]", display: true},
-    {left: "$", right: "$", display: false},
-    {left: "\\(", right: "\\)", display: false}
-  ]
-};
 
 document.addEventListener("turbolinks:load", function() {
-  // DOM取得
-  const cameraApp1 = document.getElementById('cameraApp1');
-  const cameraModalElement = document.getElementById('cameraModal');
-  const cameraPreview = document.getElementById("cameraPreview");
-  const maskRect = document.getElementById("maskRect");
-  const captureButton = document.getElementById("captureButton");
-  const closeCameraButton = document.getElementById("closeCamera");
-  const trimmingImageModalElement = document.querySelector(".trimming-image-modal");
-  let imageCapture;
-  let stream;
-  let cameraTrack;
-  const cameraModal = new Modal(cameraModalElement, {
-    keyboard: false,
-    backdrop: 'true'
+  if ($('#svg-camera').length === 0) return;
+  //////////
+  // カメラモーダル
+  //////////
+  const cameraModal = $('#cameraModal')[0];
+  // オプションハンドル
+  handleOption(cameraModal);
+  resetFormToDefault(cameraModal);
+  $('#cameraModal .close-camera-modal').on('click', function () {
+    resetFormToDefault(cameraModal);
   });
+  handleNoImageButtonClick(cameraModal, ".question-form-from-camera", '#cameraModal');
 
   // カメラアプリ起動処理
-  cameraApp1.addEventListener('click', async () => {
+  $('#svg-camera').on('click', async () => {
     const open = await fadeOutCirclesSequentially();
-    if (open == true)
-    {
+    if (open == true) {
       const openEnd = await fadeInCirclesSequentially();
-      if (openEnd) cameraModal.show();
+      if (openEnd) $('#cameraModal').modal('show');
+      setupPanelToggleAndValidation();
     }
-    
-    // stream = await openCamera(cameraPreview);
-    openCamera(cameraModalElement, cameraPreview);
-    // console.log("Stream object: ", stream);
-    
-    // cameraTrack = stream.getVideoTracks()[0];
-    // imageCapture = new ImageCapture(cameraTrack);
 
-    // カメラアプリ終了処理
-    closeCameraButton.addEventListener('click', async () => {
-      cameraModal.hide();
-      // cameraTrack.stop();
+    openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+
+    $('#cameraModal .close-camera-modal').click(async function() {
+      console.log("Camera click");
+      $('#cameraModal').modal('hide');
       closeCamera();
     });
   });
 
   // 撮影範囲設定path
-  const place = [];
-  place.push(cameraModalElement, trimmingImageModalElement);
-  place.forEach(element => {
-    const resizableRects = element.querySelector('.resizable-rect');
-    const lightDarkAreas = element.querySelector('.light-dark-area');
-    const preview = element.querySelector('.preview');
+  const places = ['#cameraModal', '.trimming-image-modal', '.simple-camera-modal'];
+  $.each(places, function(index, element) {
+    const resizableRects = $(element).find('.resizable-rect');
+    const lightDarkAreas = $(element).find('.light-dark-area');
+    const preview = $(element).find('.preview');
 
-    initResizableRect(resizableRects, lightDarkAreas, preview);
+    initResizableRect(resizableRects[0], lightDarkAreas[0], preview[0]);
   });
 
-  // 撮影ボタンクリック時の処理
-  captureButton.addEventListener("click", async () => {
-    // const photo = await imageCapture.takePhoto();
-    // const photo = takePhoto();
-    // console.log(photo);
+  $("#captureButton").click(async function() {
     const imageBitmap = await takePhoto();
+    console.log(`imageBitmap${imageBitmap}`)
     
-    // 元の画像をプレビューに表示
-    // const originalImageUrl = URL.createObjectURL(photo);
-    // console.log(originalImageUrl);
-    // preview.src = originalImageUrl;
-    // カメラアプリ終了処理
-    cameraModal.hide();
-    // cameraTrack.stop();
+    $('#cameraModal').modal('hide');
     closeCamera();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const maskRect = cameraModalElement.querySelector('.mask-rect');
+    const maskRect = $('#cameraModal .mask-rect')[0]; // jQueryで要素を選択し、DOM要素にアクセス
     const svgRect = maskRect.getBoundingClientRect();
+    const preview = $("#cameraPreview");
 
     let scale, offsetX, offsetY;
-    // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
-    if (imageBitmap.width / imageBitmap.height > cameraPreview.offsetWidth / cameraPreview.offsetHeight) {
-      // 画像は高さを基準にプレビュー領域を覆う
-      scale = imageBitmap.height / cameraPreview.offsetHeight;
-      offsetX = (cameraPreview.offsetWidth - (imageBitmap.width / scale)) / 2;
+    if (imageBitmap.width / imageBitmap.height > preview.outerWidth() / preview.outerHeight()) {
+      scale = imageBitmap.height / preview.outerHeight();
+      offsetX = (preview.outerWidth() - (imageBitmap.width / scale)) / 2;
       offsetY = 0;
     } else {
-      // 画像は幅を基準にプレビュー領域を覆う
-      scale = imageBitmap.width / cameraPreview.offsetWidth;
+      scale = imageBitmap.width / preview.outerWidth();
       offsetX = 0;
-      offsetY = (cameraPreview.offsetHeight - (imageBitmap.height / scale)) / 2;
+      offsetY = (preview.outerHeight() - (imageBitmap.height / scale)) / 2;
     }
 
-    // プレビュー上のmaskRectの実際の画像上での相対位置を計算
-    const realX = (svgRect.left - cameraPreview.offsetLeft - offsetX) * scale;
-    const realY = (svgRect.top - cameraPreview.offsetTop - offsetY) * scale;
+    const realX = (svgRect.left - preview.offset().left - offsetX) * scale;
+    const realY = (svgRect.top - preview.offset().top - offsetY) * scale;
     const realWidth = svgRect.width * scale;
     const realHeight = svgRect.height * scale;
 
-    // CanvasのサイズをmaskRectのサイズに合わせる
-    canvas.width = svgRect.width;
-    canvas.height = svgRect.height;
+    canvas.width = realWidth; // 元の画像の解像度に合わせたサイズ
+    canvas.height = realHeight;
 
-    // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
-    // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
-    // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
-    ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
+    // 実際の切り取り領域をCanvasに描画
+    ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
 
     canvas.toBlob(async (blob) => {
+      console.log(blob)
       // const result = await processImage(blob);
-      // BlobをObject URLに変換
       const imageUrl = URL.createObjectURL(blob);
       console.log('image:', imageUrl);
       // console.log('Response:', result.text);
 
-      // const questionForm = cameraModalElement.querySelector(".question-form");
-      // const questionInputForm = questionForm.querySelector(".question-input-form");
+      // const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
+      // const questionInputForm = $(questionForm).find(".question-input-form")[0];
       // questionInputForm.value = result.text;
 
-      // // 隠しinput要素を取得
-      // const imageInput = questionForm.querySelector('.hidden-question-image');
+      // const imageInput = $(questionForm).find('.hidden-question-image')[0];
 
-      // // DataTransferオブジェクトを使用してファイルリストを作成
       // const dataTransfer = new DataTransfer();
       // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
       // imageInput.files = dataTransfer.files;
-      // submitFormAndShowModal(questionForm);
+      // submitFormAndShowModal(questionForm, result.text);
     }, 'image/png');
   });
 
-
-
-  // 画像選択ボタンがクリック時の処理
-  const imageInputButtonFromCamera = document.querySelector('.image-input-button-from-camera');
-  const inputButton = imageInputButtonFromCamera.querySelector('.image-input');
-  const writeOutImageButton = trimmingImageModalElement.querySelector('.write-out-image');
-  let originalImageFile = null;
-  const trimmingImageModal = new Modal(trimmingImageModalElement, {
-    keyboard: false,
-    backdrop: 'true'
+  //////////
+  // カメラモーダルからの画像選択
+  //////////
+  $('.image-input-button-from-camera').on('click', function (e) {
+    console.log("click");
+    $('.image-input-button-from-camera .image-input')[0].click();
+    e.stopPropagation();
   });
-
-  imageInputButtonFromCamera.addEventListener('click', function () {
-    inputButton.click();
-    return false;
-  });
-  // グローバル変数としてオリジナルの画像ファイルを保持
 
   // 画像が選択されたらプレビューに表示
-  inputButton.addEventListener('change', function(e) {
+  $('.image-input-button-from-camera .image-input').on('change', function(e) {
+    const cameraModal = $('#cameraModal');
+    const trimmingImageModal = $('.trimming-image-modal');
+    const preview = $('.trimming-image-modal .preview');
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        const preview = trimmingImageModalElement.querySelector('.preview');
-        preview.src = e.target.result;
+        preview.attr('src', e.target.result);
       };
       reader.readAsDataURL(file);
 
-      cameraModal.hide();
-      // cameraTrack.stop();
+      cameraModal.modal('hide');
       closeCamera();
 
 
       setBackButtonListener(async () => {
         // ここに戻るボタンが押されたときの処理を記述
-        if (trimmingImageModal._isShown == true) {
-          const preview = trimmingImageModalElement.querySelector('.preview');
-          preview.src = '';
-          trimmingImageModal.hide();
-
-          inputButton.value = '';
+        if (trimmingImageModal.hasClass('show')) {
+          $('.image-input-button-from-camera .image-input').val('');
+          preview.attr('src', '');
+          trimmingImageModal.modal('hide');
+          cameraModal.modal('show');
+          openCamera(cameraModal[0], $('#cameraModal .preview')[0]);
           
-          cameraModal.show();
-          // stream = await openCamera(cameraPreview);
-          openCamera(cameraModalElement, cameraPreview);
-          
-          // cameraTrack = stream.getVideoTracks()[0];
-          // imageCapture = new ImageCapture(cameraTrack);
-          
-          closeCameraButton.addEventListener('click', async () => {
-            cameraModal.hide();
-            // cameraTrack.stop();
+          $('#cameraModal .close-camera-modal').click(async function() {
+            cameraModal.modal('hide');
             closeCamera();
           });
         }
-      }, trimmingImageModalElement, '.return-from-trimming');
+      }, trimmingImageModal[0], '.return-from-trimming');
 
       setWriteOutButtonListener(async () => {
-        const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
-        const preview = trimmingImageModalElement.querySelector('.preview');
+        const preview = $('.trimming-image-modal .preview');
+        const maskRect = $('.trimming-image-modal .mask-rect')[0];
         const svgRect = maskRect.getBoundingClientRect();
-
+        
         // canvas要素を作成
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         const ctx = canvas.getContext('2d');
-      
+        
         // プレビュー画像とコンテナのアスペクト比を計算
-        const imageAspectRatio = preview.naturalWidth / preview.naturalHeight;
-        const containerAspectRatio = preview.offsetWidth / preview.offsetHeight;
-      
+        const imageAspectRatio = preview[0].naturalWidth / preview[0].naturalHeight;
+        const containerAspectRatio = preview.outerWidth() / preview.outerHeight();
+        
         // 実際の表示サイズとコンテナ内でのオフセットを計算
         let renderWidth, renderHeight, offsetX, offsetY;
         if (containerAspectRatio > imageAspectRatio) {
           // コンテナの幅が画像の幅よりも広い場合
-          renderHeight = preview.offsetHeight;
+          renderHeight = preview.outerHeight();
           renderWidth = imageAspectRatio * renderHeight;
-          offsetX = (preview.offsetWidth - renderWidth) / 2;
+          offsetX = (preview.outerWidth() - renderWidth) / 2;
           offsetY = 0;
         } else {
           // コンテナの高さが画像の高さよりも高い場合
-          renderWidth = preview.offsetWidth;
+          renderWidth = preview.outerWidth();
           renderHeight = renderWidth / imageAspectRatio;
           offsetX = 0;
-          offsetY = (preview.offsetHeight - renderHeight) / 2;
+          offsetY = (preview.outerHeight() - renderHeight) / 2;
         }
-      
-        // SVG内でのmaskRectの位置とサイズを取得
-      
+        
         // 実際の座標を計算
-        const x = (svgRect.left - preview.offsetLeft - offsetX) * (preview.naturalWidth / renderWidth);
-        const y = (svgRect.top - preview.offsetTop - offsetY) * (preview.naturalHeight / renderHeight);
-        const width = svgRect.width * (preview.naturalWidth / renderWidth);
-        const height = svgRect.height * (preview.naturalHeight / renderHeight);
-      
-        // canvasのサイズをmaskRectのサイズに合わせる
-        canvas.width = svgRect.width;
-        canvas.height = svgRect.height;
+        const realX = (svgRect.left - preview.offset().left - offsetX) * (preview[0].naturalWidth / renderWidth);
+        const realY = (svgRect.top - preview.offset().top - offsetY) * (preview[0].naturalHeight / renderHeight);
+        const realWidth = svgRect.width * (preview[0].naturalWidth / renderWidth);
+        const realHeight = svgRect.height * (preview[0].naturalHeight / renderHeight);
 
+        canvas.width = realWidth; // 元の画像の解像度に合わせたサイズ
+        canvas.height = realHeight;
+        
         // 画像をロードして切り取り範囲を描画
         const image = new Image();
-        image.src = preview.src;
+        image.src = preview.attr('src');
 
-        // 画像をトリミングして処理する部分
         image.onload = function() {
           // 切り取り範囲をキャンバスに描画
-          ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
-
-          // canvasからblobを生成してOCR処理
+          // ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+          // 実際の切り取り領域をCanvasに描画
+          ctx.drawImage(image, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
+          
+          // canvasからblobを生成してOCR処理（この部分は省略された処理に対する例示です）
           canvas.toBlob(async (blob) => {
-            // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
+            // const result = await processImage(blob);
             // if (result && result.text) {
-            //   const result = await processImage(blob);
-            //   // BlobをObject URLに変換
-            //   const imageUrl = URL.createObjectURL(blob);
-            //   console.log('image:', imageUrl);
-            //   // console.log('Response:', result.text);
+            //   $(".question-form-from-camera").find(".question-input-form").val(result.text);
 
-            //   const questionForm = cameraModalElement.querySelector(".question-form");
-            //   const questionInputForm = questionForm.querySelector(".question-input-form");
-            //   questionInputForm.value = result.text;
-
-            //   // 隠しinput要素を取得
-            //   const imageInput = questionForm.querySelector('.hidden-question-image');
-
-            //   // DataTransferオブジェクトを使用してファイルリストを作成
             //   const dataTransfer = new DataTransfer();
             //   dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-            //   imageInput.files = dataTransfer.files;
-            //   submitFormAndShowModal(questionForm);
-            //   trimmingImageModal.hide();
+            //   $(".question-form-from-camera").find('.hidden-question-image')[0].files = dataTransfer.files;
+            //   submitFormAndShowModal($(".question-form-from-camera")[0], result.text);
+            //   $('#trimmingImageModal').modal('hide');
             // }
           }, 'image/png');
         };
-      }, trimmingImageModalElement, '.write-out-image');
+      }, trimmingImageModal[0], '.write-out-image');
 
-      trimmingImageModal.show();
+      $('#trimmingImageModal').modal('show');
     }
   });
 
-  // 入力画面
-  // DOM取得
-  const writeButton = document.querySelector('.write-button');
-  const writeQuestionModalElement = document.querySelector('.write-question-modal');
-  const returnCameraFromWrite = writeQuestionModalElement.querySelector(".return-camera-from-write");
-  const cameraCircle = writeQuestionModalElement.querySelector('.camera-circle');
-  const imageCircle = writeQuestionModalElement.querySelector('.image-circle');
-  const writeSubmitButton = writeQuestionModalElement.querySelector(".write-submit");
-  const writeQuestionModal = new Modal(writeQuestionModalElement, {
-    keyboard: false,
-    backdrop: 'true'
+  //////////
+  // 質問入力モーダル
+  //////////
+  const writeQuestionModal = $('.write-question-modal')[0];
+  // オプションハンドル
+  handleOption(writeQuestionModal);
+  resetFormToDefault(writeQuestionModal);
+  $(".write-question-modal #closeWrite").on('click', () => {
+    resetFormToDefault(writeQuestionModal);
   });
-  const simpleCameraModalElement = document.querySelector('.simple-camera-modal');
-  const simpleCameraPreview = simpleCameraModalElement.querySelector(".preview");
-  const simpleCameraCaptureButton = simpleCameraModalElement.querySelector('.capture-button');
-  const simpleCameraModal = new Modal(simpleCameraModalElement, {
-    keyboard: false,
-    backdrop: 'true'
-  });
-  let simpleCameraImageCapture;
-  let simpleCameraStream;
-  let simpleCameraTrack;
-
-  const resizableRects = simpleCameraModalElement.querySelector('.resizable-rect');
-  const lightDarkAreas = simpleCameraModalElement.querySelector('.light-dark-area');
-  const maskRectWrite = simpleCameraModalElement.querySelector(".mask-rect");
-  const writeQuery = writeQuestionModalElement.querySelector(".question-input-form")
-  
-  initResizableRect(resizableRects, lightDarkAreas, simpleCameraPreview);
+  handleNoImageButtonClick(writeQuestionModal, ".question-form-from-write", '.write-question-modal');
 
   // 入力画面起動
-  writeButton.addEventListener('click', async () => {
-    cameraModal.hide();
-    // cameraTrack.stop();
+  $('.write-button').on('click', async () => {
+    $('#cameraModal').modal('hide');
     closeCamera();
-    writeQuestionModal.show();
+    $('.write-question-modal').modal('show');
     console.log("show write modal");
   });
   
-  returnCameraFromWrite.addEventListener('click', async () => {
-    if (writeQuestionModal._isShown == true) 
-    {
-      writeQuestionModal.hide();
-      cameraModal.show();
-      // stream = await openCamera(cameraPreview);
-      openCamera(cameraModalElement, cameraPreview);
-      
-      // cameraTrack = stream.getVideoTracks()[0];
-      // imageCapture = new ImageCapture(cameraTrack);
+  $('.return-camera-from-write').on('click', async () => {
+    const writeQuestionModal = $('.write-question-modal');
+    if (writeQuestionModal.hasClass('show')) {
+      writeQuestionModal.modal('hide');
+      $('#cameraModal').modal('show');
 
-      closeCameraButton.addEventListener('click', async () => {
-        cameraModal.hide();
-        // cameraTrack.stop();
-        closeCamera();
-      });
+      openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+
+      resetFormToDefault(writeQuestionModal[0]);
     }
   });
 
-  cameraCircle.addEventListener('click', async () => {
-    writeQuestionModal.hide();
-    simpleCameraModal.show();
-    // simpleCameraStream = await openCamera(simpleCameraPreview);    
-    openCamera(simpleCameraModalElement, simpleCameraPreview);
-    // simpleCameraTrack = simpleCameraStream.getVideoTracks()[0];
-    // simpleCameraImageCapture = new ImageCapture(simpleCameraTrack);
+  $('.write-question-modal .camera-circle').on('click', async () => {
+    console.log("camera")
+    const writeQuestionModal = $('.write-question-modal').eq(0);
+    const simpleCameraModal = $('.simple-camera-modal');
+    const preview = $(".simple-camera-modal .preview");
+    console.log(preview);
+    writeQuestionModal.modal('hide');
+    simpleCameraModal.modal('show');  
+    openCamera(simpleCameraModal[0], preview[0]);
 
     setBackButtonListener(async () => {
       // ここに戻るボタンが押されたときの処理を記述
-      if (simpleCameraModal._isShown == true) {
-        simpleCameraModal.hide();
-        // simpleCameraTrack.stop();
+      if (simpleCameraModal.hasClass('show')) {
+        simpleCameraModal.modal('hide');
         closeCamera();
-        writeQuestionModal.show();
+        writeQuestionModal.modal('show');
       }
-    }, simpleCameraModalElement, '.return-button');
+    }, simpleCameraModal[0], '.return-button');
 
     setCaptureButtonListener(async () => {
       // 撮影ボタンが押されたときの処理を記述
-      // const photo = await simpleCameraImageCapture.takePhoto();
-      // const photo = takePhoto();
       const imageBitmap = await takePhoto();
-      
-      // 元の画像をプレビューに表示
-      // const originalImageUrl = URL.createObjectURL(photo);
-      // console.log(originalImageUrl);
-      // preview.src = originalImageUrl;
-      // カメラアプリ終了処理
-      simpleCameraModal.hide();
-      // simpleCameraTrack.stop();
+
+      simpleCameraModal.modal('hide');
       closeCamera();
 
+      const maskRect = $('.simple-camera-modal .mask-rect')[0];
+      const svgRect = maskRect.getBoundingClientRect();
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      const svgRect = maskRect.getBoundingClientRect();
       
       let scale, offsetX, offsetY;
       // プレビュー画面と実際の画像のアスペクト比を比較し、どちらの辺が基準になるか決定
-      if (imageBitmap.width / imageBitmap.height > simpleCameraPreview.offsetWidth / simpleCameraPreview.offsetHeight) {
+      if (imageBitmap.width / imageBitmap.height > preview.outerWidth() / preview.outerHeight()) {
         // 画像は高さを基準にプレビュー領域を覆う
-        scale = imageBitmap.height / simpleCameraPreview.offsetHeight;
-        offsetX = (simpleCameraPreview.offsetWidth - (imageBitmap.width / scale)) / 2;
+        scale = imageBitmap.height / preview.outerHeight();
+        offsetX = (preview.outerWidth() - (imageBitmap.width / scale)) / 2;
         offsetY = 0;
       } else {
         // 画像は幅を基準にプレビュー領域を覆う
-        scale = imageBitmap.width / simpleCameraPreview.offsetWidth;
+        scale = imageBitmap.width / preview.outerWidth();
         offsetX = 0;
-        offsetY = (simpleCameraPreview.offsetHeight - (imageBitmap.height / scale)) / 2;
+        offsetY = (preview.outerHeight() - (imageBitmap.height / scale)) / 2;
       }
 
       // プレビュー上のmaskRectの実際の画像上での相対位置を計算
-      const realX = (svgRect.left - simpleCameraPreview.offsetLeft - offsetX) * scale;
-      const realY = (svgRect.top - simpleCameraPreview.offsetTop - offsetY) * scale;
+      const realX = (svgRect.left - preview.offset().left - offsetX) * scale;
+      const realY = (svgRect.top - preview.offset().top - offsetY) * scale;
       const realWidth = svgRect.width * scale;
       const realHeight = svgRect.height * scale;
 
@@ -404,183 +304,136 @@ document.addEventListener("turbolinks:load", function() {
       canvas.width = svgRect.width;
       canvas.height = svgRect.height;
 
-      // imageBitmapから実際のmaskRectの範囲だけを切り出して描画
-      // 注意: トリミングされた範囲をキャンバスにフィットさせるため、
-      // drawImageの最後の4つのパラメーターはキャンバスのサイズを使用します。
-      ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
       
       canvas.toBlob(async (blob) => {
         console.log("blob", blob);
-        // const result = await processImage(blob);
+        const result = await processImage(blob);
         const imageUrl = URL.createObjectURL(blob);
         console.log('image:', imageUrl);
-        // writeQuery.value = result.text;
+        $('.write-question-modal .question-input-form').val(result.text);
+
         // // 新しい 'input' イベントを作成
-        // const event = new Event('input', {
-        //   bubbles: true, // イベントをバブリングさせる
-        //   cancelable: true, // イベントをキャンセル可能にする
-        // });
+        const event = new Event('input', {
+          bubbles: true, // イベントをバブリングさせる
+          cancelable: true, // イベントをキャンセル可能にする
+        });
 
         // // テキストエリア要素でイベントを発火
-        // writeQuery.dispatchEvent(event);
+        $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
       }, 'image/png');
-    }, simpleCameraModalElement, '.capture-button');
+    }, simpleCameraModal[0], '.capture-button');
   });
 
-  writeSubmitButton.addEventListener('click', async (event) => {
+  $('.write-question-modal .write-submit').on('click', async (event) => {
     event.preventDefault();
-    if (writeQuery.value !== ''){
-      const questionForm = writeQuestionModalElement.querySelector(".question-form-from-write");
-      console.log(questionForm);
-      writeQuestionModal.hide();
+    if ($('.write-question-modal .question-input-form').val() !== ''){
+      $('.write-question-modal').modal('hide');
       
-      submitFormAndShowModal(questionForm);
+      submitFormAndShowModal($('.write-question-modal .question-form-from-write')[0], $('.write-question-modal .question-input-form').value);
     }
   });
 
-  const writeImageInputButton = writeQuestionModalElement.querySelector('.image-input-write');
-  // 入力画面から画像を選択しトリミング画面を開く
-  const imagePreview = trimmingImageModalElement.querySelector('.preview');
-  const resizableRectsTrim = trimmingImageModalElement.querySelector('.resizable-rect');
-  const lightDarkAreasTrim = trimmingImageModalElement.querySelector('.light-dark-area');
-
-  imageCircle.addEventListener('click', function () {
-    writeImageInputButton.click();
-    return false;
+  $('.write-question-modal .image-circle').on('click', function (e) {
+    console.log("Click");
+    $('.write-question-modal .image-input-write')[0].click();
+    e.stopPropagation();
   });
   
-  writeImageInputButton.addEventListener('change', function(e) {
+  $('.write-question-modal .image-input-write').on('change', function(e) {
+    const writeQuestionModal = $('.write-question-modal').eq(0);
+    const trimmingImageModal = $('.trimming-image-modal');
+    const preview = $('.trimming-image-modal .preview');
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        imagePreview.src = e.target.result;
+        preview.attr('src', e.target.result);
       };
       reader.readAsDataURL(file);
       
-      writeQuestionModal.hide();
-      trimmingImageModal.show();
-      initResizableRect(resizableRectsTrim, lightDarkAreasTrim, imagePreview);
+      writeQuestionModal.modal('hide');
+      trimmingImageModal.modal('show');
 
       setBackButtonListener(async () => {
         // ここに戻るボタンが押されたときの処理を記述
-        if (trimmingImageModal._isShown == true) {
-          const preview = trimmingImageModalElement.querySelector('.preview');
-          preview.src = '';
-          writeImageInputButton.value = '';
-          trimmingImageModal.hide();
-          writeQuestionModal.show();
+        if (trimmingImageModal.hasClass('show')) {
+          $('.write-question-modal .image-input-write').val('');
+          preview.attr('src', '');
+          trimmingImageModal.modal('hide');
+          writeQuestionModal.modal('show');
         }
-      }, trimmingImageModalElement, '.return-from-trimming');
+      }, trimmingImageModal[0], '.return-from-trimming');
       
       setWriteOutButtonListener(async () => {
-        const previewImage = trimmingImageModalElement.querySelector('.preview');
-        const maskRect = trimmingImageModalElement.querySelector('.mask-rect');
+        const maskRect = $('.trimming-image-modal .mask-rect')[0];
+        const svgRect = maskRect.getBoundingClientRect();
       
         // canvas要素を作成
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
       
         // プレビュー画像とコンテナのアスペクト比を計算
-        const imageAspectRatio = imagePreview.naturalWidth / imagePreview.naturalHeight;
-        const containerAspectRatio = imagePreview.offsetWidth / imagePreview.offsetHeight;
+        const imageAspectRatio = preview[0].naturalWidth / preview[0].naturalHeight;
+        const containerAspectRatio = preview.outerWidth() / preview.outerHeight();
       
         // 実際の表示サイズとコンテナ内でのオフセットを計算
         let renderWidth, renderHeight, offsetX, offsetY;
         if (containerAspectRatio > imageAspectRatio) {
           // コンテナの幅が画像の幅よりも広い場合
-          renderHeight = imagePreview.offsetHeight;
+          renderHeight = preview.outerHeight();
           renderWidth = imageAspectRatio * renderHeight;
-          offsetX = (imagePreview.offsetWidth - renderWidth) / 2;
+          offsetX = (preview.outerWidth() - renderWidth) / 2;
           offsetY = 0;
         } else {
           // コンテナの高さが画像の高さよりも高い場合
-          renderWidth = imagePreview.offsetWidth;
+          renderWidth = preview.outerWidth();
           renderHeight = renderWidth / imageAspectRatio;
           offsetX = 0;
-          offsetY = (imagePreview.offsetHeight - renderHeight) / 2;
+          offsetY = (preview.outerHeight() - renderHeight) / 2;
         }
       
-        // SVG内でのmaskRectの位置とサイズを取得
-        const svgRect = maskRect.getBoundingClientRect();
-      
         // 実際の座標を計算
-        const x = (svgRect.left - imagePreview.offsetLeft - offsetX) * (imagePreview.naturalWidth / renderWidth);
-        const y = (svgRect.top - imagePreview.offsetTop - offsetY) * (imagePreview.naturalHeight / renderHeight);
-        const width = svgRect.width * (imagePreview.naturalWidth / renderWidth);
-        const height = svgRect.height * (imagePreview.naturalHeight / renderHeight);
+        const realX = (svgRect.left - preview.offset().left - offsetX) * (preview[0].naturalWidth / renderWidth);
+        const realY = (svgRect.top - preview.offset().top - offsetY) * (preview[0].naturalHeight / renderHeight);
+        const realWidth = svgRect.width * (preview[0].naturalWidth / renderWidth);
+        const realHeight = svgRect.height * (preview[0].naturalHeight / renderHeight);
       
-        // canvasのサイズをmaskRectのサイズに合わせる
-        canvas.width = svgRect.width;
-        canvas.height = svgRect.height;
+        canvas.width = realWidth; // 元の画像の解像度に合わせたサイズ
+        canvas.height = realHeight;
       
         // 画像をロードして切り取り範囲を描画
         const image = new Image();
-        image.src = imagePreview.src;
+        image.src = preview.attr('src');
 
         // 画像をトリミングして処理する部分
         image.onload = async function() {
           // 切り取り範囲をキャンバスに描画
-          ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(image, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
 
           // canvasからblobを生成
           canvas.toBlob(async (blob) => {
             // processImage関数でOCR処理
-            // const result = await processImage(blob);
+            const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
-            // if (result && result.text) {
-            //   writeQuery.value = result.text;
+            if (result && result.text) {
+              $('.write-question-modal .question-input-form').val(result.text);
 
-            //   // 新しい 'input' イベントを作成して発火
-            //   const event = new Event('input', {
-            //     bubbles: true,
-            //     cancelable: true,
-            //   });
-            //   writeQuery.dispatchEvent(event);
-            //   trimmingImageModal.hide();
-            // }
+              // 新しい 'input' イベントを作成して発火
+              const event = new Event('input', {
+                bubbles: true,
+                cancelable: true,
+              });
+              $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
+              trimmingImageModal.hide();
+            }
           }, 'image/png');
         };
-      }, trimmingImageModalElement, '.write-out-image');
+      }, trimmingImageModal[0], '.write-out-image');
     }
   });
 });
-
-
-function submitFormAndShowModal(formElement) {
-  // FormDataを作成
-  var formData = new FormData(formElement);
-
-  // データをサーバに送信
-  fetch('/questions/get_answer', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log(data.content);
-
-    // 新しいモーダルの中身を設定
-    console.log("これがjavascript側での回答", data.content);
-    var content = convertTextToHtml(data.content);
-    var answerModalElement = document.getElementById('answerModal');
-    var answerModal = new Modal(answerModalElement);
-    var modalBody = answerModalElement.querySelector('.answer-modal-body');
-    revealText(content, 0, modalBody);
-
-    // 新しいモーダルを表示
-    answerModal.show();
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('エラーが発生しました。', error);
-  });
-}
-
-function convertNewlines(text) {
-  return text.replace(/\n/g, '<br>');
-}
 
 function setBackButtonListener(listener, element, buttonSelector) {
   var returnButton = element.querySelector(buttonSelector);
@@ -617,19 +470,30 @@ function setWriteOutButtonListener(listener, element, buttonSelector) {
   writeOutButton.addEventListener('click', listener);
 }
 
-function revealText(text, index, element) {
-  element.innerHTML = '';
-  if (index < text.length) {
-    // 次の文字を追加
-    element.innerHTML += text[index];
-    // 次の文字へ
-    setTimeout(() => revealText(text, index + 1, element), 30); // 100ミリ秒ごとに次の文字を表示
-  }
-}
-
 function convertTextToHtml(text) {
   // MarkdownをHTMLに変換
   let html = marked.parse(text);
 
   return html
+}
+
+function handleNoImageButtonClick(modalElement, formSelector, modal) {
+  const noImageButton = modalElement.querySelector('.no_image_button .button');
+  const otherRadioButton = modalElement.querySelector('input[name="option_select"][value="other"]');
+  const workNameInput = modalElement.querySelector('input[name="work_name"]');
+  const textTypeSelect = modalElement.querySelector('select[name="text_type"]');
+  const ancientType = modalElement.querySelector('.translate-ancient-option.active');
+
+  noImageButton.addEventListener('click', async (event) => {
+    event.preventDefault();
+    if (!otherRadioButton.checked && (workNameInput.value && textTypeSelect)) {
+      const questionForm = modalElement.querySelector(formSelector);
+      const questionTitle = textTypeSelect.value + "：「${workNameInput.value}」の" + ancientType.value 
+      $(modal).modal('hide');
+      closeCamera();
+      submitFormAndShowModal(questionForm, questionTitle);
+    } else {
+      alert("作品名や種類を明確にして下さい。");
+    }
+  });
 }

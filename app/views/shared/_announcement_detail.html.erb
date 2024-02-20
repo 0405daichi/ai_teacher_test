@@ -1,0 +1,31 @@
+<!-- app/views/shared/_announcement_detail.html.erb -->
+<div class="announcement-page">
+  <button type="button" class="btn-close close-button" aria-label="Close" style="position: absolute; top: 20px; right: 20px;"></button>
+  <div class="announcement-title">
+    <h5><%= announcement.title %></h5>
+  </div>
+  <div class="announcement-content">
+    <p><%= announcement.content %></p>
+  </div>
+</div>
+
+<style>
+  .announcement-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .announcement-title {
+      flex: 1;
+      width: 100%;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .announcement-content {
+      flex: 9;
+      width: 100%;
+    }
+  }
+</style>

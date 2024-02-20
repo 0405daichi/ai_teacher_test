@@ -1,0 +1,58 @@
+<!-- app/views/some_view/survey_modal.html.erb -->
+<div id="survey-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">アンケート</h5>
+      </div>
+      <div class="modal-body" style="overflow: scroll;">
+        <%= form_with url: survey_responses_path, method: :post, id: 'survey-form' do |form| %>
+          <div class="form-group">
+            <%= form.label :feedback, "サービスに関して気になることや改善して欲しいことはありますか？" %>
+            <%= form.text_area :feedback, class: 'form-control ', id: 'user-feedback', rows: 3, placeholder: "あなたの意見をお聞かせください" %>
+          </div>
+          <div class="form-check">
+            <%= form.radio_button :feedbackOption, '特にない', class: 'form-check-input', id: 'noConcern' %>
+            <%= form.label :feedbackOption, "特にない", class: 'form-check-label', for: 'noConcern' %>
+          </div>
+          <div class="modal-footer">
+            <%= form.submit "送信", class: "btn btn-primary", id: "submit-button" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const feedbackTextArea = document.getElementById('user-feedback');
+    const noConcernRadio = document.getElementById('noConcern');
+    const submitButton = document.getElementById('submit-button');
+    
+    function updateSubmitButtonState() {
+      // テキストエリアにテキストが入力されているか、"特にない"が選択されているかをチェック
+      if (feedbackTextArea.value.trim() !== "" || noConcernRadio.checked) {
+        submitButton.disabled = false; // 送信ボタンを有効にする
+      } else {
+        submitButton.disabled = true; // 送信ボタンを無効にする
+      }
+    }
+
+    function deactivateRadioIfTextareaIsActive() {
+      if (feedbackTextArea.value.trim() !== "") {
+        noConcernRadio.checked = false; // テキストエリアがアクティブならラジオボタンの選択を解除
+        updateSubmitButtonState(); // 送信ボタンの状態を更新
+      }
+    }
+    
+    // テキストエリアの入力イベントにリスナーを追加
+    feedbackTextArea.addEventListener('input', function() {
+      deactivateRadioIfTextareaIsActive();
+      updateSubmitButtonState();
+    });
+    
+    // ラジオボタンの変更イベントにリスナーを追加
+    noConcernRadio.addEventListener('change', updateSubmitButtonState);
+  });
+</script>

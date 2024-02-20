@@ -1,0 +1,10 @@
+// app/views/home/refresh_card.js.erb
+
+// 新しいカードを追加
+$("#all-cards").prepend("<%= j(render 'shared/card', card: @user_card_least) %>");
+$("#user-cards").prepend("<%= j(render 'shared/card', card: @user_card_least) %>");
+
+// 新しいカードに対するイベントハンドラを追加
+$("#all-cards .card-<%= @user_card_least.id %>, #user-cards .card-<%= @user_card_least.id %>").on("click", function() {
+  fetchCardDetails(<%= @user_card_least.id %>);
+});

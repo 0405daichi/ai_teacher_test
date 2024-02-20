@@ -1,0 +1,6 @@
+// app/views/likes/destroy.js.erb
+
+$(".like-<%= @question.id %>").each(function() {
+  $(this).html("<%= j(render 'likes/like', card: @question) %>");
+});
+$("#user-liked-cards .card-<%= @question.id %>").remove();

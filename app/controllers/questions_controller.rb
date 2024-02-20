@@ -29,25 +29,14 @@ class QuestionsController < ApplicationController
     can_edit_own_post = current_user.can_edit? && @question.user == current_user
   
     respond_to do |format|
-      format.html { render :show }
-      format.json { 
-        render json: { 
-          question: @question.content, 
-          image_url: image_url,
-          answer_1: answer_1&.content, 
-          answer_2: answer_2&.content, 
-          answer_3: answer_3&.content, 
-          is_liked: is_liked, 
-          is_bookmarked: is_bookmarked,
-          can_edit_own_post: can_edit_own_post
-        } 
-      }
+      format.html { render :edit }
+      format.js
     end
   end
 
   def edit
     @question = Question.find(params[:id])
-    render :show
+    render :edit
   end
 
   def update
@@ -88,18 +77,32 @@ class QuestionsController < ApplicationController
 
 
   # 編集ボタン（企業アカウントなどがLP的な回答を作成できるように）-----一旦済み
-  # ヒントボタン
-  # ヘルプや推奨される使い方
-  # 作品名とそれが何の部類（漢文,小説）なのかの情報を含める必要がある
+  # 作品名とそれが何の部類（漢文,小説）なのかの情報を含める必要がある-----一旦済み
   # カメラフォーカス-----一旦済み
   # カメラ画面範囲-----一旦済み
-  # 切り取り画像の画質
+  # モーダル切り替え時などの選択内容初期化処理-----一旦済み
+  # カメラモーダル口語訳オプションレイアウトはみ出し-----一旦済み
+  # 切り取り画像の画質-----一旦済み
+  # 検索、ボタン配置-----一旦済み
+  # ログイン方法（snsアカウントでのログイン機能）-----一旦済み(googleのみ/ui,ux修正)(ボタンから画面にいくとgoogle表示されない問題)
+  # ヒントボタン-----一旦済み
+  # ヘルプや推奨される使い方-----一旦済み
+  # アプリ立ち上げ時、カメラ起動時、撮影時、回答作成時のアニメーションやアンケート機能-----一旦済み
+  # 目安箱-----一旦済み
   # 範囲指定やり方
-  # カード表示画面の「質問」「わかりやすく」を押したら折りたたむ
-  # アプリ立ち上げ時、カメラ起動時、撮影時、回答作成時のアニメーションやアンケート機能
-  # 目安箱
-  # モーダル切り替え時などの選択内容初期化処理
-  # ユーザー詳細画面
+  # ユーザー詳細画面-----デザイン整え必須（+編集機能）
+  # 検索結果がない場合の画面-----一旦済み
+  # 各種エラー対応-----一旦済み（メソッドごとのエラー対応必須）
+  # フォームの文字を消したらコンソールエラー-----一旦済み
+  # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）
+  # パスワード変更機能
+  # 入力画面での口語訳オプションで写真だけのイベントと、そのままモーダル閉じた時のオプション初期化
+  # バリデーション
+  # カメラモーダル閉じた後のストリーム
+  # 広告+アンケート
+  # 検索モーダル閉じた時に検索結果リセット
+  # 編集アイコン
+  # 回答再生成イベントハンドル
   
   def get_answer
     puts "params: #{params.inspect}"
@@ -107,9 +110,10 @@ class QuestionsController < ApplicationController
     image = params[:image] # 画像を受け取る
     answer_type = params[:answer_type]
     puts "コントローラー側：#{question}"
-    ai_answer = generate_ai_response(params, question, true)
-    puts "これが生成したai_answer: #{ai_answer}"
-  
+    # ai_answer = generate_ai_response(params, question, true)
+    ai_answer = "test"
+    # puts "これが生成したai_answer: #{ai_answer}"
+
     @question = Question.new(content: question)
     @question.image.attach(image) if image.present? # 画像があれば添付
     @question.has_image = image.present? # 画像の有無を設定
@@ -119,11 +123,24 @@ class QuestionsController < ApplicationController
   
     # ログインしているユーザーのIDを紐づける
     @question.user = current_user if user_signed_in?
+    user_id = @question.user_id if user_signed_in?
   
     puts "@question：#{@question}"
+
+    # アンケートモーダルを表示するか否かのフラグを設定
+    survey_id = 1 # アンケートID
+    show_survey = false # デフォルトではfalseに設定
+
+    if user_signed_in?
+      # 指定したアンケートにまだ回答していない場合のみshow_surveyをtrueにする
+      show_survey = !SurveyResponse.exists?(user_id: current_user.id, survey_id: survey_id)
+
+      # 全てのログインユーザーに表示しない場合
+      # show_survey = false
+    end
   
     if @question.save
-      render json: { content: ai_answer }
+      render json: { content: ai_answer, user_id: user_id, question_id: @question.id, show_survey: show_survey }
     else
       # 保存に失敗した場合の処理を追加
       render json: { error: "Failed to save question and answer." }, status: :unprocessable_entity
@@ -134,7 +151,14 @@ class QuestionsController < ApplicationController
     puts "params: #{params.inspect}"
     question_id = params[:question_id]
     @question = Question.find(question_id)
-    answer_content = generate_ai_response(params, @question.content, false)
+    
+    # 質問に紐付いた答えの中からanswer_typeが1のものを検索し、そのcontentを取得
+    specific_answer_content = @question.answers.find_by(answer_type: 1)&.content
+    
+    question_content = @question.content.presence || specific_answer_content
+    
+    # generate_ai_responseメソッドの第二引数としてquestion_contentを渡す
+    answer_content = generate_ai_response(params, question_content, false)
     answer_type = params[:answer_type]
     
     # 既存の回答の中で、同じanswer_typeを持つものを検索
@@ -160,16 +184,15 @@ class QuestionsController < ApplicationController
         render json: { error: "Failed to save answer." }, status: :unprocessable_entity
       end
     end
-  end  
+  end
 
   def search
     query = params[:query]
-    questions = Question.all.includes(:answer)
+    questions = Question.all.includes(:answers)
   
     calculator = SimilarityCalculator.new
     @results = calculator.similar_questions(query, questions)
     respond_to do |format|
-      format.html { render partial: 'shared/search_results', locals: { results: @results } }
       format.js   # JavaScriptからのリクエストに応答
     end
   end  
@@ -189,6 +212,10 @@ class QuestionsController < ApplicationController
       render json: { error: '画像からテキストを抽出できませんでした。' }, status: :unprocessable_entity
     end
   end  
+
+  def show_card
+    @question = Question.find(params[:id])
+  end
 
   private
 
@@ -212,7 +239,7 @@ class QuestionsController < ApplicationController
     Rails.logger.info ENV.inspect
     api_key = ENV['OPENAI_API_KEY']
     gpt_client = Gpt35Client.new(api_key)
-    response = gpt_client.generate_answer(params, question, first)
+    response = gpt_client.get_answer(params, question, first)
     puts "これがgenerate_ai_responseの答え: #{response}"
     response
   end
