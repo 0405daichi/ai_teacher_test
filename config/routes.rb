@@ -1,11 +1,14 @@
 Rails.application.routes.draw do
   get 'home/index'
-  get 'users/show'
   devise_scope :users do
     get '/users', to: redirect("/users/sign_up")
   end
-  # Deviseの設定を一つにまとめ、OmniAuthのコールバックを含める
-  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+
+  devise_for :users, controllers: {
+    omniauth_callbacks: 'users/omniauth_callbacks',
+    passwords: 'users/passwords' # パスワード再設定のためのカスタマイズされたコントローラーを追加
+  }
+
 
   resources :questions do
     collection do
