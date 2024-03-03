@@ -29,6 +29,8 @@ function refreshCard(user_id, question_id) {
 };
 
 export async function submitFormAndShowModal(formElement, question) {
+  accelerateRotation();
+  $('#loading-overlay').fadeIn();
   formElement.value = question;
   
   // FormDataを作成
@@ -43,16 +45,19 @@ export async function submitFormAndShowModal(formElement, question) {
   .then(data => {
     console.log(data);
     console.log(!data.user_id);
-    if (data.user_id !== "" || data.user_id !== null) {
-      if (data.show_survey) {
-        // アンケートモーダルを表示する処理
-        showSurveyModal(data.user_id, data.question_id);
-      } else {
-        // アンケートをスキップして回答表示処理を直接実行
-        refreshCard(data.user_id, data.question_id);
-        fetchCardDetails(data.user_id);
+    $('#loading-overlay').fadeOut();
+    decelerateRotation();
+    setTimeout(() => {
+      if (data.user_id !== "" || data.user_id !== null) {
+        if (data.show_survey) {
+          // アンケートモーダルを表示する処理
+          showSurveyModal(data.user_id, data.question_id);
+        } else {
+          // アンケートをスキップして回答表示処理を直接実行
+          fetchCardDetails(data.question_id);
+        }
       }
-    }
+    }, 1000);
   })
   .catch(error => {
     console.error('Error:', error);

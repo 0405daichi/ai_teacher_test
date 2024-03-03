@@ -12,7 +12,7 @@ module Prompts
     ・自分の役割に徹する\n
     ・回答は必ず日本語\n
     ・回答のフォーマットはMarkdownで統一\n
-    ・LaTeX表現は使用しない\n"
+    ・数式はLaTeX表現を用いる\n"
 
   common_prompt_break = {
     user_instruction: "\n### 生徒からの指示:\n",

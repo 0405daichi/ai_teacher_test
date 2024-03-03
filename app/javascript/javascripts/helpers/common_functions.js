@@ -16,7 +16,8 @@ function showSlide(index) {
   $slides.eq(index).addClass('active');
 
   // answer-type要素にvalueを設定
-  $('#cardContentModal .answer-type').val(index + 1); // スライドインデックス + 1
+  $('#cardContentModal .generate-div .add-ans-form .answer_type').val(index + 1); // スライドインデックス + 1
+  console.log($('#cardContentModal .generate-div .add-ans-form .answer_type'));
 
   // インジケーターの更新
   $indicators.removeClass('active'); // 全てのインジケーターからactiveを削除
@@ -51,6 +52,61 @@ function setCardDetailsModal(cardId) {
       showTextForIndex(index);
     });
   });
+
+  $('#cardContentModal .re-generate-answer-button').on('click', function(event) {
+    event.preventDefault();
+
+    $('#loading-overlay').fadeIn();
+  
+    // フォームデータを取得
+    var formData = $('#cardContentModal #regenerate-form').serialize();
+  
+    // Ajaxリクエストを送信
+    $.ajax({
+      url: "/questions/add_new_answer", // フォームのアクションURL
+      type: "POST", // HTTPメソッド
+      data: formData, // 送信するデータ
+      dataType: "script", // 期待するレスポンスのタイプ
+      success: function(script) {
+        $('#loading-overlay').fadeOut();
+      },
+      error: function(xhr, status, error) {
+        // エラー時の処理
+        console.error("Error: " + status + " " + error);
+      }
+    });
+  });  
+
+  // '.custom-button'がクリックされたときのイベントハンドラを定義
+  $('.custom-button').click(function(e) {
+    e.preventDefault(); // デフォルトのフォーム送信を防止
+  
+    // クリックされた'.custom-button'の最も近い親フォーム要素を探し
+    var form = $(this).closest('form');
+  
+    // フォームデータをシリアライズ
+    var formData = form.serialize();
+  
+    // Ajaxリクエストを送信
+    $.ajax({
+      url: form.attr('action'), // フォームのアクション属性からURLを取得
+      type: "POST", // HTTPメソッド
+      data: formData, // 送信するデータ
+      dataType: "script", // 期待するレスポンスのタイプ
+  
+      // 成功時のコールバック
+      success: function(response) {
+        // 成功時の処理をここに記述
+        // 例: 成功メッセージの表示、フォームフィールドのクリアなど
+      },
+  
+      // エラー時の処理
+      error: function(xhr, status, error) {
+        console.error("Error: " + status + " " + error);
+        // エラーメッセージの表示やフォームの状態を元に戻す処理など
+      }
+    });
+  });  
 }
 
 function showCardDetailsModal(cardId) {

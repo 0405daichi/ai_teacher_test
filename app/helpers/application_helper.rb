@@ -1,6 +1,14 @@
 module ApplicationHelper
+  require 'katex'
   require 'redcarpet'
   require 'redcarpet/render_strip'
+
+  # TeX数学式をHTMLにレンダリングするメソッド
+  def render_tex(math_expression)
+    Katex.render(math_expression)
+  rescue  => e
+    "数式のレンダリング中にエラーが発生しました: #{e.message}"
+  end
 
   # マークダウン形式のテキストをHTMLに変換するメソッド
   def markdown(text)

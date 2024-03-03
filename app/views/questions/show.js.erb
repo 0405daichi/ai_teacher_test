@@ -1,1 +1,18 @@
+// app/views/questions/show.js.erb
 $("#main-body").prepend("<%= j(render 'show', card: @question) %>");
+
+document.querySelectorAll('.answer-content').forEach(function(el) {
+  renderMathInElement(el, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\[", right: "\\]", display: true},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "$", right: "$", display: false},
+    ]
+  });
+
+  // ShowdownでMarkdownをHTMLに変換
+  var converter = new showdown.Converter();
+  var html = converter.makeHtml(el.innerHTML);
+  el.innerHTML = html;
+});

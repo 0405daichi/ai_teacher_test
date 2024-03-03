@@ -6,6 +6,7 @@ require_relative 'prompts'
 require 'tiktoken_ruby'
 
 class Gpt35Client
+  include Prompts
   MAX_TOKENS = 100000 # APIリクエストごとの最大トークン数
   MAX_RETRIES = 3 # 最大再試行回数
   RETRY_WAIT = 2 # 再試行までの待機時間（秒）
@@ -34,6 +35,7 @@ class Gpt35Client
     else
       prompt = re_generate_prompt(params) + question
     end
+    puts "これがプロンプトですよーーーーーー#{prompt}"
     prompt
   end
 
@@ -100,10 +102,12 @@ class Gpt35Client
         }
       )
 
+      
       if response
         content = response['choices'][0]['message']['content'].strip
         return content
       else
+        puts "これがレスポンスですよーーーー#{response}"
         puts 'リクエストに失敗しました。'
         return nil
       end
@@ -203,12 +207,13 @@ class Gpt35Client
   end  
 
   def re_generate_prompt(params)
+    puts "これがアンサータイプですよーーー#{params['answer_type']}"
     case params['answer_type']
-    when 1
+    when '1'
       return RE_GENERATE_USER_PROMPTS[:answer_type_1]
-    when 2
+    when '2'
       return RE_GENERATE_USER_PROMPTS[:answer_type_2]
-    when 3
+    when '3'
       return RE_GENERATE_USER_PROMPTS[:answer_type_3]
     else
       return RE_GENERATE_USER_PROMPTS[:answer_type_1]

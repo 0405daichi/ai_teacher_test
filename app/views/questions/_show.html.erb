@@ -24,31 +24,49 @@
               <div class="answer-type" style="display: none;"></div>
               <div class="custom-slide answer-1 active">
                 <% if card.answers.exists?(answer_type: 1) %>
-                  <%= markdown(card.answers.find_by(answer_type: 1).content) %>
+                  <%= render 'answer_content', content: card.answers.find_by(answer_type: 1).content %>
                 <% else %>
-                  <p>わかりやすい回答を作成しましょう</p>
-                  <div class="custom-button">
-                    <%= render 'shared/svg/submit' %>
+                  <div class="no-answer">
+                    <p>わかりやすい回答を作成しましょう</p>
+                    <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                      <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
+                      <%= f.hidden_field :question_id, class: "question_id", value: card.id %>
+                      <div class="custom-button">
+                        <%= render 'shared/svg/submit' %>
+                      </div>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
               <div class="custom-slide answer-2">
                 <% if card.answers.exists?(answer_type: 2) %>
-                  <%= card.answers.find_by(answer_type: 2).content %>
+                  <%= render 'answer_content', content: card.answers.find_by(answer_type: 2).content %>
                 <% else %>
-                  <p>小学生にもわかるような回答を作成しましょう</p>
-                  <div class="custom-button">
-                    <%= render 'shared/svg/submit' %>
+                  <div class="no-answer">
+                    <p>小学生にもわかるような回答を作成しましょう</p>
+                    <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                      <%= f.hidden_field :answer_type, class: "answer_type", value: 2 %>
+                      <%= f.hidden_field :question_id, class: "question_id", value: card.id %>
+                      <div class="custom-button">
+                        <%= render 'shared/svg/submit' %>
+                      </div>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
               <div class="custom-slide answer-3">
                 <% if card.answers.exists?(answer_type: 3) %>
-                  <%= card.answers.find_by(answer_type: 3).content %>
+                  <%= render 'answer_content', content: card.answers.find_by(answer_type: 3).content %>
                 <% else %>
-                  <p>回答を例え話で作成しましょう</p>
-                  <div class="custom-button">
-                    <%= render 'shared/svg/submit' %>
+                  <div class="no-answer">
+                    <p>回答を例え話で作成しましょう</p>
+                    <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                      <%= f.hidden_field :answer_type, class: "answer_type", value: 3 %>
+                      <%= f.hidden_field :question_id, class: "question_id", value: card.id %>
+                      <div class="custom-button">
+                        <%= render 'shared/svg/submit' %>
+                      </div>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
@@ -67,9 +85,13 @@
       <div class="modal-footer" style="height: auto;">
         <div class="footer-left">
           <div class="generate-div">
-            <div class="re-generate-answer-button">
-              <%= render 'shared/svg/reload' %>
-            </div>
+            <%= form_with url: "/questions/add_new_answer", id: "regenerate-form", class: "add-ans-form", method: :post do |f| %>
+              <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
+              <%= f.hidden_field :question_id, class: "question_id", value: card.id %>
+              <div class="re-generate-answer-button">
+                <%= render 'shared/svg/reload' %>
+              </div>
+            <% end %>
           </div>
           <% if current_user.can_edit? && card.user == current_user %>
             <div class="edit-card-buttons">
@@ -187,13 +209,16 @@
     margin: 5%;
   }
 
-  .custom-button .active svg {
-    position: absolute; /* 絶対位置指定 */
-    top: 50%; /* 上部から50%の位置 */
-    left: 50%; /* 左から50%の位置 */
-    transform: translate(-50%, -50%); /* 中央に配置 */
-    width: 60%; /* SVGのサイズ（必要に応じて調整） */
-    height: 60%; /* SVGのサイズ（必要に応じて調整） */
+  .custom-button {
+    display: inline-block; /* 必要に応じて変更してください */
+    border-radius: 50%; /* 丸い形状 */
+    transition: background-color 0.3s ease; /* 背景色変化のアニメーション */
+    padding: 10px; /* ボタン内のスペース */
+    cursor: pointer; /* ホバー時にカーソルをポインターに */
+  }
+
+  .custom-button:hover {
+    background-color: #FFFCF3; /* ホバー時の背景色 - お好みで色を変更してください */
   }
 
   .footer-left {
@@ -252,6 +277,30 @@
 
   .custom-carousel-inner {
     height: 100%;
+  }
+
+  .no-answer {
+    text-align: center;
+  }
+
+  .like svg {
+    stroke: black;
+  }
+
+  .bookmark svg {
+    stroke: black;
+  }
+
+  .re-generate-answer-button {
+    display: inline-block; /* 必要に応じて変更してください */
+    border-radius: 50%; /* 丸い形状 */
+    transition: background-color 0.3s ease; /* 背景色変化のアニメーション */
+    padding: 10px; /* ボタン内のスペース */
+    cursor: pointer; /* ホバー時にカーソルをポインターに */
+  }
+
+  .re-generate-answer-button:hover {
+    background-color: #FFFCF3; /* ホバー時の背景色 - お好みで色を変更してください */
   }
 }
 </style>

@@ -8,7 +8,7 @@
       <%= card.content %> <!-- 画像がなければコンテンツを表示 -->
     <% end %>
   </div>
-  <div class="card-bottom">
+  <div class="card-footer">
     <div class="like like-<%= card.id%>" id="like-<%= card.id%>" style="display: flex;">
       <%= render "likes/like", card: card %>
     </div>

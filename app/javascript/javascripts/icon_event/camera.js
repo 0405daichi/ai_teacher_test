@@ -31,7 +31,9 @@ document.addEventListener("turbolinks:load", function() {
       setupPanelToggleAndValidation();
     }
 
-    openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+    setTimeout(() => {
+      openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+    }, 500); // 500ミリ秒の遅延
 
     $('#cameraModal .close-camera-modal').click(async function() {
       console.log("Camera click");
@@ -138,7 +140,9 @@ document.addEventListener("turbolinks:load", function() {
           preview.attr('src', '');
           trimmingImageModal.modal('hide');
           cameraModal.modal('show');
-          openCamera(cameraModal[0], $('#cameraModal .preview')[0]);
+          setTimeout(() => {
+            openCamera(cameraModal[0], $('#cameraModal .preview')[0]);
+          }, 500); // 500ミリ秒の遅延
           
           $('#cameraModal .close-camera-modal').click(async function() {
             cameraModal.modal('hide');
@@ -243,7 +247,10 @@ document.addEventListener("turbolinks:load", function() {
       writeQuestionModal.modal('hide');
       $('#cameraModal').modal('show');
 
-      openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+      // カメラを開く前に少し待つ
+      setTimeout(() => {
+        openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+      }, 500); // 500ミリ秒の遅延
 
       resetFormToDefault(writeQuestionModal[0]);
     }
@@ -257,7 +264,9 @@ document.addEventListener("turbolinks:load", function() {
     console.log(preview);
     writeQuestionModal.modal('hide');
     simpleCameraModal.modal('show');  
-    openCamera(simpleCameraModal[0], preview[0]);
+    setTimeout(() => {
+      openCamera(simpleCameraModal[0], preview[0]);
+    }, 500); // 500ミリ秒の遅延
 
     setBackButtonListener(async () => {
       // ここに戻るボタンが押されたときの処理を記述

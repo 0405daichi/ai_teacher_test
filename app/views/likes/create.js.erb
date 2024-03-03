@@ -4,3 +4,7 @@ $(".like-<%= @question.id %>").each(function() {
   $(this).html("<%= j(render 'likes/like', card: @question) %>");
 });
 $("#user-liked-cards").prepend("<%= j(render 'shared/card', card: @question) %>");
+
+$("#user-liked-cards .card-<%= @question.id %> .card-body").on('click', function() {
+  fetchCardDetails(<%= @question.id %>);
+});

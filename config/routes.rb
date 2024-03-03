@@ -34,6 +34,8 @@ Rails.application.routes.draw do
   get 'announcements/:id/detail', to: 'announcements#detail', as: 'announcement_detail'
 
   get '/refresh_card/:id', to: 'home#refresh_card'
+  get '/refresh_all_cards', to: 'home#refresh_all_cards'
+  get '/add_more_cards', to: 'home#add_more_cards'
 
   post '/survey_responses', to: 'survey_responses#create'
   post '/feedback', to: 'survey_responses#create_feedback'

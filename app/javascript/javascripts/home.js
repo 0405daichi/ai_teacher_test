@@ -1,6 +1,7 @@
 // app/javascript/javascripts/home.js
 
 import { write } from "@popperjs/core";
+import { closeCamera } from './helpers/cameraFunctions';
 
 document.addEventListener('turbolinks:load', () => {
   if ($('.center-point').length === 0) return;
@@ -47,14 +48,53 @@ document.addEventListener('turbolinks:load', () => {
   const numCircles = 5;
   const circleContainer = document.getElementById('circles');
   const radius = 100;
-  const rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
-  const centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
+  let rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
+  let centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
   // 中心の画像を取得
   const centerPoint = document.querySelector('.center-point');
   centerPoint.dataset.angle = 0;
 
   // 'svg-container'の子要素として配置されたSVGを全て取得
   const svgElements = document.querySelector('#svg-container').children;
+
+  // 回転を加速させる関数
+  function accelerateRotation() {
+    rotationSpeed = 5; // 加速させたい回転速度に調整
+    centerRotationSpeed = -5; // 中心の回転も加速
+  }
+
+  // 回転を減速させて元の速度に戻す関数
+  function decelerateRotation() {
+    // 目標の回転速度
+    const targetRotationSpeed = 0.1;
+    const targetCenterRotationSpeed = -0.1;
+  
+    // 減速処理を行う関数
+    function step() {
+      // 現在の回転速度と目標の回転速度の差を計算
+      const speedDifference = rotationSpeed - targetRotationSpeed;
+      const centerSpeedDifference = centerRotationSpeed - targetCenterRotationSpeed;
+  
+      // 差が十分に小さくなったら、目標の回転速度に設定して終了
+      if (Math.abs(speedDifference) < 0.01 && Math.abs(centerSpeedDifference) < 0.01) {
+        rotationSpeed = targetRotationSpeed;
+        centerRotationSpeed = targetCenterRotationSpeed;
+      } else {
+        // 現在の回転速度を少し減速させる
+        rotationSpeed -= speedDifference * 0.1; // ここの係数を調整して減速率を変更
+        centerRotationSpeed -= centerSpeedDifference * 0.1; // 係数を調整
+  
+        // 次のフレームで再度減速処理を実行
+        requestAnimationFrame(step);
+      }
+    }
+  
+    // 減速処理の開始
+    step();
+  }  
+
+  window.accelerateRotation = accelerateRotation;
+  window.decelerateRotation = decelerateRotation;
 
   for (let i = 0; i < numCircles; i++) {
     const angle = (i * 360) / numCircles;
@@ -303,6 +343,12 @@ document.addEventListener('turbolinks:load', () => {
   // textareaのclickイベントでbodyのclickイベントをキャンセル
   textarea.addEventListener('click', function(e) {
       e.stopPropagation();
+  });
+
+  $('.modal').on('hidden.bs.modal', function () {
+    // ここにすべてのモーダルが閉じた後に実行したい関数やコードを記述します
+    closeCamera();
+    console.log("閉じました。");
   });
 });
 

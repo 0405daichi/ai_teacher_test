@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>リンク生成</title>
+</head>
+<body>
+    <h2>リンク文字列入力（先頭の「h」抜き）</h2>
+    <input type="text" id="linkInput" placeholder="ttp://example.com">
+    <button onclick="openLink()">リンクを開く</button>
+
+    <script>
+        function openLink() {
+            // 入力値を取得
+            var inputElement = document.getElementById("linkInput");
+            var input = inputElement.value;
+            // 先頭に「h」を追加して完全なURLを生成
+            var fullUrl = "h" + input;
+            
+            // 生成したURLを新しいタブで開く
+            window.open(fullUrl, "_blank");
+
+            // 入力フィールドを空にする
+            inputElement.value = "";
+        }
+
+        // エンターキーでリンクを開くイベントリスナーを追加
+        document.getElementById("linkInput").addEventListener("keypress", function(event) {
+            // エンターキーが押された場合
+            if (event.keyCode === 13 || event.which === 13) {
+                // ボタンのクリックイベントを実行
+                openLink();
+
+                // フォームの送信を防ぐ
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

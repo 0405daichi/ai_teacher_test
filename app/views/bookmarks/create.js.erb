@@ -2,3 +2,7 @@ $(".bookmark-<%= @question.id%>").each(function() {
   $(this).html("<%= j(render 'bookmarks/bookmark', card: @question) %>");
 });
 $("#user-bookmarked-cards").prepend("<%= j(render 'shared/card', card: @question) %>");
+
+$("#user-bookmarked-card .card-<%= @question.id %> .card-body").on('click', function() {
+  fetchCardDetails(<%= @question.id %>);
+});

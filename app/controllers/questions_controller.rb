@@ -89,20 +89,25 @@ class QuestionsController < ApplicationController
   # ヘルプや推奨される使い方-----一旦済み
   # アプリ立ち上げ時、カメラ起動時、撮影時、回答作成時のアニメーションやアンケート機能-----一旦済み
   # 目安箱-----一旦済み
-  # 範囲指定やり方
   # ユーザー詳細画面-----デザイン整え必須（+編集機能）
   # 検索結果がない場合の画面-----一旦済み
   # 各種エラー対応-----一旦済み（メソッドごとのエラー対応必須）
   # フォームの文字を消したらコンソールエラー-----一旦済み
+  # 編集アイコン-----一旦済み
+  # 検索モーダル閉じた時に検索結果リセット-----一旦済み
+  # 回答一覧に表示する回答の数を調整-----一旦済み
+  # いいねした時の更新-----一旦済み
+  # 回答再生成イベントハンドル-----一旦済み
+  # 範囲指定やり方
   # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）
   # パスワード変更機能
   # 入力画面での口語訳オプションで写真だけのイベントと、そのままモーダル閉じた時のオプション初期化
   # バリデーション
   # カメラモーダル閉じた後のストリーム
   # 広告+アンケート
-  # 検索モーダル閉じた時に検索結果リセット
-  # 編集アイコン
-  # 回答再生成イベントハンドル
+  # 再生成時のプロンプト改善
+  # 回答生成タイムアウト時の処理
+  # 一覧表示で表示カード更新後にカード詳細開けない
   
   def get_answer
     puts "params: #{params.inspect}"
@@ -112,6 +117,7 @@ class QuestionsController < ApplicationController
     puts "コントローラー側：#{question}"
     # ai_answer = generate_ai_response(params, question, true)
     ai_answer = "test"
+    sleep 5
     # puts "これが生成したai_answer: #{ai_answer}"
 
     @question = Question.new(content: question)
@@ -158,30 +164,22 @@ class QuestionsController < ApplicationController
     question_content = @question.content.presence || specific_answer_content
     
     # generate_ai_responseメソッドの第二引数としてquestion_contentを渡す
-    answer_content = generate_ai_response(params, question_content, false)
+    # answer_content = generate_ai_response(params, question_content, false)
+    answer_content = 'test'
+    sleep 5
     answer_type = params[:answer_type]
     
     # 既存の回答の中で、同じanswer_typeを持つものを検索
     existing_answer = @question.answers.find_by(answer_type: answer_type)
     
-    if existing_answer
-      # 既存の回答が見つかった場合、contentを更新
-      existing_answer.update(content: answer_content)
-      if existing_answer.save
-        render json: { content: existing_answer.content }
-      else
-        render json: { error: "Failed to update answer." }, status: :unprocessable_entity
-      end
-    else
-      # 新しい回答を生成
-      @answer = @question.answers.build(content: answer_content, answer_type: answer_type)
-      
+    @answer = existing_answer || @question.answers.build(answer_type: answer_type)
+    @answer.content = answer_content
+
+    respond_to do |format|
       if @answer.save
-        # 保存成功時の処理
-        render json: { content: @answer.content }
+        format.js { render 'add_new_answer', locals: { answer: @answer } } # update_answer.js.erb を呼び出す
       else
-        # 保存失敗時の処理
-        render json: { error: "Failed to save answer." }, status: :unprocessable_entity
+        format.json { render json: { error: @answer.errors.full_messages.to_sentence }, status: :unprocessable_entity }
       end
     end
   end

@@ -1,5 +1,8 @@
 <!-- app/views/home/index.html.erb -->
 <div id="overlay" class="overlay home"></div>
+<div id="loading-overlay" style="display:none;">
+  <div class="loading-message">回答を考えています...</div>
+</div>
 <div class="center-point"><%= image_tag 'logo-kids.png' %></div>
 <div id="circles"></div>
 <div class="faq-icon" style="display: block;">
@@ -14,8 +17,8 @@
     <h1>よくあるご質問</h1>
   </div>
   <div class="faq-details">
-    <div class="faq-details-title">
-      <h2 style="margin: 5% 5% 0 5%; text-align: center;">アプリの基本的な機能</h2>
+    <div class="faq-details-title" style="margin: 5% 5% 0 5%;">
+      <h2 style="text-align: center;">アプリの基本的な機能</h2>
     </div>
     <details class="details js-details">
       <summary class="details-summary js-details-summary"><span class="btn"></span>カメラ</summary>
@@ -59,8 +62,8 @@
         </div>
       </div>
     </details>
-    <div class="faq-details-title">
-      <h2 style="margin: 5% 5% 0 5%; text-align: center;">質問について</h2>
+    <div class="faq-details-title" style="margin: 5% 5% 0 5%;">
+      <h2 style="text-align: center;">質問について</h2>
     </div>
     <details class="details js-details">
       <summary class="details-summary js-details-summary"><span class="btn"></span>写真の撮り方</summary>
@@ -209,12 +212,19 @@ $(accordionSummary).each(function() {
 });
 </script>
 <style>
-  .details {
-    border-bottom: 1px solid black;
-    &:last-of-type {
-      border-bottom: 1px solid black;
-    } 
+  .faq-title {
+    padding: 20px;
   }
+
+  .faq-details-title {
+    border-radius: 50px;
+    padding: 10px;
+  }
+
+  .details {
+    /* border-radius: solid 1px none; */
+  }
+
   .details-summary {
     position: relative;
     display: block;
@@ -224,6 +234,8 @@ $(accordionSummary).each(function() {
     &:hover {
       cursor: pointer;
       opacity: 0.8;
+      border-radius: 50px;
+      background-color: #F3F6FF;
     }
     .btn {
       position: absolute;
@@ -237,7 +249,7 @@ $(accordionSummary).each(function() {
           &:before,
           &:after {
               content: "";
-              background-color: #fff;
+              background-color: #F3F6FF;
               border-radius: 10px;
               width: 18px;
               height: 4px;
@@ -291,6 +303,30 @@ $(accordionSummary).each(function() {
     z-index: 9999;
   }
 
+  #loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000; /* 必要に応じて調整 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading-message {
+    color: white;
+    font-size: 20px; /* 必要に応じて調整 */
+    animation: bounce 1s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  
   .faq-icon {
     position: absolute;
     bottom: 0;
@@ -333,7 +369,7 @@ $(accordionSummary).each(function() {
     width: 90%;
     z-index: 4;
     display: none; /* 初期状態では非表示 */
-    overflow: overlay;
+    overflow: auto;
   }
 
   #faq-contents.visible {
@@ -347,7 +383,6 @@ $(accordionSummary).each(function() {
 
   .faq-details {
     max-height: 100%;
-    overflow-y: auto;
   }
 
   .center-point {

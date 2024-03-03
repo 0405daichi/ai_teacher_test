@@ -1,4 +1,4 @@
-// cameraFunctions.js
+// app/javascript/javascripts/helpers/cameraFunctions.js
 
 // 調べている間は「起動中」などのモーダルを表示する ※必須
 // capabilitiesは設定され得る値なのでsettings(実際に使用されている値)と違う場合があるかも知れない ※必須

@@ -15,25 +15,50 @@ document.addEventListener("turbolinks:load", function() {
   // インスタグラムアプリ起動処理
   $('#svg-search').on('click', async (e) => {
     const open = await fadeOutCirclesSequentially();
-    if (open == true)
-    {
+    if (open == true) {
       const openEnd = await fadeInCirclesSequentially();
-      if (openEnd) 
-      {
+      if (openEnd) {
         $('.instagramModal').modal('show');
-
-        $(".instagramModal .card").on('click', function () {
-          const id = $(this).data('card-id');
-          fetchCardDetails(id)
+  
+        // 現在のカードの内容を保存
+        const originalCardsContent = $("#all-cards").html();
+        // 既に表示されているカードの数を取得
+        var existingCardsCount = $("#all-cards").children().length;
+  
+        // 最新の質問を取得して表示
+        $.ajax({
+          url: '/refresh_all_cards',
+          type: 'GET',
+          dataType: 'script',
+          data: { existing_cards_count: existingCardsCount },
+          success: function(response) {
+            // 成功時の処理はここに記述（refresh_all_card.js.erb で処理される）
+          },
+          error: function(xhr, status, error) {
+            // 失敗時には元のカードの内容を再表示
+            $("#all-cards").html(originalCardsContent);
+            console.error('最新の質問の取得に失敗しました。', error);
+          }
         });
-
+  
+        $(".instagramModal .card").each(function() {
+          const card = $(this); // 現在のカードを取得
+          card.find('.card-body').on('click', function() {
+            const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
+            fetchCardDetails(id);
+          });
+        });
+  
+        $("#user-search-cards .search-results").empty();
+        $("#no-results-message").hide(); // メッセージを隠す
+        $('.instagramModal .search-textarea').val('');
+  
         if (!isUserLoggedIn()) return;
-        // Homeボタンをクリックしてアクティブ状態にする
         $('.instagramModal .circle1')[0].click();
         e.stopPropagation();
       }
     }
-  });
+  });  
 
   // jQueryを使用したコード
   $('.option-circle').click(function() {
@@ -54,6 +79,40 @@ document.addEventListener("turbolinks:load", function() {
       $('.cards-panel-modal-body').scrollTop(0); // スクロール位置をトップに戻す
     }
   });
+
+  const modalBody = document.querySelector('.instagramModal .modal-body');
+
+  modalBody.addEventListener('scroll', function() {
+    const scrollHeight = this.scrollHeight;
+    const scrollTop = this.scrollTop;
+    const containerHeight = this.clientHeight;
+
+    if (scrollTop + containerHeight >= scrollHeight) {
+      let activeCategory = $('.bottom-circles .circle.option-circle.active').data('category');
+      loadMoreCards(activeCategory);
+    }
+  });
+  
+  function loadMoreCards(activeCategory) {
+    let existingCardsCount = $(`.${activeCategory}-cards .card`).length;
+    console.log(existingCardsCount);
+    
+    $.ajax({
+      url: '/add_more_cards',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        category: activeCategory,
+        existing_cards_count: existingCardsCount
+      },
+      success: function(response) {
+        // 成功時の処理はサーバー側のスクリプトで行われます。
+      },
+      error: function(xhr, status, error) {
+        console.error('カードのロードに失敗しました。', error);
+      }
+    });
+  }  
 
   $('.instagramModal .search-form').on('submit', function(event) {
     event.preventDefault(); // フォームの送信を阻止
@@ -96,7 +155,9 @@ document.addEventListener("turbolinks:load", function() {
     const preview = $(".simple-camera-modal .preview");
     instagramModal.modal('hide');
     simpleCameraModal.modal('show');
-    openCamera(simpleCameraModal[0], preview[0]);
+    setTimeout(() => {
+      openCamera(simpleCameraModal[0], preview[0]);
+    }, 500); // 500ミリ秒の遅延
 
     setBackButtonListener(async () => {
       // ここに戻るボタンが押されたときの処理を記述

@@ -1,0 +1,8 @@
+// add_new_answer.js.erb
+<% if @answer.persisted? %>
+  // 成功した場合の処理。例えば、回答を表示する
+  $(".answer-<%= @answer.answer_type %>").hide().html("<%= j(render(partial: 'answer_content', locals: { content: @answer.content })) %>").fadeIn(1000);
+<% else %>
+  // エラーが発生した場合の処理
+  alert("回答の保存に失敗しました。");
+<% end %>

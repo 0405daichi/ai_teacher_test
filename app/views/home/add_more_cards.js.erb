@@ -1,0 +1,19 @@
+// app/views/home/add_more_cards_cards.js.erb
+<% if @cards.present? %>
+  var cardsHtml = '<%= j(render partial: "shared/card", collection: @cards, as: :card) %>';
+  $('#<%= @category %>-cards').append(cardsHtml);
+
+  // 追加されたカードに対してイベントリスナーを設定
+  // カードのクラス名や共通の属性を使ってセレクタを指定する
+  $('#<%= @category %>-cards .card').each(function() {
+    var cardId = $(this).data('card-id');
+    $(this).on('click', function() {
+      fetchCardDetails(cardId);
+    });
+  });
+
+  console.log("OK");
+<% else %>
+  console.log("NO");
+  console.log('表示する質問はありません。');
+<% end %>
