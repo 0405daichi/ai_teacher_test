@@ -56,7 +56,7 @@ function setCardDetailsModal(cardId) {
   $('#cardContentModal .re-generate-answer-button').on('click', function(event) {
     event.preventDefault();
 
-    $('#loading-overlay').fadeIn();
+    toggleOverlay('show', 'generate');
   
     // フォームデータを取得
     var formData = $('#cardContentModal #regenerate-form').serialize();
@@ -68,11 +68,13 @@ function setCardDetailsModal(cardId) {
       data: formData, // 送信するデータ
       dataType: "script", // 期待するレスポンスのタイプ
       success: function(script) {
-        $('#loading-overlay').fadeOut();
+        toggleOverlay('hide');
       },
       error: function(xhr, status, error) {
+        toggleOverlay('hide');
         // エラー時の処理
         console.error("Error: " + status + " " + error);
+        alert(`エラーが発生しました`);
       }
     });
   });  
@@ -155,3 +157,32 @@ function isUserLoggedIn() {
 }
 
 window.isUserLoggedIn = isUserLoggedIn;
+
+export function toggleOverlay(action, messageType) {
+  const overlay = $('#loading-overlay');
+  const messageElement = overlay.find('.loading-message');
+  let message = '';
+
+  // メッセージタイプに応じたメッセージを設定
+  switch(messageType) {
+    case 'generate':
+      message = '回答を考えています...';
+      break;
+    case 'camera-setting':
+      message = 'カメラを起動しています...';
+      break;
+    default:
+      message = '処理中です...';
+  }
+
+  // メッセージを更新
+  messageElement.text(message);
+
+  // アクションに応じたオーバーレイの表示・非表示
+  if(action === 'show') {
+    overlay.fadeIn();
+  } else if(action === 'hide') {
+    overlay.fadeOut();
+  }
+}
+window.toggleOverlay = toggleOverlay;

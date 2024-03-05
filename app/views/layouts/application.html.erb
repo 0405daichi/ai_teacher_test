@@ -20,6 +20,13 @@
   </head>
 
   <body id="main-body" class="<%= user_signed_in? ? 'user-logged-in' : 'user-logged-out' %>">
+    <% flash.each do |key, message| %>
+      <% if key == 'alert' || key == 'error' %>
+        <div class="flash-message <%= key %>"><%= message %></div>
+      <% end %>
+    <% end %>
+
+
     <%= yield %>
   </body>
 </html>
@@ -33,4 +40,17 @@ document.getElementById('main-body').style.height=vh+'px';
  #main-body {
   background-color: #F3F6FF;
  }
+
+.flash-message {
+  padding: 10px 0;
+  margin: 0;
+  background-color: #f44336; /* 赤色でエラーメッセージを表示 */
+  color: white;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* 他の要素より前面に表示 */
+}
+
 </style>

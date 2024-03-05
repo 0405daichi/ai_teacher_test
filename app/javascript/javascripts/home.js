@@ -22,6 +22,8 @@ document.addEventListener('turbolinks:load', () => {
 
   // クロスアイコンのクリックイベント
   crossIcon.addEventListener('click', function() {
+    faqContent.scrollTop = 0;
+    
     circleBg.classList.remove('circleactive'); // 円の拡大を解除
     faqContent.classList.remove('visible'); // FAQコンテンツを非表示
 

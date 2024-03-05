@@ -98,16 +98,19 @@ class QuestionsController < ApplicationController
   # 回答一覧に表示する回答の数を調整-----一旦済み
   # いいねした時の更新-----一旦済み
   # 回答再生成イベントハンドル-----一旦済み
+  # パスワード変更機能-----一旦済み(gmailのみ検証済み,Googleアカウントでログインしたユーザーは考慮していない)
+  # 一覧表示で表示カード更新後にカード詳細開けない-----一旦済み
+  # 回答生成タイムアウト時の処理-----一旦済み
+  # カメラモーダル閉じた後のストリーム-----一旦済み
+  # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）-----保留
+  # 広告+アンケート-----保留
   # 範囲指定やり方
-  # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）
-  # パスワード変更機能
   # 入力画面での口語訳オプションで写真だけのイベントと、そのままモーダル閉じた時のオプション初期化
   # バリデーション
-  # カメラモーダル閉じた後のストリーム
-  # 広告+アンケート
-  # 再生成時のプロンプト改善
-  # 回答生成タイムアウト時の処理
-  # 一覧表示で表示カード更新後にカード詳細開けない
+  # レスポンシブデザイン
+  # モーダルの閉じ方
+  # googleログインボタンデザイン
+  # パスワード再設定ページデザイン
   
   def get_answer
     puts "params: #{params.inspect}"
@@ -115,9 +118,9 @@ class QuestionsController < ApplicationController
     image = params[:image] # 画像を受け取る
     answer_type = params[:answer_type]
     puts "コントローラー側：#{question}"
-    # ai_answer = generate_ai_response(params, question, true)
-    ai_answer = "test"
-    sleep 5
+    ai_answer = generate_ai_response(params, question, true)
+    # ai_answer = "test"
+    # sleep 5
     # puts "これが生成したai_answer: #{ai_answer}"
 
     @question = Question.new(content: question)

@@ -82,12 +82,12 @@ class Gpt35Client
   # APIリクエストを行い、回答を生成するメソッド
   def generate_answer(params, question, first, prompt)
     token_count = calculate_tokens(prompt)
-
+  
     if token_count > MAX_TOKENS
-      puts '字数が多いです。' # ユーザーに通知して処理を中止
-      return nil
+      flash[:error] = '字数が多いです。' # フラッシュメッセージにエラーを追加
+      return redirect_to request.referer || root_path # ユーザーを前のページまたはルートページにリダイレクト
     end
-
+  
     begin
       system_message = { role: "system", content: return_system_message(params, first) }
       user_message = { role: "user", content: prompt }
@@ -101,22 +101,29 @@ class Gpt35Client
           n: 1,
         }
       )
-
       
-      if response
+      if response.key?('error')
+        puts "エラーが発生しました: #{response['error']['message']}" # サーバーログにエラーを出力
+        flash[:error] = "エラーが発生しました: #{response['error']['message']}" # フラッシュメッセージにエラーを追加
+        return redirect_to request.referer || root_path
+      elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
         content = response['choices'][0]['message']['content'].strip
         return content
       else
-        puts "これがレスポンスですよーーーー#{response}"
-        puts 'リクエストに失敗しました。'
-        return nil
+        puts "レスポンスの形式が正しくありません。"
+        flash[:error] = 'レスポンスの形式が正しくありません。'
+        return redirect_to request.referer || root_path
       end
     rescue Net::ReadTimeout
-      puts 'リクエストタイムアウトが発生しました。' # ユーザーに通知して処理を中止
-      return nil
+      puts 'リクエストタイムアウトが発生しました。'
+      flash[:error] = 'リクエストタイムアウトが発生しました。'
+      return redirect_to request.referer || root_path
+    rescue => e
+      puts "例外が発生しました: #{e.message}"
+      flash[:error] = "例外が発生しました: #{e.message}"
+      return redirect_to request.referer || root_path
     end
-  end
-
+  end  
 
   # 補助メソッド (analyzeOptions, returnPrompt, re_generate_prompt) の実装は省略
   def returnPrompt(params, detailOptions)

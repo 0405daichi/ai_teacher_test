@@ -1,4 +1,5 @@
 // app/javascript/javascripts/helpers/cameraFunctions.js
+import { toggleOverlay } from './common_functions.js';
 
 // 調べている間は「起動中」などのモーダルを表示する ※必須
 // capabilitiesは設定され得る値なのでsettings(実際に使用されている値)と違う場合があるかも知れない ※必須
@@ -21,6 +22,7 @@ async function initializeCamera() {
   }
 
   try {
+    toggleOverlay('show', 'camera-setting');
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     const videoTrack = stream.getVideoTracks()[0];
     const capabilities = videoTrack.getCapabilities();
@@ -30,7 +32,9 @@ async function initializeCamera() {
     cameraSettings.isInitialized = true;
 
     videoTrack.stop();
+    toggleOverlay('hide');
   } catch (error) {
+    toggleOverlay('hide');
     console.error('カメラの初期化に失敗しました。', error);
   }
 }
@@ -51,6 +55,7 @@ export async function openCamera(modalElement, cameraPreviewElement) {
   }
 
   try {
+    toggleOverlay('show', 'camera-setting');
     // ビデオトラックの初期設定
     let videoConstraints = {
       facingMode: 'environment', // 外部カメラの使用
@@ -66,7 +71,9 @@ export async function openCamera(modalElement, cameraPreviewElement) {
 
     // モーダル要素をグローバル変数に保存（この部分はコード全体の文脈に応じて適宜修正してください）
     currentCameraModal = modalElement;
+    toggleOverlay('hide');
   } catch (error) {
+    toggleOverlay('hide');
     console.error('カメラへのアクセスに失敗しました。', error);
     // エラーが発生した場合もユーザーにリロードを促す
     const reload = confirm('カメラへのアクセスに失敗しました。アプリを再起動しますか？');

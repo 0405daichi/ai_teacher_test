@@ -30,7 +30,7 @@ function refreshCard(user_id, question_id) {
 
 export async function submitFormAndShowModal(formElement, question) {
   accelerateRotation();
-  $('#loading-overlay').fadeIn();
+  toggleOverlay('show', 'generate');
   formElement.value = question;
   
   // FormDataを作成
@@ -41,14 +41,21 @@ export async function submitFormAndShowModal(formElement, question) {
     method: 'POST',
     body: formData
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) {
+      // エラーレスポンスを処理
+      return response.json().then(data => {
+        throw new Error(data.message || "未知のエラーが発生しました。");
+      });
+    }
+    return response.json();
+  })
   .then(data => {
     console.log(data);
-    console.log(!data.user_id);
-    $('#loading-overlay').fadeOut();
+    toggleOverlay('hide');
     decelerateRotation();
     setTimeout(() => {
-      if (data.user_id !== "" || data.user_id !== null) {
+      if (data.user_id) {
         if (data.show_survey) {
           // アンケートモーダルを表示する処理
           showSurveyModal(data.user_id, data.question_id);
@@ -60,8 +67,10 @@ export async function submitFormAndShowModal(formElement, question) {
     }, 1000);
   })
   .catch(error => {
-    console.error('Error:', error);
-    alert('エラーが発生しました。', error);
+    // console.error('Error:', error);
+    // エラーメッセージをアラートで表示
+    toggleOverlay('hide');
+    alert(`エラーが発生しました`);
   });
 }
 
