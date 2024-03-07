@@ -30,22 +30,19 @@
           </div>
       <% end %>
 
-        <div class="google-auth-button" style="margin: 10px">
-            <div id="g_id_onload"
-                data-client_id=<%= ENV['GOOGLE_CLIENT_ID'] %>
-                data-auto_prompt="false">
+      <% if devise_mapping.omniauthable? %>
+        <% resource_class.omniauth_providers.each do |provider| %>
+          <% if provider == :google_oauth2 %>
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <%= link_to "Googleで登録", omniauth_authorize_path(resource_name, provider), class: "btn btn-primary", style: "margin-top: 20px;", method: :post %>
             </div>
-            <div class="g_id_signin"
-                data-type="standard"
-                data-size="large"
-                data-theme="outline"
-                data-text="signup_with"
-                data-shape="pill"
-                data-logo_alignment="left">
-            </div>
-        </div>
+          <% end %>
+        <% end %>
+      <% end %>
 
-      <%= render "devise/shared/links" %>
+      <div class="links-container">
+        <%= render "devise/shared/links" %>
+      </div>
 
       <%= button_to '←', root_path, {class: "btn btn-outline-light", method: :get}%>
   </div>

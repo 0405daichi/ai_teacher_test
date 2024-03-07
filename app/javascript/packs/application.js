@@ -17,6 +17,7 @@ import "../javascripts/helpers/common_functions"
 import "../javascripts/helpers/openApp"
 import "../javascripts/icon_event/instagram"
 import "../javascripts/icon_event/user"
+import "../javascripts/icon_event/ad"
 
 Rails.start();
 Turbolinks.start();

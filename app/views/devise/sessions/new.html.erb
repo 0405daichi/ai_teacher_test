@@ -27,7 +27,19 @@
             </div>
         <% end %>
 
-        <%= render "devise/shared/links" %>
+        <% if devise_mapping.omniauthable? %>
+            <% resource_class.omniauth_providers.each do |provider| %>
+                <% if provider == :google_oauth2 %>
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <%= link_to "Googleでログイン", omniauth_authorize_path(resource_name, provider), class: "btn btn-primary", style: "margin-top: 20px;", method: :post %>
+                    </div>
+                <% end %>
+            <% end %>
+        <% end %>
+
+        <div class="links-container">
+            <%= render "devise/shared/links" %>
+        </div>
 
         <%= button_to '←', root_path, {class: "btn btn-outline-light", method: :get}%>
     </div>

@@ -13,7 +13,7 @@
                             class: "form-control mr-2 border-0 question-input-form",
                             id: "questionInputForm",
                             placeholder: "問題や質問を入力してください。",
-                            style: "resize: none; z-index: 10000; position: fixed; max-height: 90%; max-width: 90%; background-color: #FFFCF3; border: 1px solid #E8E8E8;" %>
+                            style: "resize: none; z-index: 10000; position: fixed; max-height: 90%; max-width: 93%; background-color: #FFFCF3; border: 1px solid #E8E8E8;" %>
           </div>
           <div class="question-input-items">
             <div class="question-circle camera-circle">
@@ -189,9 +189,23 @@
   });
 </script> %>
 <style>
+  .btn-close {
+    background-color: #FFFCF3; /* 背景色を白に設定 */
+    border-radius: 50%; /* 角を完全に丸くする */
+    width: 20px; /* ボタンの幅を設定 */
+    height: 20px; /* ボタンの高さを設定 */
+    display: flex; /* Flexboxを利用してアイコンを中央に配置 */
+    align-items: center; /* 垂直方向の中央揃え */
+    justify-content: center; /* 水平方向の中央揃え */
+    border: 2px solid #ddd; /* ボタンの境界線を指定 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 軽い影を追加して立体感を出す */
+    cursor: pointer; /* カーソルを指にする */
+    opacity: 1;
+  }
+
   .question-input-items {
     display: flex;
-    justify-content: end;
+    justify-content: start;
     margin-top: 45px;
   }
 

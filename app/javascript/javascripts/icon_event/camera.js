@@ -27,13 +27,20 @@ document.addEventListener("turbolinks:load", function() {
     const open = await fadeOutCirclesSequentially();
     if (open == true) {
       const openEnd = await fadeInCirclesSequentially();
-      if (openEnd) $('#cameraModal').modal('show');
-      setupPanelToggleAndValidation();
+      if (openEnd) {
+        if (window.innerWidth <= 768) {
+          // スマートフォンやタブレットで見られている可能性が高い
+          $('#cameraModal').modal('show');
+          setupPanelToggleAndValidation();
+          setTimeout(() => {
+            openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+          }, 500); // 500ミリ秒の遅延
+        } else {
+          // PCで見られている可能性が高い
+          $('.camera-modal-pc').modal('show');
+        }
+      }
     }
-
-    setTimeout(() => {
-      openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
-    }, 500); // 500ミリ秒の遅延
 
     $('#cameraModal .close-camera-modal').click(async function() {
       console.log("Camera click");
@@ -111,7 +118,12 @@ document.addEventListener("turbolinks:load", function() {
   // カメラモーダルからの画像選択
   //////////
   $('.image-input-button-from-camera').on('click', function (e) {
-    console.log("click");
+    $('.image-input-button-from-camera .image-input')[0].click();
+    e.stopPropagation();
+  });
+
+  // PC用
+  $('.image-input-button-from-camera-pc').on('click', function (e) {
     $('.image-input-button-from-camera .image-input')[0].click();
     e.stopPropagation();
   });
@@ -238,20 +250,30 @@ document.addEventListener("turbolinks:load", function() {
     $('#cameraModal').modal('hide');
     closeCamera();
     $('.write-question-modal').modal('show');
-    console.log("show write modal");
+  });
+
+  // 入力画面起動（PC用）
+  $('.write-button-pc').on('click', async () => {
+    $('.camera-modal-pc').modal('hide');
+    $('.write-question-modal').modal('show');
+    $('.write-question-modal .camera-circle').hide();
   });
   
   $('.return-camera-from-write').on('click', async () => {
     const writeQuestionModal = $('.write-question-modal');
     if (writeQuestionModal.hasClass('show')) {
       writeQuestionModal.modal('hide');
-      $('#cameraModal').modal('show');
+      // PC用と場合分け
+      if (window.innerWidth <= 768) {
+        $('#cameraModal').modal('show');
 
-      // カメラを開く前に少し待つ
-      setTimeout(() => {
-        openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
-      }, 500); // 500ミリ秒の遅延
-
+        // カメラを開く前に少し待つ
+        setTimeout(() => {
+          openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
+        }, 500); // 500ミリ秒の遅延
+      } else {
+        $('camera-modal-pc').modal('show');
+      }
       resetFormToDefault(writeQuestionModal[0]);
     }
   });

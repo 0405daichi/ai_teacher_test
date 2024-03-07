@@ -156,61 +156,31 @@
     </div>
   </div>
 </div>
-<%# <script>
-  let isPanelOpen = false;
-  const cameraElement = document.querySelector('.cameraModal');
-  const ancientTranslationOptions = cameraElement.querySelector('.ancient-translation-options');
-  const workNameInput = ancientTranslationOptions.querySelector('input[name="work_name"]');
-  const textTypeSelect = ancientTranslationOptions.querySelector('select[name="text_type"]');
-  const otherRadioButton = ancientTranslationOptions.querySelector('input[name="option_select"][value="other"]');
 
-  const otherOptionRadioButton = ancientTranslationOptions.querySelector('.other-option');
-  const noImageOptionRadioButton = ancientTranslationOptions.querySelector('.no-image-option');
-  const noImageOptions = ancientTranslationOptions.querySelector('.no_image_options');
+<!-- PC用 -->
+<div class="modal fade camera-modal-pc" id="camera-pc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header pb-5">
+        <button type="button" class="btn-close camera-modal-pc-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
+      </div>
+      <div class="modal-body">
+        <div class="buttons">
+          <div id="writeButtonPc" class="write-button-pc">
+            <svg xmlns="http://www.w3.org/2000/svg" width="3" height="3" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" class="ai ai-Pencil"><path d="M4.333 16.048L16.57 3.81a2.56 2.56 0 0 1 3.62 3.619L7.951 19.667a2 2 0 0 1-1.022.547L3 21l.786-3.93a2 2 0 0 1 .547-1.022z"/><path d="M14.5 6.5l3 3"/></svg>
+          </div>
+          <div id="imageInputButtonFromCameraPc" class="image-input-button-from-camera-pc">
+            <%= render 'shared/svg/image' %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        
+      </div>
+    </div>
+  </div>
+</div>
 
-  if (otherOptionRadioButton) {
-    otherOptionRadioButton.addEventListener('change', () => {
-      if (otherOptionRadioButton.checked) {
-        noImageOptions.style.display = 'none';
-      }
-    });
-  }
-
-  if (noImageOptionRadioButton) {
-    noImageOptionRadioButton.addEventListener('change', () => {
-      if (noImageOptionRadioButton.checked) {
-        noImageOptions.style.display = 'block';
-      }
-    });
-  }
-  
-  document.querySelector('.circle-quarter').addEventListener('click', function() {
-    const activeOptionElement = cameraElement.querySelector('.option-carousel .option.active');
-    const isActiveOptionTranslation = activeOptionElement && activeOptionElement.dataset.option === '現代語訳・口語訳';
-
-    if (isPanelOpen && isActiveOptionTranslation) {
-      if (!otherRadioButton.checked) {
-        if (!workNameInput.value || !textTypeSelect) {
-          alert("作品名や種類を明確にして下さい。");
-          return;
-        }
-      }
-    }
-
-    // this.classList.toggle('active'); // ボタン自身に activeクラスを付与し
-    document.getElementById('option-panel').classList.toggle('panelactive'); // ナビゲーションに panelactiveクラスを付与
-    isPanelOpen = !isPanelOpen;
-
-    document.querySelector('.circle-bg').classList.toggle('circleactive'); // 丸背景に circleactiveクラスを付与
-
-    // 歯車のクラスを切り替えてアニメーションを停止し、右に傾ける
-    var gear = document.querySelector('.gear');
-    gear.classList.toggle('rotateLeft');
-
-    var svg = gear.querySelector('.ai-Gear'); // 必要なpath要素の正確なセレクター
-    svg.classList.toggle('stroke-black');
-  });
-</script> %>
 <style>
   .option-carousel {
     display: flex;
@@ -708,5 +678,90 @@
 
   .return-from-trimming:hover svg {
     stroke: black;
+  }
+
+  /* pc-modal */
+  .camera-modal-pc .buttons {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .write-button-pc {
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    margin-right: 5%;
+  }
+
+  .write-button-pc svg {
+    position: relative;
+    width: 85%;
+    height: 85%;
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+  }
+
+  .write-button-pc:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  /* 通常状態でのSVGの線の色 */
+  .write-button-pc svg path {
+    stroke: white; /* デフォルトは白色 */
+    transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+  }
+
+  /* マウスが乗ったときのSVGの線の色 */
+  .write-button-pc:hover svg path {
+    stroke: black; /* マウスが乗ったときは黒色 */
+  }
+
+  .image-input-button-from-camera-pc {
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    margin-left: 5%;
+  }
+
+  .image-input-button-from-camera-pc svg {
+    position: relative;
+    width: 85%;
+    height: 85%;
+    top: 50%; /* 上部から50%の位置 */
+    left: 50%; /* 左から50%の位置 */
+    transform: translate(-50%, -50%); /* 中央に配置 */
+  }
+
+  .image-input-button-from-camera-pc:hover {
+    background-color: white; /* マウスが乗ったときの背景色 */
+    transition: background-color 0.3s ease; /* 背景色変更のアニメーション */
+  }
+
+  /* 通常状態でのSVGの線の色 */
+  .image-input-button-from-camera-pc svg path {
+    stroke: white; /* デフォルトは白色 */
+    transition: stroke 0.3s ease; /* 線の色変更のアニメーション */
+  }
+
+  /* マウスが乗ったときのSVGの線の色 */
+  .image-input-button-from-camera-pc:hover svg path {
+    stroke: black; /* マウスが乗ったときは黒色 */
+  }
+
+  /* マウスが乗ったときのSVGの線の色 */
+  .image-input-button-from-camera-pc:hover svg circle {
+    stroke: black; /* マウスが乗ったときは黒色 */
   }
 </style>

@@ -91,3 +91,13 @@
   color: #f44336;  // エラーテキストの赤色
   list-style: none;  // リストマークを削除
 }
+
+.links-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.white-link {
+  color: white; /* リンクのテキストカラーを白に設定 */
+}

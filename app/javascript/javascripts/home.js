@@ -23,7 +23,7 @@ document.addEventListener('turbolinks:load', () => {
   // クロスアイコンのクリックイベント
   crossIcon.addEventListener('click', function() {
     faqContent.scrollTop = 0;
-    
+
     circleBg.classList.remove('circleactive'); // 円の拡大を解除
     faqContent.classList.remove('visible'); // FAQコンテンツを非表示
 
@@ -216,6 +216,40 @@ document.addEventListener('turbolinks:load', () => {
     circle.style.top = `${centerY + y}px`;
     circle.style.transform = `rotate(${270-a}deg)`; 
   }
+
+  // アイコンクリック時の円拡大
+  document.querySelectorAll('.rotating-circle').forEach(icon => {
+    icon.addEventListener('click', function(event) {
+      const circle = document.getElementById('animation-circle');
+      
+      // クリックされた要素の位置とサイズを取得
+      const rect = icon.getBoundingClientRect();
+      
+      // 要素の中心位置を計算
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // animation-circle の位置をクリックされた要素の中心に設定
+      circle.style.left = `${centerX - (circle.offsetWidth / 2)}px`;
+      circle.style.top = `${centerY - (circle.offsetHeight / 2)}px`;
+
+      // .circleactive クラスを追加してアニメーションを開始
+      circle.classList.add('circleactive');
+      
+      // アニメーション終了後のクリーンアップ処理
+      circle.addEventListener('animationend', () => {
+        circle.classList.remove('circleactive'); // クラスを削除
+        // 必要に応じて追加のリセット処理を行う
+      });
+    });
+  });
+  
+  const circleBgAd = document.querySelector('.circle-bg-ad');
+  const adDetail = document.querySelector('.ad-detail');
+  centerPoint.addEventListener('click', function() {
+    circleBgAd.classList.toggle('circleactive'); // 円を拡大
+    adDetail.classList.toggle('active');
+  });
 
   // 質問モーダルの閉じるボタン
   const questionCloseButton = document.getElementById('closeQuestionButton');

@@ -2,6 +2,9 @@ class Survey < ApplicationRecord
   has_many :survey_responses
   has_many :users, through: :survey_responses
 
+  validates :title, presence: true
+  validates :description, presence: true
+
   def self.create_unique_survey(title, description)
     # 同じタイトルと説明のアンケートが既に存在するかチェック
     unless self.exists?(title: title, description: description)

@@ -1,0 +1,34 @@
+<div class="modal fade ad-modal-1" id="ad-modal-1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-body ad-modal-body p-0">
+        <button type="button" class="btn-close ad-modal-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 20px; right: 20px;"></button>
+        <iframe
+          id="ad-1-site"
+          src="https://kids.proclass.jp/">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#ad-1-site {
+  width: 100%;
+  height: 100%;
+}
+
+  .ad-modal-close {
+    background-color: #FFFCF3; /* 背景色を白に設定 */
+    border-radius: 50%; /* 角を完全に丸くする */
+    width: 50px; /* ボタンの幅を設定 */
+    height: 50px; /* ボタンの高さを設定 */
+    display: flex; /* Flexboxを利用してアイコンを中央に配置 */
+    align-items: center; /* 垂直方向の中央揃え */
+    justify-content: center; /* 水平方向の中央揃え */
+    border: 2px solid #ddd; /* ボタンの境界線を指定 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 軽い影を追加して立体感を出す */
+    cursor: pointer; /* カーソルを指にする */
+    opacity: 1;
+  }
+</style>

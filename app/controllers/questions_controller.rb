@@ -102,15 +102,17 @@ class QuestionsController < ApplicationController
   # 一覧表示で表示カード更新後にカード詳細開けない-----一旦済み
   # 回答生成タイムアウト時の処理-----一旦済み
   # カメラモーダル閉じた後のストリーム-----一旦済み
+  # googleログインボタンデザイン-----一旦済み
+  # パスワード再設定ページデザイン-----一旦済み
+  # モーダルの閉じ方-----一旦済み
+  # レスポンシブデザイン-----一旦済み
+  # 入力画面での口語訳オプションで写真だけのイベントと、そのままモーダル閉じた時のオプション初期化-----一旦済み
+  # 広告（アイコンとメイン、出し方）-----一旦済み
+  # バリデーション-----一旦済み
   # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）-----保留
   # 広告+アンケート-----保留
   # 範囲指定やり方
-  # 入力画面での口語訳オプションで写真だけのイベントと、そのままモーダル閉じた時のオプション初期化
-  # バリデーション
-  # レスポンシブデザイン
-  # モーダルの閉じ方
-  # googleログインボタンデザイン
-  # パスワード再設定ページデザイン
+  # reCAPTCHA
   
   def get_answer
     puts "params: #{params.inspect}"
@@ -235,9 +237,6 @@ class QuestionsController < ApplicationController
   end  
 
   def generate_ai_response(params, question, first)
-    Rails.logger.info "アクセストークン：#{ENV['OPENAI_API_KEY']}"
-    puts "アクセストークン：#{ENV['OPENAI_API_KEY']}"
-    Rails.logger.info ENV.inspect
     api_key = ENV['OPENAI_API_KEY']
     gpt_client = Gpt35Client.new(api_key)
     response = gpt_client.get_answer(params, question, first)
