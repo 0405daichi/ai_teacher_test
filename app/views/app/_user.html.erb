@@ -56,31 +56,61 @@
           </div>
         <% else %>
           <!-- ログインしていないユーザーへの登録メリットのスライド -->
-          <div id="registrationBenefitsCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div id="app-desc-slide" class="carousel slide" data-bs-ride="carousel">
             <!-- スライド内のアイテム -->
             <div class="carousel-inner">
               <div class="carousel-item active">
-                <img src="#" class="d-block w-100" alt="メリット1">
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>メリット 1</h5>
-                  <p>メリットの説明 1</p>
+                <div class="carousel-caption">
+                  <div class="desc-icon">
+                    <div class="icon-div">
+                      <%= render 'shared/svg/camera' %>
+                    </div>
+                    <p><span>宿題を撮影するカメラ</span></p>
+                  </div>
                 </div>
               </div>
               <div class="carousel-item">
-                <img src="#" class="d-block w-100" alt="メリット2">
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>メリット 2</h5>
-                  <p>メリットの説明 2</p>
+                <div class="carousel-caption">
+                  <div class="desc-image">
+                    <%= image_tag 'camera_example.png' %>
+                    <p><span>範囲を指定して撮影</span></p>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="carousel-caption">
+                  <div class="desc-icon">
+                    <div class="icon-div">
+                      <%= render 'shared/svg/menu/search' %>
+                    </div>
+                    <p><span>存在する回答を検索</span></p>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="carousel-caption">
+                  <div class="desc-image">
+                    <%= image_tag 'search_example_1.png' %>
+                    <p><span>他のユーザの質問、自分がした質問、いいね・ブックマークした質問を一覧表示</span></p>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="carousel-caption">
+                  <div class="desc-image">
+                    <%= image_tag 'search_example_2.png' %>
+                    <p><span>存在する質問を検索</span></p>
+                  </div>
                 </div>
               </div>
               <!-- 他のスライドアイテムを追加 -->
             </div>
             <!-- コントローラー -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#registrationBenefitsCarousel" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#app-desc-slide" data-bs-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#registrationBenefitsCarousel" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#app-desc-slide" data-bs-slide="next">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="visually-hidden">Next</span>
             </button>
@@ -337,6 +367,78 @@
       margin: 20px 0; /* 上下のマージン */
       text-align: center; /* テキストを中央揃え */
       border-radius: 5px; /* 境界線の丸み */
+    }
+
+    #app-desc-slide {
+      height: 100%;
+    }
+
+    .carousel-inner {
+      height: 100%;
+    }
+
+    .carousel-item {
+      height: 100%;
+    }
+
+    .carousel-caption {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    } 
+
+    .desc-icon {
+      flex: 1;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .desc-icon .icon-div {
+      border-radius: 50%;
+      background-color: #F3F6FF;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .desc-icon .icon-div svg {
+      width: 80%;
+      height: 80%;
+    }
+
+    .desc-image {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .desc-image img {
+      height: 100%;
+      width: 100%;
+    }
+
+    @media only screen and (max-width: 425px) {
+      .desc-image img {
+        height: 50%;
+      }
+    }
+
+    .carousel-caption p {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
     }
   }
 </style>

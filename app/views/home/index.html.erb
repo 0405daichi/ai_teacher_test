@@ -3,9 +3,9 @@
 <div id="loading-overlay" style="display:none;">
   <div class="loading-message">回答を考えています...</div>
 </div>
-<div class="center-point"><%= image_tag 'boken_title.png' %></div>
-<div class="circle-bg-ad"><%= image_tag 'boukennosho_visual.png' %></div>
-<div class="ad-detail"><%= link_to "冒険の書とは", "https://taizoson.me/boukennosho/" %></div>
+<div class="center-point ad-banner" data-ad-name="center-close-ad"><%= image_tag 'boken_title.png' %></div>
+<div class="circle-bg-ad ad-banner" data-ad-name="center-open-ad"><%= image_tag 'boukennosho_visual.png' %></div>
+<div class="ad-detail"><%= link_to "冒険の書とは", "https://taizoson.me/boukennosho/", class: 'ad-banner', data: { ad_name: 'center-open-url' } %></div>
 
 <div id="circles"></div>
 <div class="faq-icon" style="display: block;">
@@ -116,7 +116,7 @@
     <details class="details js-details">
       <summary class="details-summary js-details-summary"><span class="btn"></span>アプリに広告を載せる</summary>
       <div class="details-content js-details-content">
-        <p>私たちは、宿題カメラを通じて、<strong>「目的化された宿題」に対する疑問や気づきを得る可能性を、人々の生活に存在させたいと考えています。</strong><br><br>その挑戦を支えるスポンサーを募集しています。<br>興味のある方は、広告プランの詳細についてお問い合わせください。</p>
+        <p>私たちは、宿題カメラを通じて、<strong>「目的化された宿題」に疑問や気づきを得る可能性を、人々の生活に存在させたいと考えています。</strong><br><br>その挑戦を支えるスポンサーを募集しています。<br>興味のある方は、広告プランの詳細についてお問い合わせください。</p>
 
         <p><strong>学校教育を手段の一つとして捉える人が増える。<br>その現象を、我々と共に起こしましょう。</strong></p>
 

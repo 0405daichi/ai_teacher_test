@@ -1,20 +1,26 @@
 <!-- app/views/errors/404.html.erb -->
 <div class="error-404">
-  <h1>404</h1>
+  <div class="error-icon"><%= image_tag 'error-icon.svg' %></div>
   <p>Page Not Found</p>
   <p>指定されたページまたはファイルが見つかりませんでした。</p>
-  <a href="/">ホームページへ戻る</a>
+  <a href="/">戻る</a>
 </div>
 
 <style>
   .error-404 {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
   }
 
-  .error-404 h1 {
-    font-size: 8em; /* サイズを大きく調整 */
-    color: #333;
-    margin-bottom: 0.5em; /* 見た目の調整 */
+  .error-404 .error-icon {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .error-404 p {
@@ -26,5 +32,35 @@
   .error-404 a {
     color: #007bff;
     text-decoration: none;
+  }
+
+  @media only screen and (max-width: 425px) {
+    .error-404 {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .error-404 .error-icon {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .error-404 p {
+      font-size: medium;
+      margin-bottom: 1em; /* 見た目の調整 */
+      color: gray;
+    }
+
+    .error-404 a {
+      color: #007bff;
+      text-decoration: none;
+      font-size: medium;
+    }
   }
 </style>

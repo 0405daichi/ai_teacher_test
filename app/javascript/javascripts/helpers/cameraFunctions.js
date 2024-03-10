@@ -35,19 +35,32 @@ async function initializeCamera() {
     toggleOverlay('hide');
   } catch (error) {
     toggleOverlay('hide');
-    console.error('カメラの初期化に失敗しました。', error);
+    if (error.name === 'NotAllowedError') {
+      // ユーザーがアクセスを拒否した場合
+      alert('宿題カメラを使用するには設定からカメラへのアクセスを許可してください。');
+    } else {
+      // その他のエラー
+      console.error('カメラの初期化に失敗しました。', error);
+    }
   }
 }
 
-// カメラの初期化
-initializeCamera();
+// 現在のページがホームページであるかどうかを確認する
+function isHomePage() {
+  return window.location.pathname === '/';
+}
+
+// ページがホームページの場合のみカメラの初期化を実行
+if (isHomePage()) {
+  initializeCamera();
+}
 
 
 // カメラを開く
 export async function openCamera(modalElement, cameraPreviewElement) {
   // カメラの初期化が完了していない場合はユーザーに確認し、リロードを促す
   if (!cameraSettings.isInitialized) {
-    const reload = confirm('カメラが初期化されていません。アプリを再起動しますか？');
+    const reload = confirm('カメラが設定されていません。アプリを再起動しますか？');
     if (reload) {
       window.location.reload();
     }
@@ -69,16 +82,22 @@ export async function openCamera(modalElement, cameraPreviewElement) {
     });
     cameraPreviewElement.srcObject = currentStream;
 
-    // モーダル要素をグローバル変数に保存（この部分はコード全体の文脈に応じて適宜修正してください）
+    // モーダル要素をグローバル変数に保存
     currentCameraModal = modalElement;
     toggleOverlay('hide');
   } catch (error) {
     toggleOverlay('hide');
     console.error('カメラへのアクセスに失敗しました。', error);
-    // エラーが発生した場合もユーザーにリロードを促す
-    const reload = confirm('カメラへのアクセスに失敗しました。アプリを再起動しますか？');
-    if (reload) {
-      window.location.reload();
+
+    // カメラへのアクセスが拒否された場合の処理
+    if (error.name === 'NotAllowedError') {
+      alert('宿題カメラを使用するには設定からカメラへのアクセスを許可してください。');
+    } else {
+      // その他のエラーに対する処理
+      const reload = confirm('カメラへのアクセスに失敗しました。アプリを再起動しますか？');
+      if (reload) {
+        window.location.reload();
+      }
     }
   }
 }

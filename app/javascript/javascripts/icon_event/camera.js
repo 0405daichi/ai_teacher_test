@@ -141,8 +141,12 @@ document.addEventListener("turbolinks:load", function() {
       };
       reader.readAsDataURL(file);
 
-      cameraModal.modal('hide');
-      closeCamera();
+      if (window.innerWidth <= 768) {
+        cameraModal.modal('hide');
+        closeCamera();
+      } else {
+        $('.camera-modal-pc').modal('hide');
+      }
 
 
       setBackButtonListener(async () => {
@@ -272,7 +276,7 @@ document.addEventListener("turbolinks:load", function() {
           openCamera($('#cameraModal')[0], $("#cameraModal .preview")[0]);
         }, 500); // 500ミリ秒の遅延
       } else {
-        $('camera-modal-pc').modal('show');
+        $('.camera-modal-pc').modal('show');
       }
       resetFormToDefault(writeQuestionModal[0]);
     }
