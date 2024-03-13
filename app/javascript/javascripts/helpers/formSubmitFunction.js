@@ -54,8 +54,17 @@ export async function submitFormAndShowModal(formElement, question) {
     console.log(data);
     toggleOverlay('hide');
     decelerateRotation();
-    setTimeout(() => {
-      if (data.user_id) {
+    if (data.prompt_login) {
+      // ログインが必要な場合、確認ダイアログを表示
+      setTimeout(() => {
+        const confirmLogin = confirm("質問を生成するにはログインが必要です。ログインページへ移動しますか？");
+        if (confirmLogin) {
+          // ユーザーがOKを選択した場合、ログインページへリダイレクト
+          window.location.href = "/users/sign_in";
+        }
+      }, 1000); // ユーザー体験を考慮して、わずかな遅延後に表示
+    } else if (data.user_id) {
+      setTimeout(() => {
         if (data.show_survey) {
           // アンケートモーダルを表示する処理
           showSurveyModal(data.user_id, data.question_id);
@@ -63,8 +72,8 @@ export async function submitFormAndShowModal(formElement, question) {
           // アンケートをスキップして回答表示処理を直接実行
           fetchCardDetails(data.question_id);
         }
-      }
-    }, 1000);
+      }, 1000);
+    }
   })
   .catch(error => {
     // console.error('Error:', error);

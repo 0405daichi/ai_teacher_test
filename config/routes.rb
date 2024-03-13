@@ -6,7 +6,8 @@ Rails.application.routes.draw do
 
   devise_for :users, controllers: {
     omniauth_callbacks: 'users/omniauth_callbacks',
-    passwords: 'users/passwords' # パスワード再設定のためのカスタマイズされたコントローラーを追加
+    passwords: 'users/passwords',
+    registrations: 'users/registrations'
   }
 
 

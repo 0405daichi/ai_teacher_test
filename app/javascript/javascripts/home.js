@@ -50,7 +50,7 @@ document.addEventListener('turbolinks:load', () => {
   const numCircles = 5;
   const circleContainer = document.getElementById('circles');
   const radius = 100;
-  let rotationSpeed = 0.1; // この値を変更することで回転速度が変わります
+  let rotationSpeed = 0.1 // この値を変更することで回転速度が変わります
   let centerRotationSpeed = -0.1; // 中心の画像の回転速度（他の円とは逆方向）
   // 中心の画像を取得
   const centerPoint = document.querySelector('.center-point');
@@ -165,7 +165,7 @@ document.addEventListener('turbolinks:load', () => {
 
     const touchY = event.touches[0].clientY;
     const touchDelta = initialTouchY - touchY;
-    touchVelocity = touchDelta * 0.1; // タッチによる回転加速度を設定
+    touchVelocity = touchDelta * 0.5; // タッチによる回転加速度を設定
 
     // 回転速度に基づいて更新
     updateCircles(touchVelocity);

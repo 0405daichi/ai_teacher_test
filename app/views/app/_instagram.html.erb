@@ -8,91 +8,88 @@
         <button type="button" id="closeSearch" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 10px; right: 10px;"></button>
       </div>
       <div class="modal-body cards-panel-modal-body">
-        <% if user_signed_in? %>
-          <div class="cards-panel">
-            <!-- 全てのカード -->
-            <div class="cards all-cards" id="all-cards" style="display: block;">
-              <% all_cards.each do |card| %>
+        <div class="cards-panel">
+          <!-- 全てのカード -->
+          <div class="cards all-cards" id="all-cards" style="display: block;">
+            <% all_cards.each do |card| %>
+              <%= render "shared/card", card: card %>
+            <% end %>
+          </div>
+
+          <!-- ユーザーのカード -->
+          <% unless user_questions.empty? %>
+            <div class="cards user-cards" id="user-cards">
+              <% user_questions.each do |card| %>
                 <%= render "shared/card", card: card %>
               <% end %>
             </div>
-
-            <!-- ユーザーのカード -->
-            <% unless user_questions.empty? %>
-              <div class="cards user-cards" id="user-cards">
-                <% user_questions.each do |card| %>
-                  <%= render "shared/card", card: card %>
-                <% end %>
-              </div>
-            <% end %>
-              
-            <!-- ユーザーがいいねしたカード -->
-            <% unless user_likes.empty? %>
-              <div class="cards user-liked-cards" id="user-liked-cards">
-                <% user_likes.each do |card| %>
-                  <%= render "shared/card", card: card %>
-                <% end %>
-              </div>
-            <% end %>
-              
-            <!-- ユーザーが保存したカード -->
-            <% unless user_bookmarks.empty? %>
-              <div class="cards user-bookmarked-cards" id="user-bookmarked-cards">
-                <% user_bookmarks.each do |card| %>
-                  <%= render "shared/card", card: card %>
-                <% end %>
-              </div>
-            <% end %>
-
-            <!-- カード検索 -->
-            <div class="cards user-search-cards" id="user-search-cards">
-              <%= form_with url: search_questions_path, method: :get, class: 'search-form' do |form| %>
-                <%= form.text_area :query, id: 'searchQuery', placeholder: '質問を入力して下さい。', class: 'search-textarea' %>
+          <% end %>
+            
+          <!-- ユーザーがいいねしたカード -->
+          <% unless user_likes.empty? %>
+            <div class="cards user-liked-cards" id="user-liked-cards">
+              <% user_likes.each do |card| %>
+                <%= render "shared/card", card: card %>
               <% end %>
-              <div class="search-results"></div>
-              <div id="no-results-message" style="color: white; display: none;">検索結果がありません。</div>
-
-              <div class="input-circle-container">
-                <div class="circle camera-circle input-circle">
-                  <%= render 'shared/svg/camera' %>
-                </div>
-                <div class="circle image-circle input-circle">
-                  <%= render 'shared/svg/image' %>
-                  <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
-                </div>
-              </div>
             </div>
-            <!-- ローディングアイコンの表示部分（初期状態では非表示） -->
-            <div id="loadingIcon" style="display: none; margin: 10px 0 50px 0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="ai ai-ArrowClockwise"><path d="M19.734 16.06a8.923 8.923 0 0 1-3.915 3.978 8.706 8.706 0 0 1-5.471.832 8.795 8.795 0 0 1-4.887-2.64 9.067 9.067 0 0 1-2.388-5.079 9.136 9.136 0 0 1 1.044-5.53 8.904 8.904 0 0 1 4.069-3.815 8.7 8.7 0 0 1 5.5-.608c1.85.401 3.366 1.313 4.62 2.755.151.16.735.806 1.22 1.781"/><path d="M15.069 7.813l5.04.907L21 3.59"/></svg>
+          <% end %>
+            
+          <!-- ユーザーが保存したカード -->
+          <% unless user_bookmarks.empty? %>
+            <div class="cards user-bookmarked-cards" id="user-bookmarked-cards">
+              <% user_bookmarks.each do |card| %>
+                <%= render "shared/card", card: card %>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- カード検索 -->
+          <div class="cards user-search-cards" id="user-search-cards">
+            <%= form_with url: search_questions_path, method: :get, class: 'search-form' do |form| %>
+              <%= form.text_area :query, id: 'searchQuery', placeholder: '質問を入力して下さい。', class: 'search-textarea' %>
+            <% end %>
+            <div class="search-results"></div>
+            <div id="no-results-message" style="color: white; display: none;">検索結果がありません。</div>
+
+            <div class="input-circle-container">
+              <div class="circle camera-circle input-circle">
+                <%= render 'shared/svg/camera' %>
+              </div>
+              <div class="circle image-circle input-circle">
+                <%= render 'shared/svg/image' %>
+                <input type="file" id="imageInputSearch" class="image-input-search" style="display: none;" accept="image/*">
+              </div>
             </div>
           </div>
-        <% else %>
+          
           <%= render 'shared/auth_buttons', text: "自分がした質問や保存した質問を閲覧できます。" %>
-        <% end %>
+          
+          <!-- ローディングアイコンの表示部分（初期状態では非表示） -->
+          <div id="loadingIcon" style="display: none; margin: 10px 0 50px 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="ai ai-ArrowClockwise"><path d="M19.734 16.06a8.923 8.923 0 0 1-3.915 3.978 8.706 8.706 0 0 1-5.471.832 8.795 8.795 0 0 1-4.887-2.64 9.067 9.067 0 0 1-2.388-5.079 9.136 9.136 0 0 1 1.044-5.53 8.904 8.904 0 0 1 4.069-3.815 8.7 8.7 0 0 1 5.5-.608c1.85.401 3.366 1.313 4.62 2.755.151.16.735.806 1.22 1.781"/><path d="M15.069 7.813l5.04.907L21 3.59"/></svg>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <div class="bottom-container">
-          <% if user_signed_in? %>
-            <div class="bottom-circles">
-              <!-- こちらに円を追加します -->  
-              <div class="circle1 circle option-circle" data-category="all">
-                <%= render 'shared/svg/menu/home' %>
-              </div>
-              <div class="circle2 circle option-circle" data-category="user">
-                <%= render 'shared/svg/menu/user' %>
-              </div>
-              <div class="circle3 circle option-circle" data-category="user-liked">
-                <%= render 'shared/svg/menu/like' %>
-              </div>
-              <div class="circle4 circle option-circle" data-category="user-bookmarked">
-                <%= render 'shared/svg/menu/bookmark' %>
-              </div>
-              <div class="circle5 circle option-circle search-circle" data-category="user-search">
-                <%= render 'shared/svg/menu/search' %>
-              </div>
+          <div class="bottom-circles">
+            <!-- こちらに円を追加します -->  
+            <div class="circle1 circle option-circle" data-category="all">
+              <%= render 'shared/svg/menu/home' %>
             </div>
-          <% end %>
+            <div class="circle2 circle option-circle" data-category="user">
+              <%= render 'shared/svg/menu/user' %>
+            </div>
+            <div class="circle3 circle option-circle" data-category="user-liked">
+              <%= render 'shared/svg/menu/like' %>
+            </div>
+            <div class="circle4 circle option-circle" data-category="user-bookmarked">
+              <%= render 'shared/svg/menu/bookmark' %>
+            </div>
+            <div class="circle5 circle option-circle search-circle" data-category="user-search">
+              <%= render 'shared/svg/menu/search' %>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -14,6 +14,10 @@ class HomeController < ApplicationController
       @user_bookmarks.each do |single|
         puts "#{single.content}"
       end
+    else
+      @user_questions = ""
+      @user_likes = ""
+      @user_bookmarks = ""
     end
   
     @announcements = Announcement.all

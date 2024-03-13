@@ -1,5 +1,5 @@
 <!-- app/views/shared/_auth_buttons.html.erb -->
-
+<div class="auth-button-page">
 <div class="auth-buttons-container">
     <div class="auth-text">
         <p><%= text %></p>
@@ -11,8 +11,13 @@
     </div>
 
 </div>
+</div>
 
 <style>
+.auth-button-page {
+  height: 100%;
+}
+
 .auth-buttons-container {
     display: flex;
     flex-direction: column;

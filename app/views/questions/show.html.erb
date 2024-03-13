@@ -1,0 +1,342 @@
+<div class="card-show-page" id="card-show-page" style="overflow: scroll;">
+  <div class="app-header">
+    <%= link_to "/", class: "header-link" do %>
+      <div class="header-link-gr">
+        <%= image_tag 'icon-himo-bara.svg', alt: "Logo", class: "app-logo" %>
+        <span class="app-name">宿題カメラ</span>
+      </div>
+    <% end %>
+  </div>
+  <div class="current-card-id" style="display: none;"></div>
+  <div class="question-section">
+    <div class="whats-question">
+      <div class="whats-question-content">質問</div>
+    </div>
+    <div class="card-content-question">
+      <% if @question.image.attached? %>
+        <%= image_tag @question.image, style: "width: 100%; height: auto; margin-bottom: 30px" %> <!-- 画像があればここで表示 -->
+      <% end %>
+      <%= @question.content %>
+    </div>
+  </div>
+  <div class="answers-section">
+    <div class="whats-generate">
+      <div class="whats-generate-content"></div>
+    </div>
+    <div id="customCarousel" class="custom-carousel">
+      <div class="custom-carousel-inner">
+        <div class="answer-type" style="display: none;"></div>
+        <div class="custom-slide answer-1 active">
+          <% if @question.answers.exists?(answer_type: 1) %>
+            <%= render 'answer_content', content: @question.answers.find_by(answer_type: 1).content %>
+          <% else %>
+            <div class="no-answer">
+              <p>わかりやすい回答を作成しましょう</p>
+              <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
+                <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
+                <div class="custom-button">
+                  <%= render 'shared/svg/submit' %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="custom-slide answer-2">
+          <% if @question.answers.exists?(answer_type: 2) %>
+            <%= render 'answer_content', content: @question.answers.find_by(answer_type: 2).content %>
+          <% else %>
+            <div class="no-answer">
+              <p>小学生にもわかるような回答を作成しましょう</p>
+              <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                <%= f.hidden_field :answer_type, class: "answer_type", value: 2 %>
+                <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
+                <div class="custom-button">
+                  <%= render 'shared/svg/submit' %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="custom-slide answer-3">
+          <% if @question.answers.exists?(answer_type: 3) %>
+            <%= render 'answer_content', content: @question.answers.find_by(answer_type: 3).content %>
+          <% else %>
+            <div class="no-answer">
+              <p>回答を例え話で作成しましょう</p>
+              <%= form_with url: "/questions/add_new_answer", local: false, remote: true, id: "add-ans-form", class: "add-ans-form", method: :post do |f| %>
+                <%= f.hidden_field :answer_type, class: "answer_type", value: 3 %>
+                <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
+                <div class="custom-button">
+                  <%= render 'shared/svg/submit' %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="change-answer">
+    <!-- インジケーター -->
+    <div class="custom-indicators">
+      <span class="indicator active" data-slide-to="0"></span>
+      <span class="indicator" data-slide-to="1"></span>
+      <span class="indicator" data-slide-to="2"></span>
+    </div>
+  </div>
+  <div class="card-show-footer" style="height: auto;">
+    <div class="footer-left">
+      <div class="generate-div">
+        <%= form_with url: "/questions/add_new_answer", id: "regenerate-form", class: "add-ans-form", method: :post do |f| %>
+          <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
+          <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
+          <div class="re-generate-answer-button">
+            <%= render 'shared/svg/reload' %>
+          </div>
+        <% end %>
+      </div>
+      <% if current_user.can_edit? && @question.user == current_user %>
+        <div class="edit-card-buttons">
+          <%= link_to edit_question_path(@question), method: :get, remote: true do %>
+          <div class="edit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ai ai-Edit"><path d="M16.474 5.408l2.118 2.117m-.756-3.982L12.109 9.27a2.118 2.118 0 0 0-.58 1.082L11 13l2.648-.53c.41-.082.786-.283 1.082-.579l5.727-5.727a1.853 1.853 0 1 0-2.621-2.621z"/><path d="M19 15v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3"/></svg>
+          </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="footer-right">
+      <div class="evaluation-div">
+        <div class="like like-<%= @question.id%>" id="like-<%= @question.id%>" style="display: flex;">
+          <%= render "likes/like", card: @question %>
+        </div>
+        <div class="bookmark bookmark-<%= @question.id%>" id="bookmark-<%= @question.id%>" style="display: flex;">
+          <%= render "bookmarks/bookmark", card: @question %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#card-show-page {
+  z-index: 1100 !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .card-show-footer {
+    position: fixed; /* フッターを固定位置にします */
+    bottom: 0; /* 画面の下部に配置します */
+    left: 0; /* 左端から配置を開始します */
+    right: 0; /* 右端までフッターを広げます */
+    height: auto; /* フッターの高さは内容に応じて自動調整します */
+    background-color: #F3F6FF; /* フッターの背景色を指定します */
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1); /* 上部に影をつけて立体感を出します */
+    z-index: 1000; /* フッターが他の要素の上に表示されるようにz-indexを設定します */
+    display: flex; /* フレックスボックスを使って内部の要素を整列させます */
+    justify-content: space-between; /* 内部の要素を両端に寄せて配置します */
+    padding: 10px 20px; /* フッター内の余白を設定します */
+  }
+
+  .footer-left, .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-show-footer .generate-div {
+    display: flex;
+  }
+
+  .card-show-footer .evaluation-div {
+    display: flex;
+  }
+
+  /* カスタムカルーセルの基本スタイリング */
+  .custom-carousel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 各スライドのスタイリング */
+  .custom-slide {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* 最初は非表示 */
+    transition: opacity 0.5s; /* 必要に応じてフェード効果を追加 */
+  }
+
+  .custom-slide.active {
+    display: block; /* アクティブなスライドのみ表示 */
+    height: 100%;
+  }
+
+  /* インジケーターのスタイリング */
+  .custom-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+  }
+
+  .indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #888;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: width 0.3s, height 0.3s; /* アニメーションを追加 */
+  }
+
+  .indicator.active {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+  }
+
+  .change-answer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F3F6FF;
+    position: fixed; /* インジケーターを固定位置にします */
+    bottom: 60px; /* フッターの高さに応じて調整してください。フッターの上に配置します */
+    left: 0; /* 左端から配置を開始します */
+    right: 0; /* 右端まで広げます */
+    z-index: 2000; /* フッターよりも少し低い値に設定して、フッターの上に来るようにします */
+    text-align: center; 
+  }
+
+  .whats-question, .whats-generate {
+    background-color: #FFFCF3; /* 背景色を設定します */
+    padding: 15px; /* 内側の余白を設定します */
+    border-radius: 8px; /* 角を丸くします */
+    margin-bottom: 15px; /* 下のマージンを設定して、隣接する要素との間隔をあけます */
+    text-align: center; /* テキストを中央揃えにします */
+    font-size: x-large;
+  }
+
+  .custom-button {
+    display: inline-block; /* 必要に応じて変更してください */
+    border-radius: 50%; /* 丸い形状 */
+    transition: background-color 0.3s ease; /* 背景色変化のアニメーション */
+    padding: 10px; /* ボタン内のスペース */
+    cursor: pointer; /* ホバー時にカーソルをポインターに */
+  }
+
+  .custom-button:hover {
+    background-color: #FFFCF3; /* ホバー時の背景色 - お好みで色を変更してください */
+  }
+
+  .edit-card-buttons {
+    display: flex;
+    gap: 20px;
+  }
+
+  .card-modal-body {
+    /* display: flex; */
+    height: 100%;
+    /* flex-direction: column; */
+    background-color: #F3F6FF;
+  }
+
+  .whats-question {
+    /* flex: 1; */
+  }
+
+  .question-section, .answers-section {
+    margin: 50px 5%;
+  }
+
+  .question-section {
+    padding-top: 50px;
+  }
+
+  .card-content-question, .custom-carousel-inner {
+    background-color: #F3F6FF; /* 背景色を設定します */
+    padding: 15px; /* 内側の余白を設定します */
+    border-radius: 8px; /* 角を丸くします */
+  }
+
+  .whats-generate {
+    /* flex: 1; */
+    background-color: #FFFCF3;
+  }
+
+  .custom-carousel {
+    /* flex: 30; */
+    height: 100%;
+  }
+
+  .custom-carousel-inner {
+    height: 100%;
+  }
+
+  .no-answer {
+    text-align: center;
+  }
+
+  .like svg {
+    stroke: black;
+  }
+
+  .bookmark svg {
+    stroke: black;
+  }
+
+  .re-generate-answer-button {
+    display: inline-block; /* 必要に応じて変更してください */
+    border-radius: 50%; /* 丸い形状 */
+    transition: background-color 0.3s ease; /* 背景色変化のアニメーション */
+    padding: 10px; /* ボタン内のスペース */
+    cursor: pointer; /* ホバー時にカーソルをポインターに */
+  }
+
+  .re-generate-answer-button:hover {
+    background-color: #FFFCF3; /* ホバー時の背景色 - お好みで色を変更してください */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 30px 0;
+    padding: 3px 0 3px 10px;
+    width: 100%;
+    color: #333;
+    border-left: 5px double #888;
+  }
+
+  .app-header {
+    position: fixed;
+    top: 0;
+    left: 0; /* 左端から配置を開始します */
+    right: 0; /* 右端までフッターを広げます */
+    padding: 10px 20px;
+    background-color: #F3F6FF; /* ここでは例として背景色を指定しています */
+    z-index: 1000;
+  }
+
+  .header-link {
+    text-decoration: none;
+  }
+
+  .header-link-gr {
+    display: flex;
+    align-items: center;
+  }
+
+  .app-logo {
+    height: 50px; /* ロゴの高さを指定 */
+    margin-right: 20px; /* ロゴとアプリ名の間のマージン */
+  }
+
+  .app-name {
+    font-size: 24px; /* アプリ名のフォントサイズ */
+    color: #333; /* アプリ名の色 */
+  }
+}
+</style>

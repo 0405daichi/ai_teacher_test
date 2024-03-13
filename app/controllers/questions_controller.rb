@@ -15,7 +15,6 @@ class QuestionsController < ApplicationController
 
   def show
     @question = Question.find(params[:id])
-    image_url = @question.image.attached? ? rails_blob_url(@question.image, only_path: true) : nil
   
     is_liked = @question.likes.exists?(user: current_user)
     is_bookmarked = @question.bookmarks.exists?(user: current_user)
@@ -26,10 +25,12 @@ class QuestionsController < ApplicationController
     answer_3 = @question.answers.find_by(answer_type: 3)
   
     # ユーザーがカードを編集でき、かつそれが自分の投稿である場合のみ編集権限を許可
-    can_edit_own_post = current_user.can_edit? && @question.user == current_user
+    # can_edit_own_post = current_user.can_edit? && @question.user == current_user
+
+    image_url = @question.image.attached? ? rails_blob_url(@question.image, only_path: true) : nil
   
     respond_to do |format|
-      format.html { render :edit }
+      format.html
       format.js
     end
   end
@@ -112,20 +113,33 @@ class QuestionsController < ApplicationController
   # カメラ使用許可-----一旦済み
   # アイコンの適用-----一旦済み
   # 未ログイン時のユーザーアプリ-----一旦済み
+  # 質問詳細ページレイアウト-----一旦済み
+  # reCAPTCHA-----一旦済み(登録画面のみ)
   # ユーザーの登録情報,username,password,grade,sex?(無回答あり)（プロフィールを完成させて回答の質をあげよう的な）-----保留
   # 広告+アンケート-----保留
   # 範囲指定やり方
-  # reCAPTCHA
   
   def get_answer
     puts "params: #{params.inspect}"
+    # 未ログインユーザーの複数回の回答生成を制限
+    unless user_signed_in?
+      session[:query_count] ||= 0 # セッションにquery_countキーが存在しない場合は0を設定
+      session[:query_count] += 1 # query_countをインクリメント
+  
+      if session[:query_count] >= 2
+        # query_countが2以上の場合、ログインページへの移動を促す
+        render json: { prompt_login: true, message: "質問を続けるにはログインが必要です。" }
+        return # この時点でメソッドを終了する
+      end
+    end
+
     question = params[:questionInputForm]
     image = params[:image] # 画像を受け取る
     answer_type = params[:answer_type]
     puts "コントローラー側：#{question}"
-    ai_answer = generate_ai_response(params, question, true)
-    # ai_answer = "test"
-    # sleep 5
+    # ai_answer = generate_ai_response(params, question, true)
+    ai_answer = "test"
+    sleep 5
     # puts "これが生成したai_answer: #{ai_answer}"
 
     @question = Question.new(content: question)

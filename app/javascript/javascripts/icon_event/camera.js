@@ -266,6 +266,7 @@ document.addEventListener("turbolinks:load", function() {
   $('.return-camera-from-write').on('click', async () => {
     const writeQuestionModal = $('.write-question-modal');
     if (writeQuestionModal.hasClass('show')) {
+      $('.write-question-modal .question-input-form').val('');
       writeQuestionModal.modal('hide');
       // PC用と場合分け
       if (window.innerWidth <= 768) {
@@ -366,6 +367,8 @@ document.addEventListener("turbolinks:load", function() {
       $('.write-question-modal').modal('hide');
       
       submitFormAndShowModal($('.write-question-modal .question-form-from-write')[0], $('.write-question-modal .question-input-form').value);
+
+      $('.write-question-modal .question-input-form').val('');
     }
   });
 

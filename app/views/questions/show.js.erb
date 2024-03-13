@@ -11,8 +11,8 @@ document.querySelectorAll('.answer-content').forEach(function(el) {
     ]
   });
 
-  // ShowdownでMarkdownをHTMLに変換
-  var converter = new showdown.Converter();
-  var html = converter.makeHtml(el.innerHTML);
+  console.log("answer-content");
+  // marked.jsを使用してMarkdownをHTMLに変換
+  var html = marked.parse(el.innerHTML);
   el.innerHTML = html;
 });

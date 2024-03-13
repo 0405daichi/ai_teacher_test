@@ -5,10 +5,20 @@ $("#no-results-message").hide(); // メッセージを隠す
 
 <% if @results.any? %>
   <% @results.each do |(question, _similarity)| %>
-    $("#user-search-cards .search-results").append("<%= j(render 'shared/card', card: question) %>");
-    $("#user-search-cards .search-results .card-<%= question.id %>").on('click', function() {
-      fetchCardDetails(<%= question.id %>);
-    });
+    <% if question.content.present? %>
+      $("#user-search-cards .search-results").append("<%= j(render 'shared/card', card: question) %>");
+      $("#user-search-cards .search-results .card-<%= question.id %>").on('click', function() {
+        if (!isUserLoggedIn()) {
+          const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
+          if (confirmLogin) {
+            // ユーザーがOKを選択した場合、ログインページへリダイレクト
+            window.location.href = "/users/sign_in";
+          }
+        } else {
+          fetchCardDetails(<%= question.id %>);
+        }
+      });
+    <% end %>
   <% end %>
 <% else %>
   // 検索結果がない場合のみ、'検索結果がありません'のメッセージを表示する

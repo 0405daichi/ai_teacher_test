@@ -44,16 +44,23 @@ document.addEventListener("turbolinks:load", function() {
         $(".instagramModal .card").each(function() {
           const card = $(this); // 現在のカードを取得
           card.find('.card-body').on('click', function() {
-            const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
-            fetchCardDetails(id);
+            if (!isUserLoggedIn()) {
+              const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
+              if (confirmLogin) {
+                // ユーザーがOKを選択した場合、ログインページへリダイレクト
+                window.location.href = "/users/sign_in";
+              }
+            } else {
+              const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
+              fetchCardDetails(id);
+            }
           });
         });
-  
+
         $("#user-search-cards .search-results").empty();
         $("#no-results-message").hide(); // メッセージを隠す
         $('.instagramModal .search-textarea').val('');
-  
-        if (!isUserLoggedIn()) return;
+
         $('.instagramModal .circle1')[0].click();
         e.stopPropagation();
       }
@@ -74,7 +81,13 @@ document.addEventListener("turbolinks:load", function() {
     // 対応するカードを表示する
     const category = $(this).data('category');
     const cardsToShow = $(`.${category}-cards`);
+    if (cardsToShow.length == 0 && !isUserLoggedIn()) {
+      $('.auth-buttons-container').show();
+      $('.instagramModal .cards-panel').css('height', '100%');
+    }
     if (cardsToShow.length > 0) {
+      $('.auth-buttons-container').hide();
+      $('.instagramModal .cards-panel').css('height', 'auto');
       cardsToShow.css('display', 'block');
       $('.cards-panel-modal-body').scrollTop(0); // スクロール位置をトップに戻す
     }

@@ -3,26 +3,93 @@ import marked from 'marked';
 
 let currentIndex = 0; // 現在のスライドのインデックス
 
-function showSlide(index) {
-  const $slides = $('#cardContentModal .custom-slide');
-  const $indicators = $('#cardContentModal .indicator');
+function setupIndicatorsAndSlides(indicatorSelector, slideSelector, textArray, answerTypeSelector) {
+  $(indicatorSelector).each(function(index) {
+    $(this).on('click', function() {
+      const $slides = $(slideSelector);
+      if (index < 0 || index >= $slides.length) return; // 範囲外なら何もしない
 
-  if (index < 0 || index >= $slides.length) return; // 範囲外なら何もしない
+      $slides.removeClass('active');
+      $slides.eq(index).addClass('active');
 
-  // 全てのスライドを非表示にする
-  $slides.removeClass('active');
+      if (textArray && textArray.length > index) {
+        const $whatsGenerateDiv = $('.whats-generate-content');
+        const text = textArray[index];
+        $whatsGenerateDiv.text(text).hide().fadeIn(500);
+      }
 
-  // 新しいスライドを表示
-  $slides.eq(index).addClass('active');
+      if(answerTypeSelector) {
+        $(answerTypeSelector).val(index + 1); // スライドインデックス + 1
+      }
 
-  // answer-type要素にvalueを設定
-  $('#cardContentModal .generate-div .add-ans-form .answer_type').val(index + 1); // スライドインデックス + 1
-  console.log($('#cardContentModal .generate-div .add-ans-form .answer_type'));
+      $(indicatorSelector).removeClass('active');
+      $(this).addClass('active');
+    });
+  });
+}
 
-  // インジケーターの更新
-  $indicators.removeClass('active'); // 全てのインジケーターからactiveを削除
-  $indicators.eq(index).addClass('active'); // 新しいインジケーターにactiveを追加
-  currentIndex = index; // インデックスの更新
+function setupRegenerateAnswerButton(buttonSelector, formSelector, actionUrl) {
+  $(buttonSelector).on('click', function(event) {
+    event.preventDefault();
+
+    toggleOverlay('show', 'generate');
+  
+    // フォームデータを取得
+    var formData = $(formSelector).serialize();
+  
+    // Ajaxリクエストを送信
+    $.ajax({
+      url: actionUrl, // 引数から取得したアクションURL
+      type: "POST",
+      data: formData,
+      dataType: "script",
+      success: function(script) {
+        toggleOverlay('hide');
+      },
+      error: function(xhr, status, error) {
+        toggleOverlay('hide');
+        console.error("Error: " + status + " " + error);
+        alert(`エラーが発生しました`);
+      }
+    });
+  });
+}
+
+function setupCustomButtons(buttonSelector) {
+  $(buttonSelector).click(function(e) {
+    e.preventDefault();
+
+    toggleOverlay('show', 'generate');
+  
+    var form = $(this).closest('form');
+    var formData = form.serialize();
+  
+    $.ajax({
+      url: form.attr('action'),
+      type: "POST",
+      data: formData,
+      dataType: "script",
+  
+      success: function(response) {
+        toggleOverlay('hide');
+      },
+  
+      error: function(xhr, status, error) {
+        toggleOverlay('hide');
+        alert(`エラーが発生しました`);
+        console.error("Error: " + status + " " + error);
+      }
+    });
+  });
+}
+
+function setupModal(cardId) {
+  $('#cardContentModal .current-card-id').text(cardId);
+  
+  $('#cardContentModal .card-content-close').on('click', function () {
+    $('#cardContentModal').modal('hide');
+    $('#cardContentModal').remove();
+  });
 }
 
 // インデックスごとに異なるテキストを格納する配列
@@ -39,76 +106,12 @@ function showTextForIndex(index) {
 }  
 
 function setCardDetailsModal(cardId) {
-  $('#cardContentModal .current-card-id').text(cardId);
+  setupModal(cardId); // モーダルの基本設定
+  setupIndicatorsAndSlides('#cardContentModal .indicator', '#cardContentModal .custom-slide', texts, '#cardContentModal .generate-div .add-ans-form .answer_type');
   
-  $('#cardContentModal .card-content-close').on('click', function () {
-    $('#cardContentModal').modal('hide');
-    $('#cardContentModal').remove();
-  });
+  setupRegenerateAnswerButton('#cardContentModal .re-generate-answer-button', '#cardContentModal #regenerate-form', '/questions/add_new_answer');
 
-  $('#cardContentModal .indicator').each(function(index) {
-    $(this).on('click', function() {
-      showSlide(index); // インジケーターがクリックされたら、対応するスライドを表示
-      showTextForIndex(index);
-    });
-  });
-
-  $('#cardContentModal .re-generate-answer-button').on('click', function(event) {
-    event.preventDefault();
-
-    toggleOverlay('show', 'generate');
-  
-    // フォームデータを取得
-    var formData = $('#cardContentModal #regenerate-form').serialize();
-  
-    // Ajaxリクエストを送信
-    $.ajax({
-      url: "/questions/add_new_answer", // フォームのアクションURL
-      type: "POST", // HTTPメソッド
-      data: formData, // 送信するデータ
-      dataType: "script", // 期待するレスポンスのタイプ
-      success: function(script) {
-        toggleOverlay('hide');
-      },
-      error: function(xhr, status, error) {
-        toggleOverlay('hide');
-        // エラー時の処理
-        console.error("Error: " + status + " " + error);
-        alert(`エラーが発生しました`);
-      }
-    });
-  });  
-
-  // '.custom-button'がクリックされたときのイベントハンドラを定義
-  $('.custom-button').click(function(e) {
-    e.preventDefault(); // デフォルトのフォーム送信を防止
-  
-    // クリックされた'.custom-button'の最も近い親フォーム要素を探し
-    var form = $(this).closest('form');
-  
-    // フォームデータをシリアライズ
-    var formData = form.serialize();
-  
-    // Ajaxリクエストを送信
-    $.ajax({
-      url: form.attr('action'), // フォームのアクション属性からURLを取得
-      type: "POST", // HTTPメソッド
-      data: formData, // 送信するデータ
-      dataType: "script", // 期待するレスポンスのタイプ
-  
-      // 成功時のコールバック
-      success: function(response) {
-        // 成功時の処理をここに記述
-        // 例: 成功メッセージの表示、フォームフィールドのクリアなど
-      },
-  
-      // エラー時の処理
-      error: function(xhr, status, error) {
-        console.error("Error: " + status + " " + error);
-        // エラーメッセージの表示やフォームの状態を元に戻す処理など
-      }
-    });
-  });  
+  setupCustomButtons('#cardContentModal .custom-button');
 }
 
 function showCardDetailsModal(cardId) {
@@ -143,6 +146,33 @@ function fetchCardDetails(cardId) {
 
 window.showCardDetailsModal = showCardDetailsModal;
 window.fetchCardDetails = fetchCardDetails;
+
+document.addEventListener('DOMContentLoaded', () => {
+  // card-show-pageのインジケーターとスライドの設定
+  setupIndicatorsAndSlides('#card-show-page .indicator', '#card-show-page .custom-slide', texts, '#card-show-page .generate-div .add-ans-form .answer_type');
+
+  // card-show-pageのre-generate-answer-buttonの設定を行う
+  setupRegenerateAnswerButton('#card-show-page .re-generate-answer-button', '#card-show-page #regenerate-form', '/questions/add_new_answer');
+
+  // card-show-pageのカスタムボタンの設定
+  setupCustomButtons('#card-show-page .custom-button');
+  showTextForIndex(0)
+  document.querySelectorAll('.answer-content').forEach(function(el) {
+    renderMathInElement(el, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "$", right: "$", display: false},
+      ]
+    });
+  
+    // marked.jsを使用してMarkdownをHTMLに変換
+    var html = marked.parse(el.innerHTML);
+    el.innerHTML = html;
+  });
+});
+
 
 function convertTextToHtml(text) {
   // MarkdownをHTMLに変換

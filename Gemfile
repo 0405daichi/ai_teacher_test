@@ -23,6 +23,7 @@ gem 'redcarpet'
 gem 'omniauth-google-oauth2'
 gem "omniauth-rails_csrf_protection"
 gem 'katex', '~> 0.10.0'
+gem 'recaptcha', require: 'recaptcha/rails'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'
