@@ -3,6 +3,51 @@
 <div id="loading-overlay" style="display:none;">
   <div class="loading-message">回答を考えています...</div>
 </div>
+<div id="camera-alert" style="display:none;">
+  <ul>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+  </ul>
+  <ul>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+    <li>撮影時は画面が閉じるまでカメラを固定して下さい</li>
+  </ul>
+</div>
+<style>
+#camera-alert {
+  position: fixed;
+  bottom: 15%;
+  left: 50%;
+  transform: translate(-50%, -15%);
+  color: white;
+  width: 80%;
+  text-align: center;
+  z-index: 2000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+#camera-alert ul {
+  animation: flowing 20s linear infinite;
+  transform:translateX(100%);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+#camera-alert ul li{
+  width: 400px;
+}
+@keyframes flowing {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-100%); }
+}
+</style>
 <div class="center-point ad-banner" data-ad-name="center-close-ad"><%= image_tag 'boken_title.png' %></div>
 <div class="circle-bg-ad ad-banner" data-ad-name="center-open-ad"><%= image_tag 'boukennosho_visual.png' %></div>
 <div class="ad-detail"><%= link_to "冒険の書とは", "https://taizoson.me/boukennosho/", class: 'ad-banner', data: { ad_name: 'center-open-url' } %></div>
@@ -21,7 +66,7 @@
   </div> %>
   <div class="faq-details">
     <div class="faq-details-title">
-      <h2>アプリの基本的な機能</h2>
+      <h2>アプリの機能</h2>
     </div>
     <details class="details js-details">
       <summary class="details-summary js-details-summary"><span class="btn"></span>カメラ</summary>
@@ -111,7 +156,7 @@
       </div>
     </details>
     <div class="faq-details-title">
-      <h2>スポンサー募集について</h2>
+      <h2>スポンサー</h2>
     </div>
     <details class="details js-details">
       <summary class="details-summary js-details-summary"><span class="btn"></span>アプリに広告を載せる</summary>
@@ -273,7 +318,7 @@ $(accordionSummary).each(function() {
       cursor: pointer;
       opacity: 0.8;
       border-radius: 50px;
-      background-color: #F3F6FF;
+      background-color: #E8E8E8;
     }
     .btn {
       position: absolute;
@@ -287,7 +332,7 @@ $(accordionSummary).each(function() {
           &:before,
           &:after {
               content: "";
-              background-color: #F3F6FF;
+              background-color: #333;
               border-radius: 10px;
               width: 18px;
               height: 4px;
@@ -403,8 +448,8 @@ $(accordionSummary).each(function() {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 90%;
-    width: 90%;
+    height: 100%;
+    width: 100%;
     z-index: 4;
     display: none; /* 初期状態では非表示 */
     overflow: auto;
@@ -420,7 +465,11 @@ $(accordionSummary).each(function() {
   }
 
   .faq-details {
+    position: relative;
     max-height: 100%;
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .center-point {

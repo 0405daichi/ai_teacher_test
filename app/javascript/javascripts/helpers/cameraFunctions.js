@@ -85,6 +85,7 @@ export async function openCamera(modalElement, cameraPreviewElement) {
     // モーダル要素をグローバル変数に保存
     currentCameraModal = modalElement;
     toggleOverlay('hide');
+    $('#camera-alert').show();
   } catch (error) {
     toggleOverlay('hide');
     console.error('カメラへのアクセスに失敗しました。', error);
@@ -129,6 +130,7 @@ export async function takePhoto() {
 // カメラを閉じる
 export async function closeCamera() {
   if (currentStream) {
+    $('#camera-alert').hide();
     currentStream.getTracks().forEach(track => track.stop());
     currentStream = null;
     currentCameraModal = null;
