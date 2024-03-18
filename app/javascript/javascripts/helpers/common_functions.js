@@ -42,9 +42,23 @@ function setupRegenerateAnswerButton(buttonSelector, formSelector, actionUrl) {
       url: actionUrl, // 引数から取得したアクションURL
       type: "POST",
       data: formData,
-      dataType: "script",
-      success: function(script) {
+      dataType: "json",
+      success: function(data) {
         toggleOverlay('hide');
+        if (data.limit){
+          setTimeout(() => {
+            confirm("アクセスが集中しています。\n1分後再試行してください。");
+          }, 1000);
+        } else if (data.prompt_login) {
+          // ログインが必要な場合、確認ダイアログを表示
+          setTimeout(() => {
+            const confirmLogin = confirm("質問を生成するにはログインが必要です。\nログインページへ移動しますか？");
+            if (confirmLogin) {
+              // ユーザーがOKを選択した場合、ログインページへリダイレクト
+              window.location.href = "/users/sign_in";
+            }
+          }, 1000);
+        }
       },
       error: function(xhr, status, error) {
         toggleOverlay('hide');

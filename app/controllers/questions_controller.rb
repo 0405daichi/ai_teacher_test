@@ -75,9 +75,26 @@ class QuestionsController < ApplicationController
     flash[:error] = "更新に失敗しました: #{e.message}"
     redirect_to edit_question_path(@question)
   end  
+
+  # api制限-----一旦済み
+  # オープンソースライセンス表記-----保留
+  # ベクトル化して保存-----保留
+  # 軌道に乗るまで質問制限（100回/月?10回/日?）
+  # 各APIの詳細や設定方法をナレッジ化
+  # 回答生成中の広告表示
+  # 画面拡大縮小
   
   def get_answer
     puts "params: #{params.inspect}"
+
+    # APIリクエスト制限の確認
+    api_limit = ApiLimit.first_or_initialize
+    if api_limit.is_limited
+      # 制限がかかっている場合、処理を中止して警告メッセージを返す
+      render json: { limit: true, message: "APIのリクエスト制限に達しました。1分後再試行してください。" }
+      return # この時点でメソッドを終了する
+    end
+
     # 未ログインユーザーの複数回の回答生成を制限
     unless user_signed_in?
       session[:query_count] ||= 0 # セッションにquery_countキーが存在しない場合は0を設定
@@ -134,6 +151,27 @@ class QuestionsController < ApplicationController
 
   def add_new_answer
     puts "params: #{params.inspect}"
+
+    # APIリクエスト制限の確認
+    api_limit = ApiLimit.first_or_initialize
+    if api_limit.is_limited
+      # 制限がかかっている場合、処理を中止して警告メッセージを返す
+      render json: { limit: true, message: "APIのリクエスト制限に達しました。1分後再試行してください。" }
+      return # この時点でメソッドを終了する
+    end
+
+    # 未ログインユーザーの複数回の回答生成を制限
+    unless user_signed_in?
+      session[:query_count] ||= 0 # セッションにquery_countキーが存在しない場合は0を設定
+      session[:query_count] += 1 # query_countをインクリメント
+  
+      if session[:query_count] >= 2
+        # query_countが2以上の場合、ログインページへの移動を促す
+        render json: { prompt_login: true, message: "質問を続けるにはログインが必要です。" }
+        return # この時点でメソッドを終了する
+      end
+    end
+    
     question_id = params[:question_id]
     @question = Question.find(question_id)
     

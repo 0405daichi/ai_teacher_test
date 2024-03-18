@@ -1,0 +1,2 @@
+class ApiLimit < ApplicationRecord
+end

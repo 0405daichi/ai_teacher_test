@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_12_154655) do
+ActiveRecord::Schema.define(version: 2024_03_15_033933) do
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -65,6 +65,12 @@ ActiveRecord::Schema.define(version: 2024_02_12_154655) do
     t.integer "answer_type"
     t.index ["question_id", "answer_type"], name: "index_answers_on_question_id_and_answer_type", unique: true
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "api_limits", force: :cascade do |t|
+    t.boolean "is_limited", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "bookmarks", force: :cascade do |t|

@@ -101,7 +101,9 @@ class Gpt35Client
           n: 1,
         }
       )
-      
+
+      update_api_limit_status(response);
+
       if response.key?('error')
         puts "エラーが発生しました: #{response['error']['message']}" # サーバーログにエラーを出力
         flash[:error] = "エラーが発生しました: #{response['error']['message']}" # フラッシュメッセージにエラーを追加
@@ -239,7 +241,7 @@ class Gpt35Client
       q: query,
       key: api_key,
       cx: cx,
-      num: site == 'www.aozora.gr.jp' ? 10 : 1 # 青空文庫では上位10件を検討
+      num: site == 'www.aozora.gr.jp' ? 3 : 1 # 青空文庫では上位3件を検討
     })
 
     response = Net::HTTP.get_response(uri)
@@ -295,5 +297,25 @@ class Gpt35Client
     else
       return "指定された種類のテキストはサポートされていません。"
     end
+  end
+
+  # ヘッダーからレートリミット情報を解析し、制限状態を更新する関数
+  def update_api_limit_status(headers)
+    # ヘッダーからレートリミット情報を取得
+    limit_requests = headers['x-ratelimit-limit-requests'].to_i
+    remaining_requests = headers['x-ratelimit-remaining-requests'].to_i
+    limit_tokens = headers['x-ratelimit-limit-tokens'].to_i
+    remaining_tokens = headers['x-ratelimit-remaining-tokens'].to_i
+
+    # リクエスト制限とトークン制限を計算
+    request_diff = limit_requests - remaining_requests
+    token_diff = limit_tokens - remaining_tokens
+
+    # 制限状態を判断
+    is_limited = request_diff <= 1 || token_diff <= 1500
+
+    # データベースのフラグを更新（ここではシングルトンパターンを想定）
+    api_limit = ApiLimit.first_or_initialize
+    api_limit.update(is_limited: is_limited)
   end
 end
