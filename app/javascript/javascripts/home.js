@@ -252,41 +252,41 @@ document.addEventListener('turbolinks:load', () => {
   });
 
   // 質問モーダルの閉じるボタン
-  const questionCloseButton = document.getElementById('closeQuestionButton');
-  if (questionCloseButton) {
-    questionCloseButton.addEventListener('click', (event) => {
-      if (questionInputForm.value) {
-        const result = window.confirm('入力した内容は破棄されます。');
-        if (result) {
-          questionModal.hide();
-          questionModalButton.style.display = "block";
-        } else {
-          event.preventDefault();
-        }
-      } else {
-        questionModal.hide();
-        questionModalButton.style.display = "block";
-      }
-    });
-  }
+  // const questionCloseButton = document.getElementById('closeQuestionButton');
+  // if (questionCloseButton) {
+  //   questionCloseButton.addEventListener('click', (event) => {
+  //     if (questionInputForm.value) {
+  //       const result = window.confirm('入力した内容は破棄されます。');
+  //       if (result) {
+  //         questionModal.hide();
+  //         questionModalButton.style.display = "block";
+  //       } else {
+  //         event.preventDefault();
+  //       }
+  //     } else {
+  //       questionModal.hide();
+  //       questionModalButton.style.display = "block";
+  //     }
+  //   });
+  // }
 
-  // 検索モーダルの閉じるボタン
-  const searchCloseButton = document.getElementById('closeSearchButton');
-  const searchInputForm = document.getElementById('searchInputForm');
-  if (searchCloseButton) {
-    searchCloseButton.addEventListener('click', (event) => {
-      if (searchInputForm.value) {
-        const result = window.confirm('入力した内容は破棄されます。');
-        if (result) {
-          searchModal.hide();
-        } else {
-          event.preventDefault();
-        }
-      } else {
-        searchModal.hide();
-      }
-    });
-  }
+  // // 検索モーダルの閉じるボタン
+  // const searchCloseButton = document.getElementById('closeSearchButton');
+  // const searchInputForm = document.getElementById('searchInputForm');
+  // if (searchCloseButton) {
+  //   searchCloseButton.addEventListener('click', (event) => {
+  //     if (searchInputForm.value) {
+  //       const result = window.confirm('入力した内容は破棄されます。');
+  //       if (result) {
+  //         searchModal.hide();
+  //       } else {
+  //         event.preventDefault();
+  //       }
+  //     } else {
+  //       searchModal.hide();
+  //     }
+  //   });
+  // }
 
   document.querySelectorAll('textarea').forEach(function (elem) {
     elem.addEventListener('input', function () {

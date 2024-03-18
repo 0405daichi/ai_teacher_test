@@ -82,7 +82,7 @@ function setupCustomButtons(buttonSelector) {
       url: form.attr('action'),
       type: "POST",
       data: formData,
-      dataType: "script",
+      dataType: 'json',
   
       success: function(response) {
         toggleOverlay('hide');

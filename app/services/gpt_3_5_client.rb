@@ -101,6 +101,7 @@ class Gpt35Client
           n: 1,
         }
       )
+      puts "これがレスポンスだ#{response.headers}"
 
       update_api_limit_status(response);
 
@@ -303,6 +304,7 @@ class Gpt35Client
   def update_api_limit_status(headers)
     # ヘッダーからレートリミット情報を取得
     limit_requests = headers['x-ratelimit-limit-requests'].to_i
+    # puts "これリミットリクエスト#{limit_requests}"
     remaining_requests = headers['x-ratelimit-remaining-requests'].to_i
     limit_tokens = headers['x-ratelimit-limit-tokens'].to_i
     remaining_tokens = headers['x-ratelimit-remaining-tokens'].to_i
@@ -317,5 +319,10 @@ class Gpt35Client
     # データベースのフラグを更新（ここではシングルトンパターンを想定）
     api_limit = ApiLimit.first_or_initialize
     api_limit.update(is_limited: is_limited)
+
+    # フラグがtrueに設定された場合、1分後にフラグをfalseに戻すジョブをスケジュール
+    if is_limited
+      ResetApiLimitJob.set(wait: 1.minute).perform_later(api_limit.id)
+    end
   end
 end

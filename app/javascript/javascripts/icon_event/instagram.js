@@ -344,6 +344,7 @@ document.addEventListener("turbolinks:load", function() {
               });
               $('.instagramModal .search-textarea')[0].dispatchEvent(event);
               trimmingImageModal.hide();
+              preview.attr('src', '');
             }
           }, 'image/png');
         };

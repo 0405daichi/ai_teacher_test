@@ -168,6 +168,7 @@ document.addEventListener("turbolinks:load", function() {
       }, trimmingImageModal[0], '.return-from-trimming');
 
       setWriteOutButtonListener(async () => {
+        toggleOverlay('show');
         const preview = $('.trimming-image-modal .preview');
         const maskRect = $('.trimming-image-modal .mask-rect')[0];
         const svgRect = maskRect.getBoundingClientRect();
@@ -219,16 +220,18 @@ document.addEventListener("turbolinks:load", function() {
           canvas.toBlob(async (blob) => {
             const imageUrl = URL.createObjectURL(blob);
             console.log('image:', imageUrl);
-            // const result = await processImage(blob);
-            // if (result && result.text) {
-            //   $(".question-form-from-camera").find(".question-input-form").val(result.text);
+            const result = await processImage(blob);
+            if (result && result.text) {
+              $(".question-form-from-camera").find(".question-input-form").val(result.text);
 
-            //   const dataTransfer = new DataTransfer();
-            //   dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-            //   $(".question-form-from-camera").find('.hidden-question-image')[0].files = dataTransfer.files;
-            //   submitFormAndShowModal($(".question-form-from-camera")[0], result.text);
-            //   $('#trimmingImageModal').modal('hide');
-            // }
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+              $(".question-form-from-camera").find('.hidden-question-image')[0].files = dataTransfer.files;
+              toggleOverlay('hide');
+              submitFormAndShowModal($(".question-form-from-camera")[0], result.text);
+              $('#trimmingImageModal').modal('hide');
+              preview.attr('src', '');
+            }
           }, 'image/png');
         };
       }, trimmingImageModal[0], '.write-out-image');
@@ -465,6 +468,7 @@ document.addEventListener("turbolinks:load", function() {
               });
               $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
               trimmingImageModal.hide();
+              preview.attr('src', '');
             }
           }, 'image/png');
         };

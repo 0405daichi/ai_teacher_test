@@ -3,7 +3,7 @@ function refreshCard(user_id, question_id) {
   fetch(`/refresh_card/${user_id}`, {
     method: 'GET',
     headers: {
-      'Accept': 'application/javascript',
+      'Accept': 'application/json',
       'X-Requested-With': 'XMLHttpRequest'
     },
     credentials: 'same-origin'
@@ -35,11 +35,16 @@ export async function submitFormAndShowModal(formElement, question) {
   
   // FormDataを作成
   var formData = new FormData(formElement);
+  console.log("フォームデータです", formData)
 
   // データをサーバに送信
   fetch('/questions/get_answer', {
     method: 'POST',
-    body: formData
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest', // RailsがAjaxリクエストと認識するために設定
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: formData,
   })
   .then(response => {
     if (!response.ok) {

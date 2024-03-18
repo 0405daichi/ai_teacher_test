@@ -83,9 +83,12 @@ class QuestionsController < ApplicationController
   # 各APIの詳細や設定方法をナレッジ化
   # 回答生成中の広告表示
   # 画面拡大縮小
+  # プロンプト内の改行調整
+  # その他api制限管理
   
   def get_answer
-    puts "params: #{params.inspect}"
+    # binding.pry
+    # puts "params: #{params.inspect}"
 
     # APIリクエスト制限の確認
     api_limit = ApiLimit.first_or_initialize

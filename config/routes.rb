@@ -48,6 +48,15 @@ Rails.application.routes.draw do
   root to: 'home#index'
   post '/ocr', to: 'questions#analyze_image'
 
-  get '*not_found' => 'application#routing_error'
-  post '*not_found' => 'application#routing_error'
+  # get '*not_found' => 'application#routing_error'
+  # post '*not_found' => 'application#routing_error'
+  # Active Storageのルーティングをエラーハンドリングの対象外とする
+  direct :rails_active_storage do
+    # 何もしない（Active Storageのデフォルトの動作をそのまま利用）
+  end
+
+  # カスタムエラーページへのリダイレクト（Active Storageのパスを除外）
+  match '*path', to: 'application#routing_error', via: :all, constraints: lambda { |req|
+    !req.path.starts_with?('/rails/active_storage')
+  }
 end
