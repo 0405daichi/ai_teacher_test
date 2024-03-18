@@ -111,9 +111,9 @@ class QuestionsController < ApplicationController
     image = params[:image] # 画像を受け取る
     answer_type = params[:answer_type]
     puts "コントローラー側：#{question}"
-    # ai_answer = generate_ai_response(params, question, true)
-    ai_answer = "test"
-    sleep 5
+    ai_answer = generate_ai_response(params, question, true)
+    # ai_answer = "test"
+    # sleep 5
     # puts "これが生成したai_answer: #{ai_answer}"
 
     @question = Question.new(content: question)
@@ -135,10 +135,10 @@ class QuestionsController < ApplicationController
 
     if user_signed_in?
       # 指定したアンケートにまだ回答していない場合のみshow_surveyをtrueにする
-      show_survey = !SurveyResponse.exists?(user_id: current_user.id, survey_id: survey_id)
+      # show_survey = !SurveyResponse.exists?(user_id: current_user.id, survey_id: survey_id)
 
       # 全てのログインユーザーに表示しない場合
-      # show_survey = false
+      show_survey = false
     end
   
     if @question.save

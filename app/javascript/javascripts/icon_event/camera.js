@@ -96,21 +96,21 @@ document.addEventListener("turbolinks:load", function() {
 
     canvas.toBlob(async (blob) => {
       console.log(blob)
-      // const result = await processImage(blob);
+      const result = await processImage(blob);
       const imageUrl = URL.createObjectURL(blob);
       console.log('image:', imageUrl);
       // console.log('Response:', result.text);
 
-      // const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
-      // const questionInputForm = $(questionForm).find(".question-input-form")[0];
-      // questionInputForm.value = result.text;
+      const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
+      const questionInputForm = $(questionForm).find(".question-input-form")[0];
+      questionInputForm.value = result.text;
 
-      // const imageInput = $(questionForm).find('.hidden-question-image')[0];
+      const imageInput = $(questionForm).find('.hidden-question-image')[0];
 
-      // const dataTransfer = new DataTransfer();
-      // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-      // imageInput.files = dataTransfer.files;
-      // submitFormAndShowModal(questionForm, result.text);
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+      imageInput.files = dataTransfer.files;
+      submitFormAndShowModal(questionForm, result.text);
     }, 'image/png');
   });
 
