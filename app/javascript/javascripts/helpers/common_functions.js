@@ -130,6 +130,7 @@ function setCardDetailsModal(cardId) {
 
 function showCardDetailsModal(cardId) {
   if (!$("#cardContentModal").hasClass('show')) {
+    console.log('showCardDetailsModal成功')
     setCardDetailsModal(cardId);
     $('#cardContentModal').modal('show');
     showTextForIndex(0)
@@ -146,6 +147,7 @@ function fetchCardDetails(cardId) {
       'X-Requested-With': 'XMLHttpRequest'
     },
     success: function() {
+      console.log('fetchCardDetails成功')
       showCardDetailsModal(id);
     },
     error: function(error) {

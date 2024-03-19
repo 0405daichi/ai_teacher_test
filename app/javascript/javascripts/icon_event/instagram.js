@@ -51,6 +51,7 @@ document.addEventListener("turbolinks:load", function() {
                 window.location.href = "/users/sign_in";
               }
             } else {
+              console.log('ユーザー詳細ページ分岐')
               const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
               fetchCardDetails(id);
             }
