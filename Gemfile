@@ -24,6 +24,7 @@ gem 'omniauth-google-oauth2'
 gem "omniauth-rails_csrf_protection"
 gem 'katex', '~> 0.10.0'
 gem 'recaptcha', require: 'recaptcha/rails'
+gem 'aws-sdk-s3'
 
 group :development, :test do
   gem 'sqlite3', '~> 1.4'
