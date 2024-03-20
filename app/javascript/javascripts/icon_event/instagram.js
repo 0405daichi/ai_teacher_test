@@ -51,28 +51,24 @@ document.addEventListener("turbolinks:load", function() {
             console.log('not found');
           }
       
-          // '.card-body' 要素に対するイベントリスナーを追加
-          const cardBody = cardElement.querySelector('.card-body');
-          if (cardBody) { // cardBodyが存在する場合のみイベントリスナーを追加
-            cardBody.addEventListener('click', function() {
-              console.log('card-body-clicked');
-              var isLoggedIn = isUserLoggedIn(); // ログイン状態をチェック
-              console.log('isUserLoggedIn', isLoggedIn);
-  
-              if (!isLoggedIn) {
-                const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
-                if (confirmLogin) {
-                    // ユーザーがOKを選択した場合、ログインページへリダイレクト
-                    window.location.href = "/users/sign_in";
-                }
-              } else {
-                console.log('ユーザー詳細ページ分岐');
-                // 'data-card-id' 属性からIDを取得
-                const id = cardElement.getAttribute('data-card-id'); 
-                fetchCardDetails(id);
+          cardElement.addEventListener('click', function() {
+            console.log('card-body-clicked');
+            var isLoggedIn = isUserLoggedIn(); // ログイン状態をチェック
+            console.log('isUserLoggedIn', isLoggedIn);
+
+            if (!isLoggedIn) {
+              const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
+              if (confirmLogin) {
+                  // ユーザーがOKを選択した場合、ログインページへリダイレクト
+                  window.location.href = "/users/sign_in";
               }
-            });
-          }
+            } else {
+              console.log('ユーザー詳細ページ分岐');
+              // 'data-card-id' 属性からIDを取得
+              const id = cardElement.getAttribute('data-card-id'); 
+              fetchCardDetails(id);
+            }
+          });
         });
       
 
