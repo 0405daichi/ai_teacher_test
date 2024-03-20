@@ -50,6 +50,9 @@ document.addEventListener("turbolinks:load", function() {
             console.log('not found');
           }
           card.find('.card-body').on('click', function() {
+            console.log('card-body-clicked')
+            var a = isUserLoggedIn();
+            console.log('isUserLoggedIn', a)
             if (!isUserLoggedIn()) {
               const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
               if (confirmLogin) {
