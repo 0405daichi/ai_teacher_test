@@ -49,7 +49,7 @@ document.addEventListener("turbolinks:load", function() {
           } else {
             console.log('not found');
           }
-          card.find('.card-body').on('click', function() {
+          card.find('.card-body').addEventListener('click', function() {
             console.log('card-body-clicked');
             var a = isUserLoggedIn();
             console.log('isUserLoggedIn', a);
