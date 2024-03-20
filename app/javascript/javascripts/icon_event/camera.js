@@ -43,7 +43,6 @@ document.addEventListener("turbolinks:load", function() {
     }
 
     $('#cameraModal .close-camera-modal').click(async function() {
-      console.log("Camera click");
       $('#cameraModal').modal('hide');
       closeCamera();
     });
@@ -61,7 +60,6 @@ document.addEventListener("turbolinks:load", function() {
 
   $("#captureButton").click(async function() {
     const imageBitmap = await takePhoto();
-    console.log(`imageBitmap${imageBitmap}`)
     
     $('#cameraModal').modal('hide');
     closeCamera();
@@ -95,11 +93,8 @@ document.addEventListener("turbolinks:load", function() {
     ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
 
     canvas.toBlob(async (blob) => {
-      console.log(blob)
       const result = await processImage(blob);
       const imageUrl = URL.createObjectURL(blob);
-      console.log('image:', imageUrl);
-      // console.log('Response:', result.text);
 
       const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
       const questionInputForm = $(questionForm).find(".question-input-form")[0];
@@ -219,7 +214,6 @@ document.addEventListener("turbolinks:load", function() {
           // canvasからblobを生成してOCR処理（この部分は省略された処理に対する例示です）
           canvas.toBlob(async (blob) => {
             const imageUrl = URL.createObjectURL(blob);
-            console.log('image:', imageUrl);
             const result = await processImage(blob);
             if (result && result.text) {
               $(".question-form-from-camera").find(".question-input-form").val(result.text);
@@ -287,11 +281,9 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   $('.write-question-modal .camera-circle').on('click', async () => {
-    console.log("camera")
     const writeQuestionModal = $('.write-question-modal').eq(0);
     const simpleCameraModal = $('.simple-camera-modal');
     const preview = $(".simple-camera-modal .preview");
-    console.log(preview);
     writeQuestionModal.modal('hide');
     simpleCameraModal.modal('show');  
     setTimeout(() => {
@@ -346,10 +338,8 @@ document.addEventListener("turbolinks:load", function() {
       ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
       
       canvas.toBlob(async (blob) => {
-        console.log("blob", blob);
         const result = await processImage(blob);
         const imageUrl = URL.createObjectURL(blob);
-        console.log('image:', imageUrl);
         $('.write-question-modal .question-input-form').val(result.text);
 
         // // 新しい 'input' イベントを作成
@@ -376,7 +366,6 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   $('.write-question-modal .image-circle').on('click', function (e) {
-    console.log("Click");
     $('.write-question-modal .image-input-write')[0].click();
     e.stopPropagation();
   });
@@ -457,7 +446,6 @@ document.addEventListener("turbolinks:load", function() {
             // processImage関数でOCR処理
             const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
-            console.log('image:', imageUrl);
             if (result && result.text) {
               $('.write-question-modal .question-input-form').val(result.text);
 

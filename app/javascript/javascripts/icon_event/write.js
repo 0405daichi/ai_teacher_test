@@ -33,7 +33,6 @@ function submitFormAndShowModal(formElement) {
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data.content);
 
     // 新しいモーダルの中身を設定
     var content = convertTextToHtml(data.content);

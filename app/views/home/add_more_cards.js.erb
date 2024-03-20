@@ -7,16 +7,9 @@
   // カードのクラス名や共通の属性を使ってセレクタを指定する
   $('#<%= @category %>-cards .card').each(function() {
     var cardId = $(this).data('card-id');
-    console.log("thisthisthis", this);
-    console.log("cardidcardidcardid", cardId);
     $(this).on('click', function() {
       fetchCardDetails(cardId);
-      console.log('add-more-cards-fetch-card-details');
     });
   });
-
-  console.log("OK");
 <% else %>
-  console.log("NO");
-  console.log('表示する質問はありません。');
 <% end %>

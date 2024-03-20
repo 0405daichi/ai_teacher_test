@@ -11,7 +11,6 @@ document.querySelectorAll('.answer-content').forEach(function(el) {
     ]
   });
 
-  console.log("answer-content");
   // marked.jsを使用してMarkdownをHTMLに変換
   var html = marked.parse(el.innerHTML);
   el.innerHTML = html;

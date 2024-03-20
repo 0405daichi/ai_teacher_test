@@ -1,5 +1,4 @@
 // app/views/home/refresh_instagram_modal.js.erb
 
-console.log("refresh_instagram_modal.js.erb is executed.");
 // Instagramモーダルの内容を更新
 $("#main-body").html("<%= escape_javascript(render 'app/instagram', all_cards: @all_cards, user_questions: @user_questions, user_likes: @user_likes, user_bookmarks: @user_bookmarks) %>");

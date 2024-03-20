@@ -3,27 +3,16 @@ function refreshCard(user_id, question_id) {
   fetch(`/refresh_card/${user_id}`, {
     method: 'GET',
     headers: {
-      'Accept': 'application/json',
+      'Accept': 'text/javascript',
       'X-Requested-With': 'XMLHttpRequest'
     },
     credentials: 'same-origin'
   })
   .then(response => {
-    console.log(response);
     if (!response.ok) {
-      response.text().then(text => console.log(text)); // エラーレスポンスのボディを出力
       throw new Error('Network response was not ok');
     }
     return response.text();
-  })
-  .then(script => {
-    console.log(script);
-    eval(script);
-    const cards = [];
-    const card = document.querySelector(`#card-${question_id}`);
-    console.log(card);
-    cards.push(card);
-    // setInstagram(cards);
   })
   .catch(error => console.error('Error:', error));
 };
@@ -35,7 +24,6 @@ export async function submitFormAndShowModal(formElement, question) {
   
   // FormDataを作成
   var formData = new FormData(formElement);
-  console.log("フォームデータです", formData)
 
   // データをサーバに送信
   fetch('/questions/get_answer', {
@@ -56,7 +44,6 @@ export async function submitFormAndShowModal(formElement, question) {
     return response.json();
   })
   .then(data => {
-    console.log(data);
     toggleOverlay('hide');
     decelerateRotation();
     if (data.limit){
@@ -80,6 +67,7 @@ export async function submitFormAndShowModal(formElement, question) {
         } else {
           // アンケートをスキップして回答表示処理を直接実行
           fetchCardDetails(data.question_id);
+          refreshCard(data.user_id, data.question_id);
         }
       }, 1000);
     }
@@ -88,6 +76,7 @@ export async function submitFormAndShowModal(formElement, question) {
     // console.error('Error:', error);
     // エラーメッセージをアラートで表示
     toggleOverlay('hide');
+    decelerateRotation();
     alert(`エラーが発生しました`);
   });
 }

@@ -79,7 +79,6 @@ function setupAncientTranslationOptions(ancientTranslationOptions) {
 // パネルの開閉とバリデーションのロジックを含む関数
 function setupPanelToggleAndValidation() {
   const cameraModal = document.querySelector('.cameraModal')
-  console.log("  ", cameraModal)
   cameraModal.querySelector('.circle-quarter').addEventListener('click', function() {
     const activeOptionElement = cameraModal.querySelector('.option-carousel .option.active');
     const isActiveOptionTranslation = activeOptionElement && activeOptionElement.dataset.option === '現代語訳・口語訳';
@@ -125,6 +124,13 @@ function handleQuestionOption(modalElement) {
 
   const answerOptions = modalElement.querySelectorAll('.container .answerOption');
   updateOptionActiveState(answerOptions);
+  answerOptions.forEach(function(option) {
+    option.addEventListener('click', function() {
+      var value = this.getAttribute('data-value');
+      // 'answerType'の隠しフィールドの値を更新
+      modalElement.querySelector('#answerType').value = value == 0 ? "withExplain" : value == 1 ? "onlyAnswer" : "hint";
+    });
+  });
 }
 
 function handleTranslateOption(modalElement) {

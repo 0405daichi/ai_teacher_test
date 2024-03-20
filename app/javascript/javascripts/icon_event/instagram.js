@@ -116,7 +116,6 @@ document.addEventListener("turbolinks:load", function() {
   
   function loadMoreCards(activeCategory) {
     let existingCardsCount = $(`.${activeCategory}-cards .card`).length;
-    console.log(existingCardsCount);
     
     $.ajax({
       url: '/add_more_cards',
@@ -143,7 +142,6 @@ document.addEventListener("turbolinks:load", function() {
   $('.instagramModal .search-textarea').on('input', triggerSearch);
 
   async function triggerSearch() {
-    console.log("input")
     const url = `/questions/search?query=${encodeURIComponent($('.instagramModal .search-textarea').val().trim())}`;
     try {
       $.ajax({
@@ -227,10 +225,8 @@ document.addEventListener("turbolinks:load", function() {
       ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
       
       canvas.toBlob(async (blob) => {
-        console.log("blob", blob);
         const result = await processImage(blob);
         const imageUrl = URL.createObjectURL(blob);
-        console.log('image:', imageUrl);
         $('.instagramModal .search-textarea').val(result.text);
 
         // 新しい 'input' イベントを作成
@@ -259,7 +255,6 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   $('.instagramModal .image-circle').on('click', function (e) {
-    console.log("Click");
     $('.instagramModal .image-input-search')[0].click();
     e.stopPropagation();
   });
@@ -341,7 +336,6 @@ document.addEventListener("turbolinks:load", function() {
             // processImage関数でOCR処理
             const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
-            console.log('image:', imageUrl);
             if (result && result.text) {
               $('.instagramModal .search-textarea').val(result.text);
 

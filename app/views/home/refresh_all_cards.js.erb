@@ -3,5 +3,4 @@
   $("#all-cards").html("<%= j(render partial: 'shared/card', collection: @all_cards, as: :card) %>");
 <% else %>
   // @all_cardsが空の場合はここに何もしない、またはユーザーに通知するコードを書く
-  console.log('最新の質問はありません。');
 <% end %>

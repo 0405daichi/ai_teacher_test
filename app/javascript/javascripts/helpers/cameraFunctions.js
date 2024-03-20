@@ -17,7 +17,6 @@ const cameraSettings = {
 // カメラの最大解像度を取得し、ストリームを保持する
 async function initializeCamera() {
   if (sessionStorage.getItem('isCameraInitialized') === 'true') {
-    console.log("すでに初期化されています。");
     return; // すでに初期化されている場合は何もしない
   }
 
@@ -116,11 +115,8 @@ export async function takePhoto() {
 
   try {
     const blob = await imageCapture.takePhoto();
-    console.log("ここ", blob);
     const imageBitmap = await createImageBitmap(blob);
-    console.log("ここここ", imageBitmap);
     const originalImageUrl = URL.createObjectURL(blob);
-    console.log("ここここここ", originalImageUrl);
     return imageBitmap;
   } catch (error) {
     console.error('写真の撮影に失敗しました。', error);
@@ -148,11 +144,9 @@ export async function processImage(blob) {
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
     }
   });
-  console.log("読み込み後：", response); // オブジェクトそのまま出力
   
   const data = await response.json();
 
-  console.log("読み込み後json：", data); // オブジェクトそのまま出力
   return data;
 }
 

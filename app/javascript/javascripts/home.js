@@ -312,7 +312,6 @@ document.addEventListener('turbolinks:load', () => {
         // それぞれのモーダルを閉じ、前のモーダルを保存
         if (questionModal._isShown) {
           previousModal = questionModal;
-          console.log(previousModal);
           questionModal.hide();
         } else if (searchModal._isShown) {
           previousModal = searchModal;
@@ -384,7 +383,6 @@ document.addEventListener('turbolinks:load', () => {
   $('.modal').on('hidden.bs.modal', function () {
     // ここにすべてのモーダルが閉じた後に実行したい関数やコードを記述します
     closeCamera();
-    console.log("閉じました。");
   });
 });
 

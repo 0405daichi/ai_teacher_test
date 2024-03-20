@@ -43,9 +43,9 @@
                 <!-- 質問オプション用のコード -->
                 <div class="how-to-answer">
                   <div class="container">
-                    <% ['答えのみ', '解説付き', 'ヒント'].each_with_index do |option, index| %>
+                    <%= f.hidden_field :answerType, value: "withExplain", id: "answerType" %>
+                    <% ['解説付き', '答えのみ', 'ヒント'].each_with_index do |option, index| %>
                       <div class="answerOption my-3 mx-1 <%= 'active' if index.zero? %>" data-option="<%= option %>" data-value="<%= index %>">
-                        <%= f.hidden_field :answerType, value: index.zero? ? "onlyAnswer" : index == 1 ? "withExplain" : "hint", id: "answer_type_#{index}" %>
                         <%= option %>
                       </div>
                     <% end %>

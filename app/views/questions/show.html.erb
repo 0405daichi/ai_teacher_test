@@ -16,7 +16,7 @@
       <% if @question.image.attached? %>
         <%= image_tag @question.image, style: "width: 100%; height: auto; margin-bottom: 30px" %> <!-- 画像があればここで表示 -->
       <% end %>
-      <%= @question.content %>
+      <%= simple_format(@question.content) %>
     </div>
   </div>
   <div class="answers-section">
@@ -235,6 +235,7 @@
   }
 
   .edit-card-buttons {
+    align-items: center;
     display: flex;
     gap: 20px;
   }

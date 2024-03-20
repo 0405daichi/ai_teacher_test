@@ -2,12 +2,8 @@
 
 $(".like-<%= @question.id %>").each(function() {
   $(this).html("<%= j(render 'likes/like', card: @question) %>");
-  console.log('いいねボタンが押されて更新');
 });
 $("#user-liked-cards").prepend("<%= j(render 'shared/card', card: @question) %>");
-var a = $("#user-liked-cards");
-console.log('useruser', a);
-
 $("#user-liked-cards .card-<%= @question.id %> .card-body").on('click', function() {
   fetchCardDetails(<%= @question.id %>);
 });
