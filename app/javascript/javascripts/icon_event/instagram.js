@@ -43,6 +43,12 @@ document.addEventListener("turbolinks:load", function() {
   
         $(".instagramModal .card").each(function() {
           const card = $(this); // 現在のカードを取得
+          console.log('card-element', this);
+          if (card.find('.card-body')){
+            console.log('card-found');
+          } else {
+            console.log('not found');
+          }
           card.find('.card-body').on('click', function() {
             if (!isUserLoggedIn()) {
               const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
@@ -51,7 +57,7 @@ document.addEventListener("turbolinks:load", function() {
                 window.location.href = "/users/sign_in";
               }
             } else {
-              console.log('ユーザー詳細ページ分岐')
+              console.log('ユーザー詳細ページ分岐');
               const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
               fetchCardDetails(id);
             }
