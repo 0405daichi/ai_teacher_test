@@ -85,6 +85,7 @@ class QuestionsController < ApplicationController
   # 画面拡大縮小
   # プロンプト内の改行調整
   # その他api制限管理
+  # 質問種類検証
   
   def get_answer
     # binding.pry

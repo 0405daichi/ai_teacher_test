@@ -33,6 +33,35 @@ document.addEventListener("turbolinks:load", function() {
           data: { existing_cards_count: existingCardsCount },
           success: function(response) {
             // 成功時の処理はここに記述（refresh_all_card.js.erb で処理される）
+            document.querySelectorAll(".instagramModal .card").forEach(function(cardElement) {
+              console.log('card-element', cardElement);
+          
+              // '.card-body'が存在するかチェック
+              if (cardElement.querySelector('.card-body')) {
+                console.log('card-found');
+              } else {
+                console.log('not found');
+              }
+          
+              cardElement.addEventListener('click', function() {
+                console.log('card-body-clicked');
+                var isLoggedIn = isUserLoggedIn(); // ログイン状態をチェック
+                console.log('isUserLoggedIn', isLoggedIn);
+    
+                if (!isLoggedIn) {
+                  const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
+                  if (confirmLogin) {
+                      // ユーザーがOKを選択した場合、ログインページへリダイレクト
+                      window.location.href = "/users/sign_in";
+                  }
+                } else {
+                  console.log('ユーザー詳細ページ分岐');
+                  // 'data-card-id' 属性からIDを取得
+                  const id = cardElement.getAttribute('data-card-id'); 
+                  fetchCardDetails(id);
+                }
+              });
+            });
           },
           error: function(xhr, status, error) {
             // 失敗時には元のカードの内容を再表示
@@ -41,35 +70,7 @@ document.addEventListener("turbolinks:load", function() {
           }
         });
   
-        document.querySelectorAll(".instagramModal .card").forEach(function(cardElement) {
-          console.log('card-element', cardElement);
-      
-          // '.card-body'が存在するかチェック
-          if (cardElement.querySelector('.card-body')) {
-            console.log('card-found');
-          } else {
-            console.log('not found');
-          }
-      
-          cardElement.addEventListener('click', function() {
-            console.log('card-body-clicked');
-            var isLoggedIn = isUserLoggedIn(); // ログイン状態をチェック
-            console.log('isUserLoggedIn', isLoggedIn);
-
-            if (!isLoggedIn) {
-              const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
-              if (confirmLogin) {
-                  // ユーザーがOKを選択した場合、ログインページへリダイレクト
-                  window.location.href = "/users/sign_in";
-              }
-            } else {
-              console.log('ユーザー詳細ページ分岐');
-              // 'data-card-id' 属性からIDを取得
-              const id = cardElement.getAttribute('data-card-id'); 
-              fetchCardDetails(id);
-            }
-          });
-        });
+        
       
 
         $("#user-search-cards .search-results").empty();
