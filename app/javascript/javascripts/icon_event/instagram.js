@@ -41,31 +41,40 @@ document.addEventListener("turbolinks:load", function() {
           }
         });
   
-        $(".instagramModal .card").each(function() {
-          const card = $(this); // 現在のカードを取得
-          console.log('card-element', this);
-          if (card.find('.card-body')){
+        document.querySelectorAll(".instagramModal .card").forEach(function(cardElement) {
+          console.log('card-element', cardElement);
+      
+          // '.card-body'が存在するかチェック
+          if (cardElement.querySelector('.card-body')) {
             console.log('card-found');
           } else {
             console.log('not found');
           }
-          card.find('.card-body').addEventListener('click', function() {
-            console.log('card-body-clicked');
-            var a = isUserLoggedIn();
-            console.log('isUserLoggedIn', a);
-            if (!isUserLoggedIn()) {
-              const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
-              if (confirmLogin) {
-                // ユーザーがOKを選択した場合、ログインページへリダイレクト
-                window.location.href = "/users/sign_in";
+      
+          // '.card-body' 要素に対するイベントリスナーを追加
+          const cardBody = cardElement.querySelector('.card-body');
+          if (cardBody) { // cardBodyが存在する場合のみイベントリスナーを追加
+            cardBody.addEventListener('click', function() {
+              console.log('card-body-clicked');
+              var isLoggedIn = isUserLoggedIn(); // ログイン状態をチェック
+              console.log('isUserLoggedIn', isLoggedIn);
+  
+              if (!isLoggedIn) {
+                const confirmLogin = confirm("回答を表示するにはログインが必要です。ログインページへ移動しますか？");
+                if (confirmLogin) {
+                    // ユーザーがOKを選択した場合、ログインページへリダイレクト
+                    window.location.href = "/users/sign_in";
+                }
+              } else {
+                console.log('ユーザー詳細ページ分岐');
+                // 'data-card-id' 属性からIDを取得
+                const id = cardElement.getAttribute('data-card-id'); 
+                fetchCardDetails(id);
               }
-            } else {
-              console.log('ユーザー詳細ページ分岐');
-              const id = card.data('card-id'); // このカードのdata-card-id属性からIDを取得
-              fetchCardDetails(id);
-            }
-          });
+            });
+          }
         });
+      
 
         $("#user-search-cards .search-results").empty();
         $("#no-results-message").hide(); // メッセージを隠す
