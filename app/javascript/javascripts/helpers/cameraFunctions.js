@@ -59,7 +59,7 @@ if (isHomePage()) {
 export async function openCamera(modalElement, cameraPreviewElement) {
   // カメラの初期化が完了していない場合はユーザーに確認し、リロードを促す
   if (!cameraSettings.isInitialized) {
-    const reload = confirm('カメラが設定されていません。アプリを再起動しますか？');
+    const reload = confirm('カメラが設定されていません。\r\nアプリを再起動しますか？');
     if (reload) {
       window.location.reload();
     }
@@ -94,7 +94,7 @@ export async function openCamera(modalElement, cameraPreviewElement) {
       alert('宿題カメラを使用するには設定からカメラへのアクセスを許可してください。');
     } else {
       // その他のエラーに対する処理
-      const reload = confirm('カメラへのアクセスに失敗しました。アプリを再起動しますか？');
+      const reload = confirm('カメラへのアクセスに失敗しました。\r\nアプリを再起動しますか？');
       if (reload) {
         window.location.reload();
       }
@@ -127,6 +127,7 @@ export async function takePhoto() {
 export async function closeCamera() {
   if (currentStream) {
     $('#camera-alert').hide();
+    resetAllElementPositions();
     currentStream.getTracks().forEach(track => track.stop());
     currentStream = null;
     currentCameraModal = null;
@@ -243,48 +244,96 @@ export async function initResizableRect(rect, lightDarkArea, preview) {
   window.addEventListener("touchend", endDrag);
 }
 
-// カメラプレビューの位置とサイズを取得して調整する関数
-export async function adjustOverlayElements(rect, lightDarkArea, preview) {
-  const maskRect = lightDarkArea.querySelector('.mask-rect');
-  const previewRect = preview.getBoundingClientRect();
-  // 四つ角のパスを調整
-  const newWidth = previewRect.width / 2;
-  const newHeight = previewRect.height / 2;
-  lightDarkArea.style.width = `${previewRect.width}px`;
-  lightDarkArea.style.height = `${previewRect.height}px`;
-  rect.style.width = `${newWidth}px`;
-  rect.style.height = `${newHeight}px`;
-  rect.style.left = `${newWidth}px`;
-  rect.style.top = `${newHeight}px`;
-  maskRect.setAttribute("width", newWidth);
-  maskRect.setAttribute("height", newHeight);
-  maskRect.setAttribute("transform", `translate(-${newWidth / 2}, -${newHeight / 2})`);
+export async function initializeDraggableRect(resizableRect, lightDarkArea, preview) {
+  const moveIcon = lightDarkArea.querySelector('.move-icon');
+  const maskRect = lightDarkArea.querySelector('#maskRect');
+  let isDragging = false;
+  let startX, startY;
 
-  // pathの位置とmask-rectの位置とサイズを更新
-  const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
-  corners.forEach(corner => {
-    const path = rect.querySelector(`.${corner}-corner`);
-
-    let pathD = '';
-
-    switch (corner) {
-      case 'top-left':
-        pathD = `M 2,22 Q 2,2 22,2`;
-        break;
-      case 'top-right':
-        pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
-        break;
-      case 'bottom-right':
-        pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
-        break;
-      case 'bottom-left':
-        pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
-        break;
-    }
-
-    path.setAttribute("d", pathD);
+  moveIcon.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    e.preventDefault(); // テキスト選択の防止
   });
-  
-  // ウィンドウのリサイズ時に調整を行う
-  // window.addEventListener('resize', () => adjustOverlayElements(rect, lightDarkArea, preview));
+
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    let dx = e.clientX - startX;
+    let dy = e.clientY - startY;
+    startX = e.clientX;
+    startY = e.clientY;
+    
+    let resizableRectStyle = window.getComputedStyle(resizableRect);
+    let resizableX = parseFloat(resizableRectStyle.left);
+    let resizableY = parseFloat(resizableRectStyle.top);
+
+    let maskRectTransform = maskRect.getAttribute('transform');
+    let [maskX, maskY] = maskRectTransform.match(/translate\((-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\)/).slice(1, 3);
+
+    const previewRect = preview.getBoundingClientRect();
+    const maxWidth = previewRect.width;
+    const maxHeight = previewRect.height;
+
+    // 移動範囲の制限
+    resizableX = Math.max(maskX * -1, Math.min(resizableX, maxWidth - (maskRect.getBoundingClientRect().width / 2 )));
+    resizableY = Math.max(maskY * -1, Math.min(resizableY, maxHeight - (maskRect.getBoundingClientRect().height / 2 )));
+    
+    // 新しい位置を設定
+    resizableRect.style.left = `${resizableX + dx}px`;
+    resizableRect.style.top = `${resizableY + dy}px`;
+    maskRect.setAttribute('x', `${resizableX + dx}px`);
+    maskRect.setAttribute('y', `${resizableY + dy}px`);
+
+    // move-icon をマウスの位置に追従させる
+    moveIcon.style.left = `${resizableX + dx}px`;
+    moveIcon.style.top = `${resizableY + dy}px`;
+    moveIcon.style.transform = 'translate(-50%, -50%)'; // 中心をマウスに合わせる
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (!isDragging) return;
+    isDragging = false;
+  });
 }
+
+export async function resetAllElementPositions() {
+  // 全ての mask-rect をリセット
+  document.querySelectorAll('.mask-rect').forEach(maskRect => {
+    maskRect.setAttribute('x', '50%');
+    maskRect.setAttribute('y', '50%');
+    maskRect.setAttribute('width', '280'); // 元の幅
+    maskRect.setAttribute('height', '180'); // 元の高さ
+    maskRect.setAttribute('transform', 'translate(-140, -90)');
+  });
+
+  // 全ての resizable-rect をリセット
+  document.querySelectorAll('.resizable-rect').forEach(resizableRect => {
+    resizableRect.style.width = '280px'; // 元の幅
+    resizableRect.style.height = '180px'; // 元の高さ
+    resizableRect.style.left = '50%';
+    resizableRect.style.top = '50%';
+    resizableRect.style.transform = 'translate(-50%, -50%)';
+  });
+
+  // 全ての path をリセット
+  document.querySelectorAll('.resizable-rect path').forEach(path => {
+    if (path.classList.contains('top-left-corner')) {
+      path.setAttribute('d', 'M 2,22 Q 2,2 22,2');
+    } else if (path.classList.contains('top-right-corner')) {
+      path.setAttribute('d', 'M 278,22 Q 278,2 258,2');
+    } else if (path.classList.contains('bottom-right-corner')) {
+      path.setAttribute('d', 'M 258,178 Q 278,178 278,158');
+    } else if (path.classList.contains('bottom-left-corner')) {
+      path.setAttribute('d', 'M 22,178 Q 2,178 2,158');
+    }
+  });
+
+  // 全ての move-icon をリセット
+  document.querySelectorAll('.move-icon').forEach(moveIcon => {
+    moveIcon.style.left = '50%';
+    moveIcon.style.top = '50%';
+    moveIcon.style.transform = 'translate(-50%, -50%)';
+  });
+}
+

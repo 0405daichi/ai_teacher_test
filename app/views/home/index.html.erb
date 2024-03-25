@@ -18,6 +18,17 @@
   </ul>
 </div>
 <style>
+.move-icon {
+  animation: blink 1s infinite;
+}
+.move-icon svg {
+  width: 100%;
+  height: 100%;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
 #camera-alert {
   position: fixed;
   bottom: 15%;

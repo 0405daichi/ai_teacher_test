@@ -1,46 +1,76 @@
-<div class="circle-container">
-  <div class="outer-circle">
-    <div class="inner-circle"></div>
-  </div>
-</div>
-<div>
-  ・画像を読み込んだ後、inputのvalueを空にしてない
-  ・読み込みボタンに重複イベントが追加されていている
-  ・シンプルカメラ開く時の戻るボタンのイベント管理
-  ・シンプルカメラのキャプチャイベントの重複
-  ・答えが返ってこなかった時の質問の保存なし
-  ・答えがエラーだった時の対応
-</div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Resizable Rectangle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="rectangle-container">
+        <div id="rectangle">
+            <div id="top-handle" class="handle"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+
 <style>
-.circle-container {
-  position: relative;
-  width: 100px; /* または必要なサイズ */
-  height: 100px; /* または必要なサイズ */
+#rectangle-container {
+    position: relative;
+    width: 80%;
+    height: 400px;
+    margin: 20px auto;
+    overflow: hidden; /* Handleがコンテナ外に出るのを防ぐ */
 }
 
-.outer-circle {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(245, 245, 245, 0.5); /* 淡い白色に透明度を設定 */
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s;
+#rectangle {
+    position: absolute;
+    width: 100%;
+    height: 100px; /* 初期の高さ */
+    background-color: grey;
+    border: 5px solid black; /* 太い枠線 */
+    box-sizing: border-box;
+    top: 50%; /* 中央に配置 */
+    transform: translateY(-50%); /* Y軸の中央を合わせる */
 }
 
-.inner-circle {
-  width: 80%; /* 外側の円よりもかなり小さく */
-  height: 80%; /* 外側の円よりもかなり小さく */
-  background-color: white; /* 薄い白色に透明度を設定 */
-  border-radius: 50%;
-  transition: background-color 0.3s;
-  margin: auto; /* 中央に自動的に配置 */
-  position: relative; /* マージンを適用するために必要 */
+.handle {
+    width: 100%;
+    height: 20px; /* ハンドルの高さ */
+    background-color: darkgrey;
+    cursor: ns-resize; /* カーソルのスタイルを変更 */
+    position: absolute;
+    top: -10px; /* ハンドルが上辺にかかるように調整 */
+    left: 0;
 }
-
-.outer-circle:hover .inner-circle {
-  background-color: rgba(245, 245, 245, 0.5); /* ホバーが外れたら外側の円と同じ色に */
-}
-
 </style>
+
+<script>
+let isDragging = false;
+
+const rectangle = document.getElementById('rectangle');
+const topHandle = document.getElementById('top-handle');
+
+topHandle.addEventListener('mousedown', function(e) {
+    // ドラッグ開始
+    isDragging = true;
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+        // マウスの位置によって長方形の高さを変更
+        const rectangleRect = rectangle.getBoundingClientRect();
+        const newHeight = e.clientY - rectangleRect.top + (topHandle.offsetHeight / 2);
+        if (newHeight > 0) { // 負の高さにはしない
+            rectangle.style.height = newHeight + 'px';
+        }
+    }
+});
+
+document.addEventListener('mouseup', function(e) {
+    // ドラッグ終了
+    isDragging = false;
+});
+</script>

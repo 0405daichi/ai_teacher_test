@@ -1,7 +1,7 @@
 // app/javascript/javascripts/icon_event/instagram.js
 
 import { Modal } from 'bootstrap';
-import { openCamera, takePhoto, closeCamera, processImage, initResizableRect, adjustOverlayElements } from '../helpers/cameraFunctions.js';
+import { openCamera, takePhoto, closeCamera, processImage, resetAllElementPositions } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 // ライブラリをインポート
 import marked from 'marked';
@@ -273,6 +273,7 @@ document.addEventListener("turbolinks:load", function() {
       reader.readAsDataURL(file);
       
       instagramModal.modal('hide');
+      resetAllElementPositions();
       trimmingImageModal.modal('show');
 
       setBackButtonListener(async () => {

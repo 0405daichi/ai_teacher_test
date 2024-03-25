@@ -47,12 +47,12 @@ function setupRegenerateAnswerButton(buttonSelector, formSelector, actionUrl) {
         toggleOverlay('hide');
         if (data.limit){
           setTimeout(() => {
-            confirm("アクセスが集中しています。\n1分後再試行してください。");
+            confirm("アクセスが集中しています。\r\n1分後再試行してください。");
           }, 1000);
         } else if (data.prompt_login) {
           // ログインが必要な場合、確認ダイアログを表示
           setTimeout(() => {
-            const confirmLogin = confirm("質問を生成するにはログインが必要です。\nログインページへ移動しますか？");
+            const confirmLogin = confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？");
             if (confirmLogin) {
               // ユーザーがOKを選択した場合、ログインページへリダイレクト
               window.location.href = "/users/sign_in";
@@ -149,7 +149,7 @@ function fetchCardDetails(cardId) {
       showCardDetailsModal(id);
     },
     error: function(error) {
-      const reload = confirm('カードを開くのに失敗しました。アプリを再起動しますか？');
+      const reload = confirm('カードを開くのに失敗しました。\r\nアプリを再起動しますか？');
       if (reload) {
         window.location.reload();
       }

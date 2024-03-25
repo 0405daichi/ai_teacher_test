@@ -11,68 +11,222 @@
 </head>
 
 <body>
-  <div id="survey-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">アンケート</h5>
-        </div>
-        <div class="modal-body" style="overflow: scroll;">
-          <form id="survey-form">
-            <div class="form-group">
-              <label for="user-feedback">サービスに関して気になることや改善して欲しいことはありますか？</label>
-              <textarea class="form-control" id="user-feedback" rows="3" placeholder="あなたの意見をお聞かせください"></textarea>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="feedbackOption" id="noConcern" value="特にない">
-              <label class="form-check-label" for="noConcern">
-                特にない
-              </label>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary" id="submit-button" disabled>送信</button>
-            </div>
-          </form>
-        </div>
-      </div>
+  <video class="preview" id="cameraPreview" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; display: block;" autoplay></video>
+  <!-- 薄暗くする部分としない部分 -->
+  <div class="light-dark-area" id="lightDarkArea" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: block;">
+    <svg class="maskSvg" id="maskSvg" width="100%" height="100%">
+      <!-- Mask Definition -->
+      <defs>
+        <mask class="cutoutMask">
+          <!-- Start with a white rectangle (to allow rendering) -->
+          <rect x="0" y="0" width="100%" height="100%" fill="white" />
+          
+          <!-- Cut out a black rectangle (to block rendering) -->
+          <rect class="mask-rect" id="maskRect" x="50%" y="50%" width="280" height="180" fill="black" rx="20" ry="20" transform="translate(-140, -90)" />
+        </mask>
+      </defs>
+      <!-- Use the mask -->
+      <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="" />
+    </svg>
+    <div class="move-icon" style="position: absolute; width: 5%; height: 5%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><style>.a,.b{fill:none;}.b{stroke:white;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title>138_arr_24</title><rect class="a" width="48" height="48"/><polyline class="b" points="12 30 6 24 12 18"/><polyline class="b" points="36 18 42 24 36 30"/><polyline class="b" points="18 12 24 6 30 12"/><polyline class="b" points="30 36 24 42 18 36"/><line class="b" x1="42" y1="24" x2="6" y2="24"/><line class="b" x1="24" y1="42" x2="24" y2="6"/></svg>
     </div>
   </div>
-  <!-- Button trigger modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#survey-modal">
-    Launch static backdrop modal
-  </button>
+
+  <!-- 四つ角（長方形） -->
+  <svg class="resizable-rect" id="resizableRect" style="position: absolute; top: 50%; left: 50%; width: 280px; height: 180px; background: transparent; transform: translate(-50%, -50%); display: block;">
+    <!-- 左上の角 -->
+    <path class="corner top-left-corner" id="topLeftCorner" d="M 2,22 Q 2,2 22,2" stroke="white" fill="none" stroke-width="4"/>
+    <!-- 右上の角 -->
+    <path class="corner top-right-corner" id="topRightCorner" d="M 278,22 Q 278,2 258,2" stroke="white" fill="none" stroke-width="4"/>
+    <!-- 右下の角 -->
+    <path class="corner bottom-right-corner" id="bottomRightCorner" d="M 258,178 Q 278,178 278,158" stroke="white" fill="none" stroke-width="4"/>
+    <!-- 左下の角 -->
+    <path class="corner bottom-left-corner" id="bottomLeftCorner" d="M 22,178 Q 2,178 2,158" stroke="white" fill="none" stroke-width="4"/>
+  </svg>
+
+  <style>
+    .move-icon {
+  animation: blink 1s infinite;
+}
+.move-icon svg {
+  width: 100%;
+  height: 100%;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+
+  </style>
+
+  <script>
+function initResizableRect(rect, lightDarkArea, preview) {
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let startWidth = 0, startHeight = 0;
+  let initialCenterX = 0, initialCenterY = 0;
+
+  function startDrag(e) {
+    isDragging = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startX = clientX;
+    startY = clientY;
+    startWidth = parseFloat(window.getComputedStyle(rect).width);
+    startHeight = parseFloat(window.getComputedStyle(rect).height);
+
+    const rectBound = rect.getBoundingClientRect();
+    initialCenterX = rectBound.left + startWidth / 2;
+    initialCenterY = rectBound.top + startHeight / 2;
+  }
+
+  function duringDrag(e) {
+    if (!isDragging) return;
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const newDistX = Math.abs(clientX - initialCenterX);
+    const newDistY = Math.abs(clientY - initialCenterY);
+
+    const initialDistX = Math.abs(startX - initialCenterX);
+    const initialDistY = Math.abs(startY - initialCenterY);
+
+    const deltaX = newDistX - initialDistX;
+    const deltaY = newDistY - initialDistY;
+
+    let newWidth = startWidth + deltaX * 2;
+    let newHeight = startHeight + deltaY * 2;
+
+    const previewRect = preview.getBoundingClientRect();
+
+    // プレビュー画像の範囲内でのみリサイズを許可
+    newWidth = Math.max(100, Math.min(newWidth, previewRect.width - (rect.getBoundingClientRect().left - previewRect.left)));
+    newHeight = Math.max(100, Math.min(newHeight, previewRect.height - (rect.getBoundingClientRect().top - previewRect.top)));
+    // newWidth = Math.max(100, Math.min(window.innerWidth - 100, newWidth));
+    // newHeight = Math.max(100, Math.min(window.innerHeight - 100, newHeight));
+
+    rect.style.width = `${newWidth}px`;
+    rect.style.height = `${newHeight}px`;
+
+    // pathの位置とmask-rectの位置とサイズを更新
+    const corners = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
+    corners.forEach(corner => {
+      const path = rect.querySelector(`.${corner}-corner`);
+      const maskRect = lightDarkArea.querySelector('.mask-rect');
+
+      let pathD = '';
+      let maskRectTransform = `translate(-${newWidth / 2}, -${newHeight / 2})`;
+
+      switch (corner) {
+        case 'top-left':
+          pathD = `M 2,22 Q 2,2 22,2`;
+          break;
+        case 'top-right':
+          pathD = `M ${newWidth - 2},22 Q ${newWidth - 2},2 ${newWidth - 22},2`;
+          break;
+        case 'bottom-right':
+          pathD = `M ${newWidth - 22},${newHeight - 2} Q ${newWidth - 2},${newHeight - 2} ${newWidth - 2},${newHeight - 22}`;
+          break;
+        case 'bottom-left':
+          pathD = `M 22,${newHeight - 2} Q 2,${newHeight - 2} 2,${newHeight - 22}`;
+          break;
+      }
+
+      path.setAttribute("d", pathD);
+      maskRect.setAttribute("width", newWidth);
+      maskRect.setAttribute("height", newHeight);
+      maskRect.setAttribute("transform", maskRectTransform);
+    });
+  }
+
+  function endDrag() {
+    isDragging = false;
+  }
+
+  rect.addEventListener("mousedown", startDrag);
+  rect.addEventListener("touchstart", startDrag);
+  window.addEventListener("mousemove", duringDrag);
+  window.addEventListener("touchmove", duringDrag);
+  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("touchend", endDrag);
+}
+
+function initializeDraggableRect(lightDarkArea, resizableRect) {
+    const moveIcon = lightDarkArea.querySelector('.move-icon');
+    const maskRect = lightDarkArea.querySelector('#maskRect');
+    let isDragging = false;
+    let startX, startY;
+
+    moveIcon.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        e.preventDefault(); // テキスト選択の防止
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        let dx = e.clientX - startX;
+        let dy = e.clientY - startY;
+
+        // 画面の幅と高さを取得
+        const maxWidth = window.innerWidth;
+        const maxHeight = window.innerHeight;
+
+        // resizable-rect の現在の位置を取得
+        let resizableRectStyle = window.getComputedStyle(resizableRect);
+        let resizableX = parseFloat(resizableRectStyle.left) + dx;
+        let resizableY = parseFloat(resizableRectStyle.top) + dy;
+
+        let maskRectTransform = maskRect.getAttribute('transform');
+        let [maskX, maskY] = maskRectTransform.match(/translate\((-?\d+),\s*(-?\d+)\)/).slice(1, 3);
+
+        // 移動範囲の制限
+        resizableX = Math.max(maskX * -1, Math.min(resizableX, maxWidth - (maskRect.getBoundingClientRect().width / 2 )));
+        resizableY = Math.max(maskY * -1, Math.min(resizableY, maxHeight - (maskRect.getBoundingClientRect().height / 2 )));
+
+        // 新しい位置を設定
+        resizableRect.style.left = `${resizableX}px`;
+        resizableRect.style.top = `${resizableY}px`;
+        maskRect.setAttribute('x', `${resizableX}px`);
+        maskRect.setAttribute('y', `${resizableY}px`);
+
+        // move-icon を更新
+        moveIcon.style.left = `${resizableX}px`;
+        moveIcon.style.top = `${resizableY}px`;
+        moveIcon.style.transform = 'translate(-50%, -50%)'; // 中心をマウスに合わせる
+
+        // 次の移動のために現在のマウス位置を更新
+        startX = e.clientX;
+        startY = e.clientY;
+    });
+
+    document.addEventListener('mouseup', function() {
+        if (!isDragging) return;
+        isDragging = false;
+    });
+}
+
+
+// 使用例
+const lightDarkArea = document.querySelector('.light-dark-area');
+const resizableRect = document.getElementById('resizableRect');
+const preview = document.querySelector('.preview');
+initializeDraggableRect(lightDarkArea, resizableRect);
+
+
+    // const resizableRects = document.querySelector('.resizable-rect');
+    // const lightDarkAreas = document.querySelector('.light-dark-area');
+
+    initResizableRect(resizableRect, lightDarkArea, preview);
+  </script>
+    
+  
 </body>
 </html>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const feedbackTextArea = document.getElementById('user-feedback');
-    const noConcernRadio = document.getElementById('noConcern');
-    const submitButton = document.getElementById('submit-button');
-    
-    function updateSubmitButtonState() {
-      // テキストエリアにテキストが入力されているか、"特にない"が選択されているかをチェック
-      if (feedbackTextArea.value.trim() !== "" || noConcernRadio.checked) {
-        submitButton.disabled = false; // 送信ボタンを有効にする
-      } else {
-        submitButton.disabled = true; // 送信ボタンを無効にする
-      }
-    }
 
-    function deactivateRadioIfTextareaIsActive() {
-      if (feedbackTextArea.value.trim() !== "") {
-        noConcernRadio.checked = false; // テキストエリアがアクティブならラジオボタンの選択を解除
-        updateSubmitButtonState(); // 送信ボタンの状態を更新
-      }
-    }
-    
-    // テキストエリアの入力イベントにリスナーを追加
-    feedbackTextArea.addEventListener('input', function() {
-      deactivateRadioIfTextareaIsActive();
-      updateSubmitButtonState();
-    });
-    
-    // ラジオボタンの変更イベントにリスナーを追加
-    noConcernRadio.addEventListener('change', updateSubmitButtonState);
-  });
-</script>
+

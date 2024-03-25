@@ -82,6 +82,7 @@ class Gpt35Client
   # APIリクエストを行い、回答を生成するメソッド
   def generate_answer(params, question, first, prompt)
     token_count = calculate_tokens(prompt)
+    puts "トークン合計トークン合計トークン合計#{token_count}"
   
     if token_count > MAX_TOKENS
       flash[:error] = '字数が多いです。' # フラッシュメッセージにエラーを追加

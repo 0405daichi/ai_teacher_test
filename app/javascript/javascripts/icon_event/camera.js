@@ -1,7 +1,7 @@
 // camera.js
 
 import { Modal } from 'bootstrap';
-import { openCamera, takePhoto, closeCamera, processImage, initResizableRect } from '../helpers/cameraFunctions.js';
+import { openCamera, takePhoto, closeCamera, processImage, initResizableRect, initializeDraggableRect, resetAllElementPositions } from '../helpers/cameraFunctions.js';
 import { fadeOutCirclesSequentially, fadeInCirclesSequentially } from '../helpers/openApp.js';
 import { handleOption, resetFormToDefault } from '../helpers/optionHandleFunction.js';
 import { submitFormAndShowModal } from '../helpers/formSubmitFunction.js';
@@ -56,6 +56,7 @@ document.addEventListener("turbolinks:load", function() {
     const preview = $(element).find('.preview');
 
     initResizableRect(resizableRects[0], lightDarkAreas[0], preview[0]);
+    initializeDraggableRect(resizableRects[0], lightDarkAreas[0], preview[0]);
   });
 
   $("#captureButton").click(async function() {
@@ -230,6 +231,7 @@ document.addEventListener("turbolinks:load", function() {
         };
       }, trimmingImageModal[0], '.write-out-image');
 
+      resetAllElementPositions();
       $('#trimmingImageModal').modal('show');
     }
   });
@@ -383,6 +385,7 @@ document.addEventListener("turbolinks:load", function() {
       reader.readAsDataURL(file);
       
       writeQuestionModal.modal('hide');
+      resetAllElementPositions();
       trimmingImageModal.modal('show');
 
       setBackButtonListener(async () => {

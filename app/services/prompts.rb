@@ -8,17 +8,17 @@ module Prompts
     ・回答は**必ず条件と指示に従った**内容にする\n"
 
   common_conditions = 
-    "\n### 条件:\n
+    "### 条件:\n
     ・自分の役割に徹する\n
     ・回答は必ず日本語\n
     ・回答のフォーマットはMarkdownで統一\n
     ・数式はLaTeX表現を用いる\n"
 
   common_prompt_break = {
-    user_instruction: "\n### 生徒からの指示:\n",
-    user_question: "\n### 生徒からの質問\n",
-    detail_question: "\n### 質問の詳細\n",
-    example: "\n### 具体的な考え方\n",
+    user_instruction: "### 生徒からの指示:\n",
+    user_question: "### 生徒からの質問\n",
+    detail_question: "### 質問の詳細\n",
+    example: "### 具体的な考え方\n",
   }
 
   # gpt設定プロンプトでのユーザーからの指示内容
