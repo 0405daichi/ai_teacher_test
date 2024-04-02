@@ -4,6 +4,10 @@ require 'openai'
 require 'open-uri'
 require_relative 'prompts'
 require 'tiktoken_ruby'
+require 'net/http'
+require 'uri'
+require 'json'
+require 'logger'
 
 class Gpt35Client
   include Prompts
@@ -36,7 +40,7 @@ class Gpt35Client
       prompt = re_generate_prompt(params) + question
     end
     puts "これがプロンプトですよーーーーーー#{prompt}"
-    prompt
+    prompt + "Please answer according to **Conditions**."
   end
 
   # システムメッセージを返すメソッド
@@ -102,7 +106,6 @@ class Gpt35Client
           n: 1,
         }
       )
-      puts "これがレスポンスだ#{response.headers}"
 
       update_api_limit_status(response);
 
@@ -112,7 +115,34 @@ class Gpt35Client
         return redirect_to request.referer || root_path
       elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
         content = response['choices'][0]['message']['content'].strip
-        return content
+        puts "これがレスポンスだ#{content}"
+        # カスタムログファイルを作成
+        logger = Logger.new('custom4.log')
+        logger.info("これがレスポンスだ#{content}")
+        
+
+        # 1. テキストから数式とマークダウンをプレースホルダーに置き換える
+        replaced_text, placeholders = replace_latex_markdown_and_newlines(content)
+
+        begin
+          # 2. 置き換えたテキストを翻訳する
+          translated_text = translate_with_deepl(replaced_text)
+        rescue => e
+          puts "翻訳中にエラーが発生しました: #{e.message}"
+          # 翻訳プロセスでエラーが発生した場合、元のcontentを返す
+          # flash[:error] = "翻訳中にエラーが発生しました。元のメッセージを表示します。"
+          return content
+        end
+
+        # 3. 翻訳後のテキストでプレースホルダーを元に戻す
+        # 翻訳後のテキストでプレースホルダーを元に戻す前にチェックを追加
+        if translated_text
+          restored_text = restore_from_placeholders(translated_text, placeholders)
+        else
+          # 翻訳でエラーが発生した場合は、置換前のテキストを返す
+          restored_text = content
+        end
+        return restored_text
       else
         puts "レスポンスの形式が正しくありません。"
         flash[:error] = 'レスポンスの形式が正しくありません。'
@@ -326,4 +356,100 @@ class Gpt35Client
       ResetApiLimitJob.set(wait: 1.minute).perform_later(api_limit.id)
     end
   end
+
+  def replace_latex_markdown_and_newlines(text)
+    placeholders = {}
+    counter = 1
+  
+    # LaTeX数式とマークダウンのパターン
+    patterns = [
+      /\\\\\[(.*?)\\\\\]/,                 # \\[ ... \\] LaTeX display math
+      /\\\\\((.*?)\\\\\)/,                 # \\( ... \\) LaTeX inline math
+      /\$\$(.*?)\$\$/,                     # $$ ... $$ display math
+      /\$(.*?)\$/,                         # $ ... $ inline math
+      /(```\n?[\s\S]*?\n?```)/,            # ``` code block
+      /(`[\s\S]*?`)/,                      # ` inline code
+      /\\\[(.*?)\\\]/,                     # \[ ... \] LaTeX display math without double backslashes
+      /\\\((.*?)\\\)/,                      # \( ... \) LaTeX inline math without double backslashes
+      /\\\[\\begin\{align\*\}(.*?)\\end\{align\*\}\\\]/m
+    ]    
+  
+    replaced_text = text.dup
+    patterns.each do |pattern|
+      replaced_text.gsub!(pattern) do |match|
+        placeholder = "FO#{format('%02d', counter)}OF"
+        placeholders[placeholder] = match
+        counter += 1
+        placeholder
+      end
+    end
+  
+    # 改行コードの置き換え
+    replaced_text.gsub!(/\n/) do |match|
+      placeholder = "NL#{format('%02d', counter)}LN"
+      placeholders[placeholder] = match
+      counter += 1
+      placeholder
+    end
+    # カスタムログファイルを作成
+    logger = Logger.new('custom3.log')
+    logger.info("#### これが翻訳のために書き換えた文\n#{replaced_text}")
+    puts "#### これが翻訳のために書き換えた文\n#{replaced_text}"
+  
+    [replaced_text, placeholders]
+  end
+  
+  def restore_from_placeholders(translated_text, placeholders)
+    restored_text = translated_text
+  
+    # プレースホルダーを元に戻す
+    placeholders.each do |placeholder, original|
+      restored_text.gsub!(placeholder, original)
+    end
+
+    # カスタムログファイルを作成
+    logger = Logger.new('custom2.log')
+    logger.info("#### これが翻訳後に書き換えた文\n#{restored_text}")
+    puts "#### これが翻訳後に書き換えた文\n#{restored_text}"
+  
+    restored_text
+  end  
+
+  def translate_with_deepl(text)
+    auth_key = ENV['DEEPL_AUTH_KEY']
+    target_lang = 'JA'
+    uri = URI.parse('https://api.deepl.com/v2/translate')
+    request = Net::HTTP::Post.new(uri)
+    request.content_type = 'application/json'
+    request['Authorization'] = "DeepL-Auth-Key #{auth_key}"
+    request['User-Agent'] = 'YourApp/1.2.3'
+    request.body = JSON.dump({
+      "text" => [text],
+      "target_lang" => target_lang,
+      "glossary_id": "3d0310fe-e930-4854-a4d4-552788679978"
+    })
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.request(request)
+    end
+
+    response_body = JSON.parse(response.body)
+    logger1 = Logger.new('custom5.log')
+    logger1.info("#### response--body\n#{response.body}")
+    if response_body['translations'] && response_body['translations'][0]
+      text = response_body['translations'][0]['text']
+      puts "#### これが翻訳文\n#{text}"
+      # カスタムログファイルを作成
+      logger = Logger.new('custom1.log')
+      logger.info("#### これが翻訳文\n#{text}")
+      text
+    else
+      puts "Translation failed or unexpected response format."
+      return nil
+    end
+  rescue => e
+    puts "Error: #{e.message}"
+    nil
+  end
+
 end

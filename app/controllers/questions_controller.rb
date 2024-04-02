@@ -88,7 +88,10 @@ class QuestionsController < ApplicationController
   # 各APIの詳細や設定方法をナレッジ化
   # 回答生成中の広告表示
   # その他api制限管理
-  # 分野ごとにapi分散
+  # 分野ごとにapi分散(日本語メインはクロード?)
+  # 未ログインで回答生成後表示されない
+  # 翻訳・口語訳時のプロンプト
+  # ベクトル化
   
   def get_answer
     # binding.pry
