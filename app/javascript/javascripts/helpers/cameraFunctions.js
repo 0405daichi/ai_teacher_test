@@ -250,20 +250,31 @@ export async function initializeDraggableRect(resizableRect, lightDarkArea, prev
   let isDragging = false;
   let startX, startY;
 
-  moveIcon.addEventListener('mousedown', function(e) {
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    e.preventDefault(); // テキスト選択の防止
-  });
+  // タッチイベントとマウスイベントの処理を統一するためのヘルパー関数
+  function getPointerPosition(e) {
+    if (e.touches) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else {
+      return { x: e.clientX, y: e.clientY };
+    }
+  }
 
-  document.addEventListener('mousemove', function(e) {
+  function startDrag(e) {
+    isDragging = true;
+    const pos = getPointerPosition(e);
+    startX = pos.x;
+    startY = pos.y;
+    e.preventDefault(); // テキスト選択の防止
+  }
+
+  function doDrag(e) {
     if (!isDragging) return;
-    let dx = e.clientX - startX;
-    let dy = e.clientY - startY;
-    startX = e.clientX;
-    startY = e.clientY;
-    
+    const pos = getPointerPosition(e);
+    let dx = pos.x - startX;
+    let dy = pos.y - startY;
+    startX = pos.x;
+    startY = pos.y;
+
     let resizableRectStyle = window.getComputedStyle(resizableRect);
     let resizableX = parseFloat(resizableRectStyle.left);
     let resizableY = parseFloat(resizableRectStyle.top);
@@ -278,7 +289,7 @@ export async function initializeDraggableRect(resizableRect, lightDarkArea, prev
     // 移動範囲の制限
     resizableX = Math.max(maskX * -1, Math.min(resizableX, maxWidth - (maskRect.getBoundingClientRect().width / 2 )));
     resizableY = Math.max(maskY * -1, Math.min(resizableY, maxHeight - (maskRect.getBoundingClientRect().height / 2 )));
-    
+
     // 新しい位置を設定
     resizableRect.style.left = `${resizableX + dx}px`;
     resizableRect.style.top = `${resizableY + dy}px`;
@@ -289,12 +300,22 @@ export async function initializeDraggableRect(resizableRect, lightDarkArea, prev
     moveIcon.style.left = `${resizableX + dx}px`;
     moveIcon.style.top = `${resizableY + dy}px`;
     moveIcon.style.transform = 'translate(-50%, -50%)'; // 中心をマウスに合わせる
-  });
+  }
 
-  document.addEventListener('mouseup', function() {
+  function endDrag() {
     if (!isDragging) return;
     isDragging = false;
-  });
+  }
+
+  // マウスイベントリスナー
+  moveIcon.addEventListener('mousedown', startDrag);
+  document.addEventListener('mousemove', doDrag);
+  document.addEventListener('mouseup', endDrag);
+
+  // タッチイベントリスナーを追加
+  moveIcon.addEventListener('touchstart', startDrag);
+  document.addEventListener('touchmove', doDrag);
+  document.addEventListener('touchend', endDrag);
 }
 
 export async function resetAllElementPositions() {
