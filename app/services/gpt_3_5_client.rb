@@ -43,17 +43,17 @@ class Gpt35Client
 
     case params['option']
     when '質問'
-      prompt + "Please answer according to **Conditions**. In English"
       logger = Logger.new('custom6.log')
       logger.info("create_prompt内の質問の場合")
+      prompt += "Please answer according to **Conditions**. In English"
     when '直訳・翻訳', '現代語訳・口語訳', '要約', '添削'
       logger = Logger.new('custom7.log')
       logger.info("create_prompt内の質問以外の場合")
-      prompt + "Please answer **in Japanese according to the conditions.** In Japanese!"
+      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
     else
       logger = Logger.new('custom6.log')
       logger.info("create_prompt内のそれ以外の場合")
-      prompt + "Please answer according to **Conditions**. In English"
+      prompt += "Please answer according to **Conditions**. In English"
     end    
   end
 
