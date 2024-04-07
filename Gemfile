@@ -25,9 +25,9 @@ gem "omniauth-rails_csrf_protection"
 gem 'katex', '~> 0.10.0'
 gem 'recaptcha', require: 'recaptcha/rails'
 gem 'aws-sdk-s3'
+gem 'pg'
 
 group :development, :test do
-  gem 'pg', '~> 1.4'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'web-console', '>= 4.1.0'
   gem 'rack-mini-profiler', '~> 2.0'
@@ -43,7 +43,7 @@ group :test do
 end
 
 group :production do
-  # gem 'pg'
+
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

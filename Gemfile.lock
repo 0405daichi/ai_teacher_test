@@ -397,7 +397,7 @@ DEPENDENCIES
   nokogiri (~> 1.16.0)
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
-  pg (~> 1.4)
+  pg
   pry
   puma (~> 5.0)
   rack-mini-profiler (~> 2.0)
