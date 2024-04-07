@@ -40,7 +40,21 @@ class Gpt35Client
       prompt = re_generate_prompt(params) + question
     end
     puts "これがプロンプトですよーーーーーー#{prompt}"
-    prompt + "Please answer according to **Conditions**."
+
+    case params['option']
+    when '質問'
+      prompt + "Please answer according to **Conditions**. In English"
+      logger = Logger.new('custom6.log')
+      logger.info("create_prompt内の質問の場合")
+    when '直訳・翻訳', '現代語訳・口語訳', '要約', '添削'
+      logger = Logger.new('custom7.log')
+      logger.info("create_prompt内の質問以外の場合")
+      prompt + "Please answer **in Japanese according to the conditions.** In Japanese!"
+    else
+      logger = Logger.new('custom6.log')
+      logger.info("create_prompt内のそれ以外の場合")
+      prompt + "Please answer according to **Conditions**. In English"
+    end    
   end
 
   # システムメッセージを返すメソッド
@@ -115,34 +129,38 @@ class Gpt35Client
         return redirect_to request.referer || root_path
       elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
         content = response['choices'][0]['message']['content'].strip
-        puts "これがレスポンスだ#{content}"
-        # カスタムログファイルを作成
-        logger = Logger.new('custom4.log')
-        logger.info("これがレスポンスだ#{content}")
-        
 
-        # 1. テキストから数式とマークダウンをプレースホルダーに置き換える
-        replaced_text, placeholders = replace_latex_markdown_and_newlines(content)
+        # params['option']の値に応じた処理
+        if params['option'] == '質問'
+          logger = Logger.new('custom4.log')
+          logger.info("generate_answer内の質問の場合ok")
 
-        begin
-          # 2. 置き換えたテキストを翻訳する
-          translated_text = translate_with_deepl(replaced_text)
-        rescue => e
-          puts "翻訳中にエラーが発生しました: #{e.message}"
-          # 翻訳プロセスでエラーが発生した場合、元のcontentを返す
-          # flash[:error] = "翻訳中にエラーが発生しました。元のメッセージを表示します。"
+          # 1. テキストから数式とマークダウンをプレースホルダーに置き換える
+          replaced_text, placeholders = replace_latex_markdown_and_newlines(content)
+
+          begin
+            # 2. 置き換えたテキストを翻訳する
+            translated_text = translate_with_deepl(replaced_text)
+          rescue => e
+            puts "翻訳中にエラーが発生しました: #{e.message}"
+            # 翻訳プロセスでエラーが発生した場合、元のcontentを返す
+            return content
+          end
+
+          # 3. 翻訳後のテキストでプレースホルダーを元に戻す
+          if translated_text
+            restored_text = restore_from_placeholders(translated_text, placeholders)
+          else
+            # 翻訳でエラーが発生した場合は、置換前のテキストを返す
+            restored_text = content
+          end
+          return restored_text
+        else
+          logger = Logger.new('custom5.log')
+          logger.info("generate_answer内の質問の場合ok")
+          # '質問'以外のオプションまたはオプションが指定されていない場合、元のcontentを返す
           return content
         end
-
-        # 3. 翻訳後のテキストでプレースホルダーを元に戻す
-        # 翻訳後のテキストでプレースホルダーを元に戻す前にチェックを追加
-        if translated_text
-          restored_text = restore_from_placeholders(translated_text, placeholders)
-        else
-          # 翻訳でエラーが発生した場合は、置換前のテキストを返す
-          restored_text = content
-        end
-        return restored_text
       else
         puts "レスポンスの形式が正しくありません。"
         flash[:error] = 'レスポンスの形式が正しくありません。'
@@ -418,6 +436,7 @@ class Gpt35Client
   def translate_with_deepl(text)
     auth_key = ENV['DEEPL_AUTH_KEY']
     target_lang = 'JA'
+    source_lang = 'EN'
     uri = URI.parse('https://api.deepl.com/v2/translate')
     request = Net::HTTP::Post.new(uri)
     request.content_type = 'application/json'
@@ -426,6 +445,7 @@ class Gpt35Client
     request.body = JSON.dump({
       "text" => [text],
       "target_lang" => target_lang,
+      "source_lang" => source_lang,
       "glossary_id": "3d0310fe-e930-4854-a4d4-552788679978"
     })
 
@@ -436,6 +456,7 @@ class Gpt35Client
     response_body = JSON.parse(response.body)
     logger1 = Logger.new('custom5.log')
     logger1.info("#### response--body\n#{response.body}")
+    puts "#### これがresponse\n#{response_body['translations']}"
     if response_body['translations'] && response_body['translations'][0]
       text = response_body['translations'][0]['text']
       puts "#### これが翻訳文\n#{text}"

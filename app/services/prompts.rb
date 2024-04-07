@@ -4,6 +4,8 @@ module Prompts
 
   common_conditions = "### Conditions:\nStick to your role, answers must **always be in English**, answers must be formatted in Markdown, use LaTeX expressions for formulas."
 
+  common_conditions_ja = "### Conditions:\nStick to your role, answers must **always be in Japanese**, answers must be formatted in Markdown, use LaTeX expressions for formulas."
+  
   common_prompt_break = {
     user_instruction: "### Student Instructions:\n",
     user_question: "### Questions from students:\n",
@@ -44,9 +46,9 @@ module Prompts
   SYSTEM_PROMPTS = {
     question: common_role + common_conditions + user_instructions[:question],
     translation: common_role + common_conditions + user_instructions[:translation],
-    ancient_translation: common_role + common_conditions + user_instructions[:ancient_translation],
-    wrap_up: common_role + common_conditions + user_instructions[:wrap_up],
-    check_and_correct: common_role + common_conditions + user_instructions[:check_and_correct],
+    ancient_translation: common_role + common_conditions_ja + user_instructions[:ancient_translation],
+    wrap_up: common_role + common_conditions_ja + user_instructions[:wrap_up],
+    check_and_correct: common_role + common_conditions_ja + user_instructions[:check_and_correct],
   }
 
   # 回答再生成時のgpt側の設定プロンプト

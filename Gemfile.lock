@@ -341,8 +341,6 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sqlite3 (1.6.2-x86_64-darwin)
-    sqlite3 (1.6.2-x86_64-linux)
     thor (1.2.1)
     tiktoken_ruby (0.0.6-x86_64-darwin)
     tiktoken_ruby (0.0.6-x86_64-linux)
@@ -399,7 +397,7 @@ DEPENDENCIES
   nokogiri (~> 1.16.0)
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
-  pg
+  pg (~> 1.4)
   pry
   puma (~> 5.0)
   rack-mini-profiler (~> 2.0)
@@ -410,7 +408,6 @@ DEPENDENCIES
   sass-rails (>= 6)
   selenium-webdriver (>= 4.0.0.rc1)
   spring
-  sqlite3 (~> 1.4)
   tiktoken_ruby
   turbolinks (~> 5)
   tzinfo-data

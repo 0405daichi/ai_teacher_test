@@ -10,13 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_15_033933) do
+ActiveRecord::Schema.define(version: 2024_04_06_010502) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
     t.string "record_type", null: false
-    t.integer "record_id", null: false
+    t.bigint "record_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
@@ -60,7 +63,7 @@ ActiveRecord::Schema.define(version: 2024_03_15_033933) do
   create_table "answers", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "question_id", null: false
+    t.bigint "question_id", null: false
     t.text "content"
     t.integer "answer_type"
     t.index ["question_id", "answer_type"], name: "index_answers_on_question_id_and_answer_type", unique: true
@@ -74,8 +77,8 @@ ActiveRecord::Schema.define(version: 2024_03_15_033933) do
   end
 
   create_table "bookmarks", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "question_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "question_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["question_id"], name: "index_bookmarks_on_question_id"
@@ -83,12 +86,20 @@ ActiveRecord::Schema.define(version: 2024_03_15_033933) do
   end
 
   create_table "likes", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "question_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "question_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["question_id"], name: "index_likes_on_question_id"
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "question_vectors", force: :cascade do |t|
+    t.integer "question_id"
+    t.decimal "vector_data", default: [], array: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["question_id"], name: "index_question_vectors_on_question_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -100,8 +111,8 @@ ActiveRecord::Schema.define(version: 2024_03_15_033933) do
   end
 
   create_table "survey_responses", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "survey_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "survey_id", null: false
     t.datetime "answered_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

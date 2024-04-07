@@ -92,11 +92,11 @@ class QuestionsController < ApplicationController
   # 未ログインで回答生成後表示されない
   # 翻訳・口語訳時のプロンプト
   # ベクトル化
+  # 類似度検索結果で、見つかった文を保存せずに表示する。
+  # ボタンによる生成には制限をつける
+  # 再生成を質問の種類で場合分け
   
   def get_answer
-    # binding.pry
-    # puts "params: #{params.inspect}"
-
     # APIリクエスト制限の確認
     api_limit = ApiLimit.first_or_initialize
     if api_limit.is_limited
@@ -120,23 +120,36 @@ class QuestionsController < ApplicationController
     question = params[:questionInputForm]
     image = params[:image] # 画像を受け取る
     answer_type = params[:answer_type]
-    puts "コントローラー側：#{question}"
-    ai_answer = generate_ai_response(params, question, true)
-    # ai_answer = "test"
-    # sleep 5
-    # puts "これが生成したai_answer: #{ai_answer}"
 
     @question = Question.new(content: question)
     @question.image.attach(image) if image.present? # 画像があれば添付
     @question.has_image = image.present? # 画像の有無を設定
-  
-    # build_answerの代わりにanswers.buildを使用
-    @question.answers.build(content: ai_answer, answer_type: answer_type)
-  
+
+    # 質問をベクトル化
+    question_vector = Vectorizer.vectorize_text_with_python(question)
+    # 類似質問の検索
+    similar_question = QuestionVector.similar_to?(question_vector, threshold: 0.95)
+
+    if similar_question
+      # 類似質問が存在する場合、その質問に紐づく回答を取得して再利用
+      existing_answer = similar_question.question.answers.first.content
+      # 再利用された回答を現在の質問に紐づける
+      @question.answers.build(content: existing_answer, answer_type: answer_type)
+    else
+      # 類似質問が存在しない場合、新たにAIから回答を生成
+      ai_answer = generate_ai_response(params, question, true)
+      @question.answers.build(content: ai_answer, answer_type: answer_type)
+    end
+
     # ログインしているユーザーのIDを紐づける
     @question.user = current_user if user_signed_in?
     user_id = @question.user_id if user_signed_in?
-  
+
+    puts "コントローラー側：#{question}"
+    # ai_answer = generate_ai_response(params, question, true)
+    # ai_answer = "test"
+    # sleep 5
+    # puts "これが生成したai_answer: #{ai_answer}"
     puts "@question：#{@question}"
 
     # アンケートモーダルを表示するか否かのフラグを設定

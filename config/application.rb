@@ -22,5 +22,6 @@ module AiHomework
     config.i18n.default_locale = :ja
 
     config.action_dispatch.show_exceptions = true
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
   end
 end

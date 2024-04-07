@@ -27,7 +27,7 @@ gem 'recaptcha', require: 'recaptcha/rails'
 gem 'aws-sdk-s3'
 
 group :development, :test do
-  gem 'sqlite3', '~> 1.4'
+  gem 'pg', '~> 1.4'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'web-console', '>= 4.1.0'
   gem 'rack-mini-profiler', '~> 2.0'
@@ -43,7 +43,7 @@ group :test do
 end
 
 group :production do
-  gem 'pg'
+  # gem 'pg'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
