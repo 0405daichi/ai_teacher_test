@@ -129,6 +129,7 @@ class Gpt35Client
         return redirect_to request.referer || root_path
       elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
         content = response['choices'][0]['message']['content'].strip
+        puts "#### これがgptの答え#{content}"
 
         # params['option']の値に応じた処理
         if params['option'] == '質問'
@@ -388,27 +389,32 @@ class Gpt35Client
       /(```\n?[\s\S]*?\n?```)/,            # ``` code block
       /(`[\s\S]*?`)/,                      # ` inline code
       /\\\[(.*?)\\\]/,                     # \[ ... \] LaTeX display math without double backslashes
-      /\\\((.*?)\\\)/,                      # \( ... \) LaTeX inline math without double backslashes
-      /\\\[\\begin\{align\*\}(.*?)\\end\{align\*\}\\\]/m
-    ]    
+      /\\\((.*?)\\\)/,                     # \( ... \) LaTeX inline math without double backslashes
+      /\\\[\\begin\{align\*\}(.*?)\\end\{align\*\}\\\]/m,
+      /^-\s/,                              # - List item
+      /^\*\s/,                             # * List item
+      /^\+\s/                              # + List item
+    ]
   
     replaced_text = text.dup
     patterns.each do |pattern|
       replaced_text.gsub!(pattern) do |match|
-        placeholder = "FO#{format('%02d', counter)}OF"
-        placeholders[placeholder] = match
-        counter += 1
+        placeholder = case match
+                      when /^-\s/
+                        "LS01SL"
+                      when /^\*\s/
+                        "LS02SL"
+                      when /^\+\s/
+                        "LS03SL"
+                      else
+                        "FO#{format('%02d', counter)}OF"
+                      end
+        placeholders[placeholder] = match unless placeholder.start_with?("LS")
+        counter += 1 unless placeholder.start_with?("LS")
         placeholder
       end
     end
   
-    # 改行コードの置き換え
-    replaced_text.gsub!(/\n/) do |match|
-      placeholder = "NL#{format('%02d', counter)}LN"
-      placeholders[placeholder] = match
-      counter += 1
-      placeholder
-    end
     # カスタムログファイルを作成
     logger = Logger.new('custom3.log')
     logger.info("#### これが翻訳のために書き換えた文\n#{replaced_text}")
@@ -446,7 +452,7 @@ class Gpt35Client
       "text" => [text],
       "target_lang" => target_lang,
       "source_lang" => source_lang,
-      "glossary_id": "3d0310fe-e930-4854-a4d4-552788679978"
+      "glossary_id": "dba8a984-15e9-4719-bd1c-04979693c83d"
     })
 
     response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
