@@ -401,13 +401,13 @@ class Gpt35Client
       replaced_text.gsub!(pattern) do |match|
         placeholder = case match
                       when /^-\s/
-                        "LS01SL"
+                        "LS01"
                       when /^\*\s/
-                        "LS02SL"
+                        "LS02"
                       when /^\+\s/
-                        "LS03SL"
+                        "LS03"
                       else
-                        "FO#{format('%02d', counter)}OF"
+                        "FO#{format('%02d', counter)}"
                       end
         placeholders[placeholder] = match unless placeholder.start_with?("LS")
         counter += 1 unless placeholder.start_with?("LS")

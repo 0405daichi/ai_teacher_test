@@ -95,6 +95,8 @@ class QuestionsController < ApplicationController
   # 類似度検索結果で、見つかった文を保存せずに表示する。
   # ボタンによる生成には制限をつける
   # 再生成を質問の種類で場合分け
+  # 撮影ボタンを押した後の画面分かりずらい
+  # 写真の切り取りがうまく行っていない
   
   def get_answer
     # APIリクエスト制限の確認
