@@ -30,70 +30,13 @@ function setupIndicatorsAndSlides(indicatorSelector, slideSelector, textArray, a
 
 function setupRegenerateAnswerButton(buttonSelector, formSelector, actionUrl) {
   $(buttonSelector).on('click', function(event) {
-    event.preventDefault();
-
     toggleOverlay('show', 'generate');
-  
-    // フォームデータを取得
-    var formData = $(formSelector).serialize();
-  
-    // Ajaxリクエストを送信
-    $.ajax({
-      url: actionUrl, // 引数から取得したアクションURL
-      type: "POST",
-      data: formData,
-      dataType: "json",
-      success: function(data) {
-        toggleOverlay('hide');
-        if (data.limit){
-          setTimeout(() => {
-            confirm("アクセスが集中しています。\r\n1分後再試行してください。");
-          }, 1000);
-        } else if (data.prompt_login) {
-          // ログインが必要な場合、確認ダイアログを表示
-          setTimeout(() => {
-            const confirmLogin = confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？");
-            if (confirmLogin) {
-              // ユーザーがOKを選択した場合、ログインページへリダイレクト
-              window.location.href = "/users/sign_in";
-            }
-          }, 1000);
-        }
-      },
-      error: function(xhr, status, error) {
-        toggleOverlay('hide');
-        console.error("Error: " + status + " " + error);
-        alert(`エラーが発生しました`);
-      }
-    });
   });
 }
 
 function setupCustomButtons(buttonSelector) {
   $(buttonSelector).click(function(e) {
-    e.preventDefault();
-
     toggleOverlay('show', 'generate');
-  
-    var form = $(this).closest('form');
-    var formData = form.serialize();
-  
-    $.ajax({
-      url: form.attr('action'),
-      type: "POST",
-      data: formData,
-      dataType: 'script',
-  
-      success: function(response) {
-        toggleOverlay('hide');
-      },
-  
-      error: function(xhr, status, error) {
-        toggleOverlay('hide');
-        alert(`エラーが発生しました`);
-        console.error("Error: " + status + " " + error);
-      }
-    });
   });
 }
 

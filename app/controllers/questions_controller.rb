@@ -181,7 +181,10 @@ class QuestionsController < ApplicationController
     api_limit = ApiLimit.first_or_initialize
     if api_limit.is_limited
       # 制限がかかっている場合、処理を中止して警告メッセージを返す
-      render json: { limit: true, message: "APIのリクエスト制限に達しました。1分後再試行してください。" }
+      @limit = true;
+      respond_to do |format|
+        format.js # add_new_answer.js.erbが呼ばれる
+      end
       return # この時点でメソッドを終了する
     end
 
@@ -189,10 +192,13 @@ class QuestionsController < ApplicationController
     unless user_signed_in?
       session[:query_count] ||= 0 # セッションにquery_countキーが存在しない場合は0を設定
       session[:query_count] += 1 # query_countをインクリメント
-  
+      
       if session[:query_count] >= 2
+        @prompt_login = true
         # query_countが2以上の場合、ログインページへの移動を促す
-        render json: { prompt_login: true, message: "質問を続けるにはログインが必要です。" }
+        respond_to do |format|
+          format.js # add_new_answer.js.erbが呼ばれる
+        end
         return # この時点でメソッドを終了する
       end
     end
@@ -216,12 +222,12 @@ class QuestionsController < ApplicationController
     
     @answer = existing_answer || @question.answers.build(answer_type: answer_type)
     @answer.content = answer_content
-
     respond_to do |format|
       if @answer.save
-        format.js { render 'add_new_answer', locals: { answer: @answer } } # update_answer.js.erb を呼び出す
+        format.js # 成功時の処理、add_new_answer.js.erbが呼ばれる
       else
-        format.json { render json: { error: @answer.errors.full_messages.to_sentence }, status: :unprocessable_entity }
+        # ここでエラー処理をする代わりに、@answerがpersisted?でない場合は自動的にエラーとみなされます
+        format.js # add_new_answer.js.erbが呼ばれる
       end
     end
   end

@@ -2,7 +2,7 @@
 <% if @answer.persisted? %>
   // 成功した場合の処理。例えば、回答を表示する
   $(".answer-<%= @answer.answer_type %>").hide().html("<%= j(render(partial: 'answer_content', locals: { content: @answer.content })) %>").fadeIn(1000);
-  document.querySelector('.answer-<%= @answer.answer_type %> .answer-content').forEach(function(el) {
+  document.querySelector('.answer-content').forEach(function(el) {
     renderMathInElement(el, {
       delimiters: [
         {left: "$$", right: "$$", display: true},
@@ -16,6 +16,21 @@
     var html = marked.parse(el.innerHTML);
     el.innerHTML = html;
   });
+<% elsif @api_limit %>
+  // APIリクエストの制限に関する処理
+  toggleOverlay('hide');
+  setTimeout(() => {
+    confirm("アクセスが集中しています。\r\n1分後再試行してください。");
+  }, 1000);
+<% elsif @prompt_login %>
+  // ログインが必要な場合の処理
+  toggleOverlay('hide');
+  setTimeout(() => {
+    const confirmLogin = confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？");
+    if (confirmLogin) {
+      window.location.href = "/users/sign_in";
+    }
+  }, 1000);
 <% else %>
   // エラーが発生した場合の処理
   alert("回答の保存に失敗しました。");

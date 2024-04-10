@@ -47,17 +47,17 @@ class Gpt35Client
       logger.info("create_prompt内の質問の場合")
       # 英語で回答生成->翻訳
       # prompt += "Please answer according to **Conditions**. In English"
-      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
+      prompt += "**条件に従って日本語で答えてください！**"
     when '直訳・翻訳', '現代語訳・口語訳', '要約', '添削'
       logger = Logger.new('custom7.log')
       logger.info("create_prompt内の質問以外の場合")
-      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
+      prompt += "**条件に従って日本語で答えてください！**"
     else
       logger = Logger.new('custom6.log')
       logger.info("create_prompt内のそれ以外の場合")
       # 英語で回答生成->翻訳
       # prompt += "Please answer according to **Conditions**. In English"
-      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
+      prompt += "**条件に従って日本語で答えてください！**"
     end    
   end
 

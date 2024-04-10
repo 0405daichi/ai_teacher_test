@@ -36,7 +36,9 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= render 'shared/svg/submit' %>
+                  <%= f.button type: 'submit', class: 'submit-btn' do %>
+                    <%= render 'shared/svg/submit' %>
+                  <% end %>
                 </div>
               <% end %>
             </div>
@@ -52,7 +54,9 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 2 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= render 'shared/svg/submit' %>
+                  <%= f.button type: 'submit', class: 'submit-btn' do %>
+                    <%= render 'shared/svg/submit' %>
+                  <% end %>
                 </div>
               <% end %>
             </div>
@@ -68,7 +72,9 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 3 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= render 'shared/svg/submit' %>
+                  <%= f.button type: 'submit', class: 'submit-btn' do %>
+                    <%= render 'shared/svg/submit' %>
+                  <% end %>
                 </div>
               <% end %>
             </div>
@@ -88,11 +94,13 @@
   <div class="card-show-footer" style="height: auto;">
     <div class="footer-left">
       <div class="generate-div">
-        <%= form_with url: "/questions/add_new_answer", id: "regenerate-form", class: "add-ans-form", method: :post do |f| %>
+        <%= form_with url: "/questions/add_new_answer", id: "regenerate-form", class: "add-ans-form", local: false, remote: true, method: :post do |f| %>
           <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
           <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
           <div class="re-generate-answer-button">
-            <%= render 'shared/svg/reload' %>
+            <%= f.button type: 'submit', class: 'submit-btn' do %>
+              <%= render 'shared/svg/reload' %>
+            <% end %>
           </div>
         <% end %>
       </div>
