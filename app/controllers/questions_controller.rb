@@ -206,9 +206,9 @@ class QuestionsController < ApplicationController
     question_content = @question.content.presence || specific_answer_content
     
     # generate_ai_responseメソッドの第二引数としてquestion_contentを渡す
-    # answer_content = generate_ai_response(params, question_content, false)
-    answer_content = 'test'
-    sleep 5
+    answer_content = generate_ai_response(params, question_content, false)
+    # answer_content = 'test'
+    # sleep 5
     answer_type = params[:answer_type]
     
     # 既存の回答の中で、同じanswer_typeを持つものを検索
