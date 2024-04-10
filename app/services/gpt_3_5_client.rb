@@ -45,7 +45,9 @@ class Gpt35Client
     when '質問'
       logger = Logger.new('custom6.log')
       logger.info("create_prompt内の質問の場合")
-      prompt += "Please answer according to **Conditions**. In English"
+      # 英語で回答生成->翻訳
+      # prompt += "Please answer according to **Conditions**. In English"
+      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
     when '直訳・翻訳', '現代語訳・口語訳', '要約', '添削'
       logger = Logger.new('custom7.log')
       logger.info("create_prompt内の質問以外の場合")
@@ -53,7 +55,9 @@ class Gpt35Client
     else
       logger = Logger.new('custom6.log')
       logger.info("create_prompt内のそれ以外の場合")
-      prompt += "Please answer according to **Conditions**. In English"
+      # 英語で回答生成->翻訳
+      # prompt += "Please answer according to **Conditions**. In English"
+      prompt += "Please answer **in Japanese according to the conditions.** In Japanese!"
     end    
   end
 
@@ -131,8 +135,9 @@ class Gpt35Client
         content = response['choices'][0]['message']['content'].strip
         puts "#### これがgptの答え#{content}"
 
-        # params['option']の値に応じた処理
-        if params['option'] == '質問' || params['action'] == 'add_new_answer'
+        # 回答を翻訳する場合の条件式
+        # if params['option'] == '質問' || params['action'] == 'add_new_answer'
+        if false
           logger = Logger.new('custom4.log')
           logger.info("generate_answer内の質問の場合ok")
 
