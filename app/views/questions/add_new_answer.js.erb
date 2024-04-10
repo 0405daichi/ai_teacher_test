@@ -1,7 +1,34 @@
 // add_new_answer.js.erb
 <% if @answer.persisted? %>
   // 成功した場合の処理。例えば、回答を表示する
-  $(".answer-<%= @answer.answer_type %>").hide().html("<%= j(render(partial: 'answer_content', locals: { content: @answer.content })) %>").fadeIn(1000);
+  // パースする内容を取得
+  var contentHtml = "<%= j(render(partial: 'answer_content', locals: { content: @answer.content })) %>";
+
+  // 新しいHTMLを一時的な要素にセットしてパース
+  var tempDiv = $('<div>').html(contentHtml);
+
+  // Mathのパース
+  renderMathInElement(tempDiv[0], {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "\\[", right: "\\]", display: true},
+      {left: "\\(", right: "\\)", display: false},
+      {left: "$", right: "$", display: false},
+    ]
+  });
+
+  // Markdownのパース
+  tempDiv.find('.answer-content').each(function() {
+    var html = marked.parse($(this).text());
+    $(this).html(html);
+  });
+
+  // パースされたHTMLでフェードイン
+  $(".answer-<%= @answer.answer_type %>")
+    .hide() // エレメントを隠す
+    .html(tempDiv.html()) // パースされたHTMLを設定
+    .fadeIn(1000); // フェードインさせる
+
 <% else %>
   // エラーが発生した場合の処理
   alert("回答の保存に失敗しました。");
