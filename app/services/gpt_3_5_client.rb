@@ -132,7 +132,7 @@ class Gpt35Client
         puts "#### これがgptの答え#{content}"
 
         # params['option']の値に応じた処理
-        if params['option'] == '質問'
+        if params['option'] == '質問' || params['action'] == 'add_new_answer'
           logger = Logger.new('custom4.log')
           logger.info("generate_answer内の質問の場合ok")
 
