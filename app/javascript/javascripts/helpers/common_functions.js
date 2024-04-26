@@ -30,13 +30,140 @@ function setupIndicatorsAndSlides(indicatorSelector, slideSelector, textArray, a
 
 function setupRegenerateAnswerButton(buttonSelector, formSelector, actionUrl) {
   $(buttonSelector).on('click', function(event) {
+    event.preventDefault();
     toggleOverlay('show', 'generate');
+
+    // フォームデータを取得
+    var formData = $(formSelector).serialize();
+
+    // Ajaxリクエストを送信
+    $.ajax({
+      url: actionUrl,
+      type: "POST",
+      data: formData,
+      dataType: "json", // JSON形式のレスポンスを期待
+      success: function(response) {
+        toggleOverlay('hide');
+        // レスポンスの内容に応じた処理を実装
+        switch (response.status) {
+          case "success":
+            // 成功時の処理
+            // HTMLをDOMに挿入
+            const $newHTML = $(".answer-" + response.answer_type + " .answer-content").hide().html(response.content);
+
+            // 数学式をレンダリングするために純粋なDOM要素を取得し使用
+            renderMathInElement($newHTML[0], {
+              delimiters: [
+                  {left: "$$", right: "$$", display: true},
+                  {left: "\\[", right: "\\]", display: true},
+                  {left: "\\(", right: "\\)", display: false},
+                  {left: "$", right: "$", display: false},
+              ]
+            });
+
+            var html = marked.parse($newHTML[0].innerHTML);
+            $newHTML[0].innerHTML = html;
+
+            // フェードイン効果を適用
+            $newHTML.fadeIn(1000);
+            break;
+          case "limit":
+            // APIリクエストの制限に関する処理
+            setTimeout(() => {
+              alert("アクセスが集中しています。\r\n1分後再試行してください。");
+            }, 1000);
+            break;
+          case "login_required":
+            // ログインが必要な場合の処理
+            setTimeout(() => {
+              if (confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？")) {
+                window.location.href = "/users/sign_in";
+              }
+            }, 1000);
+            break;
+          default:
+            // エラーが発生した場合の処理
+            alert("回答の保存に失敗しました。");
+            break;
+        }
+      },
+      error: function(xhr, status, error) {
+        toggleOverlay('hide');
+        alert(`エラーが発生しました: ${error}`);
+      }
+    });
   });
 }
 
-function setupCustomButtons(buttonSelector) {
-  $(buttonSelector).click(function(e) {
+function setupCustomButtons(buttonSelector, formSelector, actionUrl) {
+  $(buttonSelector).click(function(event) {
+    event.preventDefault();
     toggleOverlay('show', 'generate');
+
+    // フォームデータを取得
+    var formData = $(formSelector).serialize();
+
+    // Ajaxリクエストを送信
+    $.ajax({
+      url: actionUrl,
+      type: "POST",
+      data: formData,
+      dataType: "json", // JSON形式のレスポンスを期待
+      success: function(response) {
+        toggleOverlay('hide');
+        // レスポンスの内容に応じた処理を実装
+        switch (response.status) {
+          case "success":
+            // 成功時の処理
+            const $newHTML = $(".answer-" + response.answer_type + " .answer-content").hide().html(response.content);
+
+            // 数学式をレンダリングするために純粋なDOM要素を取得し使用
+            renderMathInElement($newHTML[0], {
+              delimiters: [
+                  {left: "$$", right: "$$", display: true},
+                  {left: "\\[", right: "\\]", display: true},
+                  {left: "\\(", right: "\\)", display: false},
+                  {left: "$", right: "$", display: false},
+              ]
+            });
+
+            var html = marked.parse($newHTML[0].innerHTML);
+            $newHTML[0].innerHTML = html;
+
+            // フェードイン効果を適用
+            $newHTML.fadeIn(1000);
+            break;
+          case "limit":
+            // APIリクエストの制限に関する処理
+            setTimeout(() => {
+              alert("アクセスが集中しています。\r\n1分後再試行してください。");
+            }, 1000);
+            break;
+          case "login_required":
+            // ログインが必要な場合の処理
+            setTimeout(() => {
+              if (confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？")) {
+                window.location.href = "/users/sign_in";
+              }
+            }, 1000);
+            break;
+          case "no_answer":
+            // ログインが必要な場合の処理
+            setTimeout(() => {
+              alert("回答生成中にエラーが発生しました。");
+            }, 1000);
+            break;
+          default:
+            // エラーが発生した場合の処理
+            alert("回答の保存に失敗しました。");
+            break;
+        }
+      },
+      error: function(xhr, status, error) {
+        toggleOverlay('hide');
+        alert(`エラーが発生しました: ${error}`);
+      }
+    });
   });
 }
 
@@ -66,9 +193,9 @@ function setCardDetailsModal(cardId) {
   setupModal(cardId); // モーダルの基本設定
   setupIndicatorsAndSlides('#cardContentModal .indicator', '#cardContentModal .custom-slide', texts, '#cardContentModal .generate-div .add-ans-form .answer_type');
   
-  setupRegenerateAnswerButton('#cardContentModal .re-generate-answer-button', '#cardContentModal #regenerate-form', '/questions/add_new_answer');
+  // setupRegenerateAnswerButton('#cardContentModal .re-generate-answer-button', '#cardContentModal #regenerate-form', '/questions/add_new_answer');
 
-  setupCustomButtons('#cardContentModal .custom-button');
+  setupCustomButtons('#cardContentModal .custom-button', '#cardContentModal #add-ans-form', '/questions/add_new_answer');
 }
 
 function showCardDetailsModal(cardId) {
@@ -109,10 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupIndicatorsAndSlides('#card-show-page .indicator', '#card-show-page .custom-slide', texts, '#card-show-page .generate-div .add-ans-form .answer_type');
 
   // card-show-pageのre-generate-answer-buttonの設定を行う
-  setupRegenerateAnswerButton('#card-show-page .re-generate-answer-button', '#card-show-page #regenerate-form', '/questions/add_new_answer');
+  // setupRegenerateAnswerButton('#card-show-page .re-generate-answer-button', '#card-show-page #regenerate-form', '/questions/add_new_answer');
 
   // card-show-pageのカスタムボタンの設定
-  setupCustomButtons('#card-show-page .custom-button');
+  setupCustomButtons('#card-show-page .custom-button', '#card-show-page #add-ans-form', '/questions/add_new_answer');
   showTextForIndex(0)
   document.querySelectorAll('.answer-content').forEach(function(el) {
     renderMathInElement(el, {

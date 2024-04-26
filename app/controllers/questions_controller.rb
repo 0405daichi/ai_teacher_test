@@ -79,24 +79,27 @@ class QuestionsController < ApplicationController
   # オープンソースライセンス表記-----保留
   # ベクトル化して保存-----保留
   # 未ログインユーザーがいいねした時-----保留
+  # 再生成を質問の種類で場合分け-----保留
   # api制限-----一旦済み
   # 質問種類検証-----一旦済み
   # 画面拡大縮小-----一旦済み
   # 範囲選択方法-----一旦済み
   # プロンプト内の改行調整-----一旦済み
-  # 軌道に乗るまで質問制限（100回/月?10回/日?）
+  # ベクトル化-----一旦済み
+  # 写真の切り取りがうまく行っていない-----一旦済み
+  # 撮影ボタンを押した後の画面分かりずらい-----一旦済み
+  # 類似度検索結果で、見つかった文を保存せずに表示する。-----一旦済み
+  # 未ログインで回答生成後表示されない-----一旦済み
+  # 制限の計算ができていない-----一旦済み
+  # ボタンによる生成には制限をつける-----一旦済み（re-generateは一旦保留）
+  # gptリクエスト周りのエラー対応-----一旦済み
+  # 軌道に乗るまで質問制限（100回/月?10回/日?）-----保留
   # 各APIの詳細や設定方法をナレッジ化
   # 回答生成中の広告表示
   # その他api制限管理
   # 分野ごとにapi分散(日本語メインはクロード?)
-  # 未ログインで回答生成後表示されない
-  # 翻訳・口語訳時のプロンプト
-  # ベクトル化
-  # 類似度検索結果で、見つかった文を保存せずに表示する。
-  # ボタンによる生成には制限をつける
-  # 再生成を質問の種類で場合分け
-  # 撮影ボタンを押した後の画面分かりずらい
-  # 写真の切り取りがうまく行っていない
+  # 回答生成後、ユーザーがした質問一覧に追加されない。多分非表示にされている状態で追加しようとしているから
+  # 文章から単語帳作成、単語帳から英語の問題作成
   
   def get_answer
     # APIリクエスト制限の確認
@@ -129,17 +132,24 @@ class QuestionsController < ApplicationController
 
     # 質問をベクトル化
     question_vector = Vectorizer.vectorize_text_with_python(question)
+    puts "これがベクトル化した結果#{question_vector}"
     # 類似質問の検索
     similar_question = QuestionVector.similar_to?(question_vector, threshold: 0.95)
+    puts "これが類似検索の結果#{similar_question.inspect}"
 
     if similar_question
       # 類似質問が存在する場合、その質問に紐づく回答を取得して再利用
-      existing_answer = similar_question.question.answers.first.content
+      existing_answer = similar_question.answers.first.content
       # 再利用された回答を現在の質問に紐づける
       @question.answers.build(content: existing_answer, answer_type: answer_type)
     else
       # 類似質問が存在しない場合、新たにAIから回答を生成
       ai_answer = generate_ai_response(params, question, true)
+      # ai_answer = nil
+      if ai_answer.nil?
+        render json: { no_answer: true }
+        return
+      end
       @question.answers.build(content: ai_answer, answer_type: answer_type)
     end
 
@@ -167,7 +177,8 @@ class QuestionsController < ApplicationController
     end
   
     if @question.save
-      render json: { content: ai_answer, user_id: user_id, question_id: @question.id, show_survey: show_survey }
+      QuestionVector.create(question_id: @question.id, vector_data: question_vector)
+      render json: { content: @question.answers.find_by(answer_type: answer_type), user_id: user_id, question_id: @question.id, show_survey: show_survey }
     else
       # 保存に失敗した場合の処理を追加
       render json: { error: "Failed to save question and answer." }, status: :unprocessable_entity
@@ -177,30 +188,22 @@ class QuestionsController < ApplicationController
   def add_new_answer
     puts "params: #{params.inspect}"
 
+    unless user_signed_in?
+      respond_to do |format|
+        format.json { render json: { status: "limit" }, status: :too_many_requests }
+      end
+      return
+    end
+
     # APIリクエスト制限の確認
     api_limit = ApiLimit.first_or_initialize
     if api_limit.is_limited
       # 制限がかかっている場合、処理を中止して警告メッセージを返す
       @limit = true;
       respond_to do |format|
-        format.js # add_new_answer.js.erbが呼ばれる
+        format.json { render json: { status: "login_required" } }
       end
       return # この時点でメソッドを終了する
-    end
-
-    # 未ログインユーザーの複数回の回答生成を制限
-    unless user_signed_in?
-      session[:query_count] ||= 0 # セッションにquery_countキーが存在しない場合は0を設定
-      session[:query_count] += 1 # query_countをインクリメント
-      
-      if session[:query_count] >= 2
-        @prompt_login = true
-        # query_countが2以上の場合、ログインページへの移動を促す
-        respond_to do |format|
-          format.js # add_new_answer.js.erbが呼ばれる
-        end
-        return # この時点でメソッドを終了する
-      end
     end
     
     question_id = params[:question_id]
@@ -212,7 +215,12 @@ class QuestionsController < ApplicationController
     question_content = @question.content.presence || specific_answer_content
     
     # generate_ai_responseメソッドの第二引数としてquestion_contentを渡す
-    answer_content = generate_ai_response(params, question_content, false)
+    # answer_content = generate_ai_response(params, question_content, false)
+    answer_content = nil
+    if answer_content.nil?
+      render json: { status: "no_answer" }
+      return
+    end
     # answer_content = 'test'
     # sleep 5
     answer_type = params[:answer_type]
@@ -224,10 +232,9 @@ class QuestionsController < ApplicationController
     @answer.content = answer_content
     respond_to do |format|
       if @answer.save
-        format.js # 成功時の処理、add_new_answer.js.erbが呼ばれる
+        format.json { render json: { status: "success", answer_type: @answer.answer_type, content: @answer.content }, status: :ok }
       else
-        # ここでエラー処理をする代わりに、@answerがpersisted?でない場合は自動的にエラーとみなされます
-        format.js # add_new_answer.js.erbが呼ばれる
+        format.json { render json: { status: "error" }, status: :unprocessable_entity }
       end
     end
   end

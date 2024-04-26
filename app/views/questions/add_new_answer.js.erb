@@ -18,13 +18,13 @@
   });
 <% elsif @api_limit %>
   // APIリクエストの制限に関する処理
-  toggleOverlay('hide');
+  // toggleOverlay('hide');
   setTimeout(() => {
     confirm("アクセスが集中しています。\r\n1分後再試行してください。");
   }, 1000);
 <% elsif @prompt_login %>
   // ログインが必要な場合の処理
-  toggleOverlay('hide');
+  // toggleOverlay('hide');
   setTimeout(() => {
     const confirmLogin = confirm("質問を生成するにはログインが必要です。\r\nログインページへ移動しますか？");
     if (confirmLogin) {

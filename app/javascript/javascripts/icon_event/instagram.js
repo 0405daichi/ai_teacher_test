@@ -188,7 +188,9 @@ document.addEventListener("turbolinks:load", function() {
     }, simpleCameraModal[0], '.return-button');
 
     setCaptureButtonListener(async () => {
-      const imageBitmap = await takePhoto();
+      startScan($('.simple-camera-modal .light-dark-area')[0]);
+      const imageBitmap = await takePhoto($('.simple-camera-modal .light-dark-area')[0]);
+      stopScan($('.simple-camera-modal .light-dark-area')[0]);
 
       simpleCameraModal.modal('hide');
       closeCamera();
@@ -219,24 +221,25 @@ document.addEventListener("turbolinks:load", function() {
       const realHeight = svgRect.height * scale;
 
       // CanvasのサイズをmaskRectのサイズに合わせる
-      canvas.width = svgRect.width;
-      canvas.height = svgRect.height;
+      canvas.width = realWidth;
+      canvas.height = realHeight;
 
       ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
       
       canvas.toBlob(async (blob) => {
-        const result = await processImage(blob);
+        // const result = await processImage(blob);
         const imageUrl = URL.createObjectURL(blob);
-        $('.instagramModal .search-textarea').val(result.text);
+        console.log(imageUrl);
+        // $('.instagramModal .search-textarea').val(result.text);
 
-        // 新しい 'input' イベントを作成
-        const event = new Event('input', {
-          bubbles: true, // イベントをバブリングさせる
-          cancelable: true, // イベントをキャンセル可能にする
-        });
+        // // 新しい 'input' イベントを作成
+        // const event = new Event('input', {
+        //   bubbles: true, // イベントをバブリングさせる
+        //   cancelable: true, // イベントをキャンセル可能にする
+        // });
 
-        // テキストエリア要素でイベントを発火
-        $('.instagramModal .search-textarea')[0].dispatchEvent(event);
+        // // テキストエリア要素でイベントを発火
+        // $('.instagramModal .search-textarea')[0].dispatchEvent(event);
       }, 'image/png');
     }, simpleCameraModal[0], '.capture-button');
   });
@@ -287,6 +290,7 @@ document.addEventListener("turbolinks:load", function() {
       }, trimmingImageModal[0], '.return-from-trimming');
       
       setWriteOutButtonListener(async () => {
+        startScan($('.trimming-image-modal .light-dark-area')[0]);
         const maskRect = $('.trimming-image-modal .mask-rect')[0];
         const svgRect = maskRect.getBoundingClientRect();
       
@@ -335,20 +339,22 @@ document.addEventListener("turbolinks:load", function() {
           // canvasからblobを生成
           canvas.toBlob(async (blob) => {
             // processImage関数でOCR処理
-            const result = await processImage(blob);
+            // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
-            if (result && result.text) {
-              $('.instagramModal .search-textarea').val(result.text);
+            console.log(imageUrl);
+            // if (result && result.text) {
+              stopScan($('.trimming-image-modal .light-dark-area')[0]);
+            //   $('.instagramModal .search-textarea').val(result.text);
 
-              // 新しい 'input' イベントを作成して発火
-              const event = new Event('input', {
-                bubbles: true,
-                cancelable: true,
-              });
-              $('.instagramModal .search-textarea')[0].dispatchEvent(event);
-              trimmingImageModal.hide();
-              preview.attr('src', '');
-            }
+            //   // 新しい 'input' イベントを作成して発火
+            //   const event = new Event('input', {
+            //     bubbles: true,
+            //     cancelable: true,
+            //   });
+            //   $('.instagramModal .search-textarea')[0].dispatchEvent(event);
+            //   trimmingImageModal.hide();
+            //   preview.attr('src', '');
+            // }
           }, 'image/png');
         };
       }, trimmingImageModal[0], '.write-out-image');

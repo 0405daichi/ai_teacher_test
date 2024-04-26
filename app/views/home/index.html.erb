@@ -18,6 +18,52 @@
   </ul>
 </div>
 <style>
+.scan-rectangle-container {
+  position: fixed;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 2px; /* スキャンラインの幅 */
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  animation: none; /* 初期状態ではアニメーションを適用しない */
+}
+
+.scan-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  border-radius: 20px;
+}
+
+@keyframes scanAnimation {
+  0%, 100% {
+    left: 0%;
+    opacity: 0; /* 端にいる時は非表示 */
+  }
+  20%, 30% {
+    opacity: 1; /* 移動中は表示 */
+  }
+  60%, 80% {
+    opacity: 1; /* 移動中は表示 */
+  }
+  50% {
+    left: calc(100% - 2px);
+    opacity: 0;
+  }
+}
+
+.scan-line {
+  animation: scanAnimation 2s linear infinite paused; /* 初期状態ではアニメーションを停止 */
+}
 .move-icon {
   animation: blink 1s infinite;
 }
@@ -59,7 +105,8 @@
   100% { transform:translateX(-100%); }
 }
 </style>
-<div class="center-point ad-banner" data-ad-name="center-close-ad"><%= image_tag 'boken_title.png' %></div>
+<!--<div class="center-point ad-banner" data-ad-name="center-close-ad"><%= image_tag 'boken_title.png' %></div>-->
+<div class="center-point ad-banner" data-ad-name="center-close-ad"></div>
 <div class="circle-bg-ad ad-banner" data-ad-name="center-open-ad"><%= image_tag 'boukennosho_visual.png' %></div>
 <div class="ad-detail"><%= link_to "冒険の書とは", "https://taizoson.me/boukennosho/", class: 'ad-banner', data: { ad_name: 'center-open-url' } %></div>
 

@@ -9,8 +9,8 @@ module Vectorizer
     if status.success?
       stdout.strip.split.map(&:to_f)
     else
-      # エラーが発生した場合の特定可能な「ありえない値」
-      Array.new(50, -1.0)
+      Rails.logger.error("Vectorization error: #{stderr}")
+      Array.new(384, 0)  # Sentence-BERT の出力サイズに合わせて調整
     end
   end
 end

@@ -60,16 +60,18 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   $("#captureButton").click(async function() {
+    const maskRect = $('#cameraModal .mask-rect')[0];
+    const svgRect = maskRect.getBoundingClientRect();
+    const preview = $("#cameraModal .preview");
+    startScan($('#cameraModal .light-dark-area')[0]);
     const imageBitmap = await takePhoto();
+    stopScan($('#cameraModal .light-dark-area')[0]);
     
     $('#cameraModal').modal('hide');
     closeCamera();
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const maskRect = $('#cameraModal .mask-rect')[0]; // jQueryで要素を選択し、DOM要素にアクセス
-    const svgRect = maskRect.getBoundingClientRect();
-    const preview = $("#cameraPreview");
 
     let scale, offsetX, offsetY;
     if (imageBitmap.width / imageBitmap.height > preview.outerWidth() / preview.outerHeight()) {
@@ -87,26 +89,27 @@ document.addEventListener("turbolinks:load", function() {
     const realWidth = svgRect.width * scale;
     const realHeight = svgRect.height * scale;
 
-    canvas.width = realWidth; // 元の画像の解像度に合わせたサイズ
+    canvas.width = realWidth; 
     canvas.height = realHeight;
 
     // 実際の切り取り領域をCanvasに描画
     ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
 
     canvas.toBlob(async (blob) => {
-      const result = await processImage(blob);
+      // const result = await processImage(blob);
       const imageUrl = URL.createObjectURL(blob);
+      console.log("image:", imageUrl);
 
-      const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
-      const questionInputForm = $(questionForm).find(".question-input-form")[0];
-      questionInputForm.value = result.text;
+      // const questionForm = $(".question-form-from-camera")[0]; // jQueryで要素を選択し、DOM要素にアクセス
+      // const questionInputForm = $(questionForm).find(".question-input-form")[0];
+      // questionInputForm.value = result.text;
 
-      const imageInput = $(questionForm).find('.hidden-question-image')[0];
+      // const imageInput = $(questionForm).find('.hidden-question-image')[0];
 
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-      imageInput.files = dataTransfer.files;
-      submitFormAndShowModal(questionForm, result.text);
+      // const dataTransfer = new DataTransfer();
+      // dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+      // imageInput.files = dataTransfer.files;
+      // submitFormAndShowModal(questionForm, result.text);
     }, 'image/png');
   });
 
@@ -164,7 +167,7 @@ document.addEventListener("turbolinks:load", function() {
       }, trimmingImageModal[0], '.return-from-trimming');
 
       setWriteOutButtonListener(async () => {
-        toggleOverlay('show');
+        startScan($('.trimming-image-modal .light-dark-area')[0]);
         const preview = $('.trimming-image-modal .preview');
         const maskRect = $('.trimming-image-modal .mask-rect')[0];
         const svgRect = maskRect.getBoundingClientRect();
@@ -215,18 +218,19 @@ document.addEventListener("turbolinks:load", function() {
           // canvasからblobを生成してOCR処理（この部分は省略された処理に対する例示です）
           canvas.toBlob(async (blob) => {
             const imageUrl = URL.createObjectURL(blob);
-            const result = await processImage(blob);
-            if (result && result.text) {
-              $(".question-form-from-camera").find(".question-input-form").val(result.text);
+            // const result = await processImage(blob);
+            console.log("image:", imageUrl);
+            // if (result && result.text) {
+            //   $(".question-form-from-camera").find(".question-input-form").val(result.text);
 
-              const dataTransfer = new DataTransfer();
-              dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
-              $(".question-form-from-camera").find('.hidden-question-image')[0].files = dataTransfer.files;
-              toggleOverlay('hide');
-              submitFormAndShowModal($(".question-form-from-camera")[0], result.text);
-              $('#trimmingImageModal').modal('hide');
-              preview.attr('src', '');
-            }
+            //   const dataTransfer = new DataTransfer();
+            //   dataTransfer.items.add(new File([blob], "image.png", { type: "image/png" }));
+            //   $(".question-form-from-camera").find('.hidden-question-image')[0].files = dataTransfer.files;
+            stopScan($('.trimming-image-modal .light-dark-area')[0]);
+            //   submitFormAndShowModal($(".question-form-from-camera")[0], result.text);
+            //   $('#trimmingImageModal').modal('hide');
+            //   preview.attr('src', '');
+            // }
           }, 'image/png');
         };
       }, trimmingImageModal[0], '.write-out-image');
@@ -303,7 +307,9 @@ document.addEventListener("turbolinks:load", function() {
 
     setCaptureButtonListener(async () => {
       // 撮影ボタンが押されたときの処理を記述
-      const imageBitmap = await takePhoto();
+      startScan($('.simple-camera-modal .light-dark-area')[0]);
+      const imageBitmap = await takePhoto($(".simple-camera-modal .light-dark-area")[0]);
+      stopScan($('.simple-camera-modal .light-dark-area')[0]);
 
       simpleCameraModal.modal('hide');
       closeCamera();
@@ -340,18 +346,19 @@ document.addEventListener("turbolinks:load", function() {
       ctx.drawImage(imageBitmap, realX, realY, realWidth, realHeight, 0, 0, realWidth, realHeight);
       
       canvas.toBlob(async (blob) => {
-        const result = await processImage(blob);
+        // const result = await processImage(blob);
         const imageUrl = URL.createObjectURL(blob);
-        $('.write-question-modal .question-input-form').val(result.text);
+        console.log(imageUrl);
+        // $('.write-question-modal .question-input-form').val(result.text);
 
-        // // 新しい 'input' イベントを作成
-        const event = new Event('input', {
-          bubbles: true, // イベントをバブリングさせる
-          cancelable: true, // イベントをキャンセル可能にする
-        });
+        // // // 新しい 'input' イベントを作成
+        // const event = new Event('input', {
+        //   bubbles: true, // イベントをバブリングさせる
+        //   cancelable: true, // イベントをキャンセル可能にする
+        // });
 
-        // // テキストエリア要素でイベントを発火
-        $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
+        // // // テキストエリア要素でイベントを発火
+        // $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
       }, 'image/png');
     }, simpleCameraModal[0], '.capture-button');
   });
@@ -399,7 +406,8 @@ document.addEventListener("turbolinks:load", function() {
       }, trimmingImageModal[0], '.return-from-trimming');
       
       setWriteOutButtonListener(async () => {
-        const maskRect = $('.trimming-image-modal .mask-rect')[0];
+        startScan($('.trimming-image-modal .light-dark-area')[0]);
+        const maskRect = $('.trimming-image-modal .mask-rect')[0];                         
         const svgRect = maskRect.getBoundingClientRect();
       
         // canvas要素を作成
@@ -447,20 +455,22 @@ document.addEventListener("turbolinks:load", function() {
           // canvasからblobを生成
           canvas.toBlob(async (blob) => {
             // processImage関数でOCR処理
-            const result = await processImage(blob);
+            // const result = await processImage(blob);
             const imageUrl = URL.createObjectURL(blob);
-            if (result && result.text) {
-              $('.write-question-modal .question-input-form').val(result.text);
+            console.log(imageUrl);
+            // if (result && result.text) {
+              stopScan($('.trimming-image-modal .light-dark-area')[0]);           
+            //   $('.write-question-modal .question-input-form').val(result.text);
 
-              // 新しい 'input' イベントを作成して発火
-              const event = new Event('input', {
-                bubbles: true,
-                cancelable: true,
-              });
-              $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
-              trimmingImageModal.hide();
-              preview.attr('src', '');
-            }
+            //   // 新しい 'input' イベントを作成して発火
+            //   const event = new Event('input', {
+            //     bubbles: true,
+            //     cancelable: true,
+            //   });
+            //   $('.write-question-modal .question-input-form')[0].dispatchEvent(event);
+            //   trimmingImageModal.hide();
+            //   preview.attr('src', '');
+            // }
           }, 'image/png');
         };
       }, trimmingImageModal[0], '.write-out-image');

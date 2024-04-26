@@ -1,330 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-   <meta charset="utf-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-   <title>Bootstrap Modal demo</title>
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <!-- JSファイル読み込み -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rectangle Scan Animation</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="gradient-text">Over 67 billion transistors</div>
-    <style>
- .gradient-text {
-    background: -webkit-linear-gradient(white, dodgerblue);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 50px;
-}
-    </style>
-    
-    <div class="row">
-      <div><h4>サンプル１</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          サンプル１
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル１
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">変更の保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
 
-    <div class="row">
-      <div><h4>サンプル２</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-          サンプル２（モーダルロック）
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル２<br />ダイアログの外側をクリックしてもダイアログは閉じない
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
 
-    <div class="row">
-      <div><h4>サンプル３</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalScrollable">
-          サンプル３（スクロールあり）
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="modalScrollable"  tabindex="-1" aria-labelledby="modalScrollableLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalScrollableLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル３<br /><div style="height:1000px;"></div>スクロールあり
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
 
-    <div class="row">
-      <div><h4>サンプル４</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalVerticallyCentered">
-          サンプル４（中央表示）
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="modalVerticallyCentered"  tabindex="-1" aria-labelledby="modalVerticallyCenteredLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalVerticallyCenteredLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル４<br />中央表示
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
-
-    <div class="row">
-      <div><h4>サンプル５</h4></div>
-      <div>
-        <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle1" role="button">サンプル５（複数モーダル切り替え）</a>
-        <div class="modal fade" id="exampleModalToggle1" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalToggleLabel">モーダル１</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                複数モーダル切り替え<br />モーダル１
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">モーダル２へ</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalToggleLabel2">モーダル２</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                複数モーダル切り替え<br />モーダル２
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#exampleModalToggle1" data-bs-toggle="modal" data-bs-dismiss="modal">モーダル１へ</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
-
-    <div class="row">
-      <div><h4>サンプル６</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal6Sm">
-          サンプル６（.modal-sm）
-        </button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal6Lg">
-          サンプル６（.modal-lg）
-        </button>
+<!-- 薄暗くする部分としない部分 -->
+<div class="light-dark-area" id="lightDarkArea" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: block;">
+  <svg class="maskSvg" id="maskSvg" width="100%" height="100%">
+    <!-- Mask Definition -->
+    <defs>
+      <mask class="cutoutMask" id="cutoutMask">
+        <!-- Start with a white rectangle (to allow rendering) -->
+        <rect x="0" y="0" width="100%" height="100%" fill="white" />
         
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal6Xl">
-          サンプル６（.modal-xl）
-        </button>
-        
-        <!-- Modal Small-->
-        <div class="modal fade" id="exampleModal6Sm" tabindex="-1" aria-labelledby="exampleModal6SmLabel" aria-hidden="true">
-          <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModal6SmLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル６<br />小（スモール）
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">変更の保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Large -->
-        <div class="modal fade" id="exampleModal6Lg" tabindex="-1" aria-labelledby="exampleModal6LgLabel" aria-hidden="true">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModal6LgLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル６<br />大（ラージ）
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">変更の保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Extra Large -->
-        <div class="modal fade" id="exampleModal6Xl" tabindex="-1" aria-labelledby="exampleModal6XlLabel" aria-hidden="true">
-          <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModal6XlLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル６<br />極大（エクストララージ）
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">変更の保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
-
-    <div class="row">
-      <div><h4>サンプル７</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalFull">
-          サンプル７（フルスクリーン）
-        </button>
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalFull" tabindex="-1" aria-labelledby="exampleModalFullLabel" aria-hidden="true">
-          <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalFullLabel">モーダルタイトル</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                サンプル７<br />フルスクリーン
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary">変更の保存</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- row -->
-
-    <div class="row">
-      <div><h4>サンプル８</h4></div>
-      <div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" onclick="showModal();">
-          サンプル８（Javascript起動）
-        </button>
-        
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalJs" tabindex="-1" aria-labelledby="exampleModalJsLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalJsLabel">モーダルタイトル</h5>
-              </div>
-              <div class="modal-body">
-                サンプル８<br />Javascript起動
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="hideModal();">閉じる</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <script type="text/javascript">
-        var options = {backdrop:false,keyboard:false,focus:false};
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModalJs'), options)
-        function showModal() {
-          myModal.show();
-        }
-        function hideModal() {
-          myModal.hide();
-        }
-      </script>
-    </div><!-- row -->
-    <div style="
-    width: 280px; 
-    height: 180px;
-    background-color: blue;
-    border: 2px solid red;
-    border-top-left-radius: 20px 20px; 
-    border-top-right-radius: 20px 20px;
-    border-bottom-right-radius: 20px 20px;
-    border-bottom-left-radius: 20px 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-"></div>
+        <!-- Cut out a black rectangle (to block rendering) -->
+        <rect class="mask-rect" id="maskRect" x="50%" y="50%" width="80" height="480" fill="black" rx="20" ry="20" transform="translate(-140, -90)" />
+      </mask>
+    </defs>
+    <!-- Use the mask -->
+    <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#cutoutMask)" />
+  </svg>
+  <div class="move-icon" style="position: absolute; width: 10%; height: 10%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><style>.a,.b{fill:none;}.b{stroke:white;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title>138_arr_24</title><rect class="a" width="48" height="48"/><polyline class="b" points="12 30 6 24 12 18"/><polyline class="b" points="36 18 42 24 36 30"/><polyline class="b" points="18 12 24 6 30 12"/><polyline class="b" points="30 36 24 42 18 36"/><line class="b" x1="42" y1="24" x2="6" y2="24"/><line class="b" x1="24" y1="42" x2="24" y2="6"/></svg>
+  </div>
+  <div class="scan-rectangle-container">
+    <div class="scan-line"></div>
+    <div class="scan-cover"></div>
+  </div>
+</div>
 
 
+<button onclick="startScan()" style="position: fixed; bottom: 0;">スキャン開始</button>
+<button onclick="stopScan()" style="position: fixed; bottom: 0; right: 0;">スキャン停止</button>
 
-  </div><!-- container -->
+<script src="script.js"></script>
 </body>
 </html>
+
+<style>
+.scan-rectangle-container {
+  position: fixed;
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 2px; /* スキャンラインの幅 */
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  animation: none; /* 初期状態ではアニメーションを適用しない */
+}
+
+.scan-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+  border-radius: 20px;
+}
+
+@keyframes scanAnimation {
+  0%, 100% {
+    left: 0%;
+    opacity: 0; /* 端にいる時は非表示 */
+  }
+  20%, 30% {
+    opacity: 1; /* 移動中は表示 */
+  }
+  60%, 80% {
+    opacity: 1; /* 移動中は表示 */
+  }
+  50% {
+    left: calc(100% - 2px);
+    opacity: 0;
+  }
+}
+
+.scan-line {
+  animation: scanAnimation 2s linear infinite paused; /* 初期状態ではアニメーションを停止 */
+}
+
+</style>
+
+<script>
+function startScan() {
+  // mask-rect のサイズと位置を取得
+  const maskRect = document.getElementById('maskRect').getBoundingClientRect();
+  const container = document.querySelector('.scan-rectangle-container');
+  
+  // rectangle-container のスタイルを mask-rect に合わせて設定
+  container.style.width = `${maskRect.width}px`;
+  container.style.height = `${maskRect.height}px`;
+  container.style.top = `${maskRect.top}px`;
+  container.style.left = `${maskRect.left}px`;
+
+  // スキャンラインのアニメーションを開始
+  const scanLine = document.querySelector('.scan-line');
+  scanLine.style.animationPlayState = 'running';
+}
+
+function stopScan() {
+  // スキャンラインのアニメーションを停止
+  const scanLine = document.querySelector('.scan-line');
+  // アニメーションを停止し、スキャンラインのスタイルをリセット
+  scanLine.style.animation = 'none';
+  setTimeout(function() {
+    scanLine.style.left = '0'; // スキャンラインを初期位置に戻す
+    scanLine.style.opacity = '0'; // スキャンラインを非表示にする
+    // アニメーションを再適用（ブラウザにアニメーションが新しく開始されたと認識させる）
+    scanLine.style.animation = '';
+  }, 0);
+
+  const container = document.querySelector('.scan-rectangle-container');
+  container.style.width = '0'; // 初期幅に戻す
+  container.style.height = '0'; // 初期高さに戻す
+  container.style.top = '0'; // 初期位置に戻す
+  container.style.left = '0'; // 初期位置に戻す
+}
+
+</script>

@@ -111,75 +111,67 @@ class Gpt35Client
       return redirect_to request.referer || root_path # ユーザーを前のページまたはルートページにリダイレクト
     end
   
-    begin
-      system_message = { role: "system", content: return_system_message(params, first) }
-      user_message = { role: "user", content: prompt }
-      response = @api_client.chat(
-        parameters: {
-          model: 'gpt-4-turbo-preview',
-          messages: [
-            system_message,
-            user_message
-          ],
-          n: 1,
-        }
-      )
+    system_message = { role: "system", content: return_system_message(params, first) }
+    puts "これがシステムメッセージですよーーー#{system_message}"
+    user_message = { role: "user", content: prompt }
+    response = @api_client.chat(
+      parameters: {
+        model: 'gpt-4-turbo',
+        messages: [
+          system_message,
+          user_message
+        ],
+        n: 1,
+      }
+    )
 
-      update_api_limit_status(response);
+    update_api_limit_status(response.headers);
+    # response オブジェクトとそのヘッダーを UTF-8 として安全に出力する
+    puts "これがレスポンスですよ...#{response.to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: '?')}"
+    puts "これがレスポンスのヘッダーですよ...#{response.headers.to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: '?')}"
 
-      if response.key?('error')
-        puts "エラーが発生しました: #{response['error']['message']}" # サーバーログにエラーを出力
-        flash[:error] = "エラーが発生しました: #{response['error']['message']}" # フラッシュメッセージにエラーを追加
-        return redirect_to request.referer || root_path
-      elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
-        content = response['choices'][0]['message']['content'].strip
-        puts "#### これがgptの答え#{content}"
+    if response.key?('error')
+      puts "エラーが発生しました: #{response['error']['message']}" # サーバーログにエラーを出力
+      flash[:error] = "エラーが発生しました: #{response['error']['message']}" # フラッシュメッセージにエラーを追加
+      return redirect_to request.referer || root_path
+    elsif response && response['choices'] && !response['choices'].empty? && response['choices'][0]['message'] && response['choices'][0]['message']['content']
+      content = response['choices'][0]['message']['content'].strip
+      puts "#### これがgptの答え#{content}"
 
-        # 回答を翻訳する場合の条件式
-        # if params['option'] == '質問' || params['action'] == 'add_new_answer'
-        if false
-          logger = Logger.new('custom4.log')
-          logger.info("generate_answer内の質問の場合ok")
+      # 回答を翻訳する場合の条件式
+      # if params['option'] == '質問' || params['action'] == 'add_new_answer'
+      if false
+        logger = Logger.new('custom4.log')
+        logger.info("generate_answer内の質問の場合ok")
 
-          # 1. テキストから数式とマークダウンをプレースホルダーに置き換える
-          replaced_text, placeholders = replace_latex_markdown_and_newlines(content)
+        # 1. テキストから数式とマークダウンをプレースホルダーに置き換える
+        replaced_text, placeholders = replace_latex_markdown_and_newlines(content)
 
-          begin
-            # 2. 置き換えたテキストを翻訳する
-            translated_text = translate_with_deepl(replaced_text)
-          rescue => e
-            puts "翻訳中にエラーが発生しました: #{e.message}"
-            # 翻訳プロセスでエラーが発生した場合、元のcontentを返す
-            return content
-          end
-
-          # 3. 翻訳後のテキストでプレースホルダーを元に戻す
-          if translated_text
-            restored_text = restore_from_placeholders(translated_text, placeholders)
-          else
-            # 翻訳でエラーが発生した場合は、置換前のテキストを返す
-            restored_text = content
-          end
-          return restored_text
-        else
-          logger = Logger.new('custom5.log')
-          logger.info("generate_answer内の質問の場合ok")
-          # '質問'以外のオプションまたはオプションが指定されていない場合、元のcontentを返す
+        begin
+          # 2. 置き換えたテキストを翻訳する
+          translated_text = translate_with_deepl(replaced_text)
+        rescue => e
+          puts "翻訳中にエラーが発生しました: #{e.message}"
+          # 翻訳プロセスでエラーが発生した場合、元のcontentを返す
           return content
         end
+
+        # 3. 翻訳後のテキストでプレースホルダーを元に戻す
+        if translated_text
+          restored_text = restore_from_placeholders(translated_text, placeholders)
+        else
+          # 翻訳でエラーが発生した場合は、置換前のテキストを返す
+          restored_text = content
+        end
+        return restored_text
       else
-        puts "レスポンスの形式が正しくありません。"
-        flash[:error] = 'レスポンスの形式が正しくありません。'
-        return redirect_to request.referer || root_path
+        logger = Logger.new('custom5.log')
+        logger.info("generate_answer内の質問の場合ok")
+        # '質問'以外のオプションまたはオプションが指定されていない場合、元のcontentを返す
+        return content
       end
-    rescue Net::ReadTimeout
-      puts 'リクエストタイムアウトが発生しました。'
-      flash[:error] = 'リクエストタイムアウトが発生しました。'
-      return redirect_to request.referer || root_path
-    rescue => e
-      puts "例外が発生しました: #{e.message}"
-      flash[:error] = "例外が発生しました: #{e.message}"
-      return redirect_to request.referer || root_path
+    else
+      return nil
     end
   end  
 
@@ -359,10 +351,13 @@ class Gpt35Client
   def update_api_limit_status(headers)
     # ヘッダーからレートリミット情報を取得
     limit_requests = headers['x-ratelimit-limit-requests'].to_i
-    # puts "これリミットリクエスト#{limit_requests}"
+    puts "これリミットリクエスト#{limit_requests}"
     remaining_requests = headers['x-ratelimit-remaining-requests'].to_i
+    puts "これリリマイニングリクエスト#{remaining_requests}"
     limit_tokens = headers['x-ratelimit-limit-tokens'].to_i
+    puts "これリミットトークン#{limit_tokens}"
     remaining_tokens = headers['x-ratelimit-remaining-tokens'].to_i
+    puts "これリリマイニングトークン#{remaining_tokens}"
 
     # リクエスト制限とトークン制限を計算
     request_diff = limit_requests - remaining_requests

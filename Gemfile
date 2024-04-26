@@ -27,13 +27,14 @@ gem 'recaptcha', require: 'recaptcha/rails'
 gem 'aws-sdk-s3'
 gem 'pg'
 
-group :development, :test do
+group :development do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'web-console', '>= 4.1.0'
   gem 'rack-mini-profiler', '~> 2.0'
   gem 'listen', '~> 3.3'
   gem 'spring'
   gem 'dotenv-rails'
+  gem 'rspec-rails'
 end
 
 group :test do

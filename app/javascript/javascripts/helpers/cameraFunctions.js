@@ -358,3 +358,40 @@ export async function resetAllElementPositions() {
   });
 }
 
+function startScan(lightDarkArea) {
+  // mask-rect のサイズと位置を取得
+  const maskRect = lightDarkArea.querySelector('#maskRect').getBoundingClientRect();
+  const container = lightDarkArea.querySelector('.scan-rectangle-container');
+  
+  // rectangle-container のスタイルを mask-rect に合わせて設定
+  container.style.width = `${maskRect.width}px`;
+  container.style.height = `${maskRect.height}px`;
+  container.style.top = `${maskRect.top}px`;
+  container.style.left = `${maskRect.left}px`;
+
+  // スキャンラインのアニメーションを開始
+  const scanLine = container.querySelector('.scan-line');
+  scanLine.style.animationPlayState = 'running';
+}
+
+function stopScan(lightDarkArea) {
+  // スキャンラインのアニメーションを停止
+  const scanLine = lightDarkArea.querySelector('.scan-line');
+  // アニメーションを停止し、スキャンラインのスタイルをリセット
+  scanLine.style.animation = 'none';
+  setTimeout(function() {
+    scanLine.style.left = '0'; // スキャンラインを初期位置に戻す
+    scanLine.style.opacity = '0'; // スキャンラインを非表示にする
+    // アニメーションを再適用（ブラウザにアニメーションが新しく開始されたと認識させる）
+    scanLine.style.animation = '';
+  }, 0);
+
+  const container = lightDarkArea.querySelector('.scan-rectangle-container');
+  container.style.width = '0'; // 初期幅に戻す
+  container.style.height = '0'; // 初期高さに戻す
+  container.style.top = '0'; // 初期位置に戻す
+  container.style.left = '0'; // 初期位置に戻す
+}
+
+window.startScan = startScan;
+window.stopScan = stopScan;

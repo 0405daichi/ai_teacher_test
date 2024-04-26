@@ -36,9 +36,7 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= f.button type: 'submit', class: 'submit-btn' do %>
-                    <%= render 'shared/svg/submit' %>
-                  <% end %>
+                  <%= render 'shared/svg/submit' %>
                 </div>
               <% end %>
             </div>
@@ -54,9 +52,7 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 2 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= f.button type: 'submit', class: 'submit-btn' do %>
-                    <%= render 'shared/svg/submit' %>
-                  <% end %>
+                  <%= render 'shared/svg/submit' %>
                 </div>
               <% end %>
             </div>
@@ -72,9 +68,7 @@
                 <%= f.hidden_field :answer_type, class: "answer_type", value: 3 %>
                 <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
                 <div class="custom-button">
-                  <%= f.button type: 'submit', class: 'submit-btn' do %>
-                    <%= render 'shared/svg/submit' %>
-                  <% end %>
+                  <%= render 'shared/svg/submit' %>
                 </div>
               <% end %>
             </div>
@@ -93,17 +87,15 @@
   </div>
   <div class="card-show-footer" style="height: auto;">
     <div class="footer-left">
-      <div class="generate-div">
+      <!--<div class="generate-div">
         <%= form_with url: "/questions/add_new_answer", id: "regenerate-form", class: "add-ans-form", local: false, remote: true, method: :post do |f| %>
           <%= f.hidden_field :answer_type, class: "answer_type", value: 1 %>
           <%= f.hidden_field :question_id, class: "question_id", value: @question.id %>
           <div class="re-generate-answer-button">
-            <%= f.button type: 'submit', class: 'submit-btn' do %>
               <%= render 'shared/svg/reload' %>
-            <% end %>
           </div>
         <% end %>
-      </div>
+      </div>-->
       <% if current_user.can_edit? && @question.user == current_user %>
         <div class="edit-card-buttons">
           <%= link_to edit_question_path(@question), method: :get, remote: true do %>

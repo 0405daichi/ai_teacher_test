@@ -59,6 +59,8 @@ export async function submitFormAndShowModal(formElement, question) {
           window.location.href = "/users/sign_in";
         }
       }, 1000);
+    } else if (data.no_answer) {
+      alert(`回答生成中にエラーが発生しました。`);
     } else if (data.user_id) {
       setTimeout(() => {
         if (data.show_survey) {
@@ -69,6 +71,10 @@ export async function submitFormAndShowModal(formElement, question) {
           fetchCardDetails(data.question_id);
           refreshCard(data.user_id, data.question_id);
         }
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        fetchCardDetails(data.question_id);
       }, 1000);
     }
   })
