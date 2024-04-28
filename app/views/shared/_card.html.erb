@@ -4,7 +4,7 @@
   <div class="card-body">
     <div class="card-display-content">
       <% if card.image.attached? %>
-        <%= image_tag card.image, style: "height: 100%;" %> <!-- 画像があればここで表示 -->
+        <%= image_tag card.image, style: "width: 100%;" %> <!-- 画像があればここで表示 -->
       <% else %>
         <%= simple_format(card.content) %> <!-- 画像がなければコンテンツを表示 -->
       <% end %>
